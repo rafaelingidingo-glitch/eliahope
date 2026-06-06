@@ -48,18 +48,35 @@ model GalleryImage {
 }
 
 model Donation {
-  id          String   @id @default(cuid())
-  donorName   String
-  donorEmail  String
-  amount      Float
-  currency    String   @default("TZS")
-  method      String
-  type        String   @default("one-time")
-  campaign    String?
-  status      String   @default("pending")
-  message     String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  donorName       String
+  donorEmail      String?
+  donorPhone      String?
+  amount          Float
+  currency        String   @default("TZS")
+  method          String
+  type            String   @default("one-time")
+  campaignId      String?
+  campaign        String?
+  status          String   @default("pending")
+  transactionId   String?
+  mpesaReceipt    String?
+  message         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PaymentProof {
+  id           String   @id @default(cuid())
+  donorName    String
+  donorPhone   String
+  amount       Float
+  receiptUrl   String
+  campaignId   String?
+  status       String   @default("pending")
+  adminNotes   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Campaign {
