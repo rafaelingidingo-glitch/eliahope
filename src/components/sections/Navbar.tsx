@@ -28,7 +28,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
 
-      const sections = ['#home', '#about', '#programs', '#impact', '#donate']
+      const sections = ['#home', '#about', '#programs', '#impact']
       for (const section of sections.reverse()) {
         const el = document.querySelector(section)
         if (el) {
