@@ -182,7 +182,7 @@ export default function GalleryManagement() {
                 alt={img.title || 'Gallery image'}
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/logo.png'
+                  (e.target as HTMLImageElement).src = '/logo.jpeg'
                 }}
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Elia's Hope Community" }],
   icons: {
-    icon: "/logo.png",
+    icon: "/logo.jpeg",
   },
   openGraph: {
     title: "Elia's Hope Community",

@@ -62,7 +62,7 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
             }}
             className="flex items-center gap-2"
           >
-            <img src="/logo.png" alt="Elia's Hope Community" className="h-10 md:h-12 w-auto" />
+            <img src="/logo.jpeg" alt="Elia's Hope Community" className="h-10 md:h-12 w-auto" />
           </a>
 
           {/* Desktop Nav Links */}
@@ -134,7 +134,7 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b border-white/10">
-                    <img src="/logo.png" alt="Elia's Hope" className="h-9 w-auto" />
+                    <img src="/logo.jpeg" alt="Elia's Hope" className="h-9 w-auto" />
                     <Button
                       variant="ghost"
                       size="icon"
