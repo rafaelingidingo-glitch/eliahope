@@ -53,11 +53,13 @@ DONATION DETAILS
 ────────────────────────────────────────────
 Amount:        TZS ${donation.amount.toLocaleString()}
 Currency:      ${donation.currency}
-Method:        ${donation.method === 'mpesa' ? 'M-Pesa' : 'Bank Transfer'}
+Method:        ${donation.method === 'mpesa' ? 'M-Pesa' : donation.method === 'crdb' ? 'CRDB Bank' : 'Bank Transfer'}
 Type:          ${donation.type}
 Campaign:      ${donation.campaign || 'General Donation'}
 Status:        ${donation.status.toUpperCase()}
 ${donation.mpesaReceipt ? `M-Pesa Ref:     ${donation.mpesaReceipt}` : ''}
+${donation.crdbReference ? `Bank Ref:      ${donation.crdbReference}` : ''}
+${donation.crdbAccountHolder ? `Account Holder: ${donation.crdbAccountHolder}` : ''}
 ${donation.message ? `Message:       ${donation.message}` : ''}
 
 ════════════════════════════════════════════

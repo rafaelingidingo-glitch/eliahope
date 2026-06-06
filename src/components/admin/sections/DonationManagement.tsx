@@ -242,6 +242,8 @@ export default function DonationManagement() {
         return 'bg-green-100 text-green-700'
       case 'pending':
         return 'bg-yellow-100 text-yellow-700'
+      case 'processing':
+        return 'bg-blue-100 text-blue-700'
       case 'failed':
         return 'bg-red-100 text-red-700'
       case 'cancelled':
@@ -557,6 +559,7 @@ export default function DonationManagement() {
                 <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="successful">Successful</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="processing">Processing</SelectItem>
                 <SelectItem value="failed">Failed</SelectItem>
                 <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
@@ -566,7 +569,7 @@ export default function DonationManagement() {
               <SelectContent>
                 <SelectItem value="all">All Methods</SelectItem>
                 <SelectItem value="mpesa">M-Pesa</SelectItem>
-                <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
+                <SelectItem value="crdb">CRDB Bank</SelectItem>
               </SelectContent>
             </Select>
             <Select value={campaignFilter} onValueChange={setCampaignFilter}>
@@ -627,7 +630,7 @@ export default function DonationManagement() {
                               <Building2 className="h-3.5 w-3.5 text-blue-600" />
                             )}
                             <span className="capitalize text-sm">
-                              {d.method === 'mpesa' ? 'M-Pesa' : 'Bank Transfer'}
+                              {d.method === 'mpesa' ? 'M-Pesa' : d.method === 'crdb' ? 'CRDB Bank' : 'Bank Transfer'}
                             </span>
                           </div>
                         </TableCell>
@@ -856,7 +859,7 @@ export default function DonationManagement() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-gray-500">
-                These details are displayed on the public donation page for bank transfers.
+                Organization bank account details for internal reference.
               </p>
 
               <div>
@@ -934,7 +937,7 @@ export default function DonationManagement() {
                 <div>
                   <span className="text-gray-500 block">Method</span>
                   <span className="font-semibold text-[#0F2D5C] capitalize">
-                    {selectedDonation.method === 'mpesa' ? 'M-Pesa' : 'Bank Transfer'}
+                    {selectedDonation.method === 'mpesa' ? 'M-Pesa' : selectedDonation.method === 'crdb' ? 'CRDB Bank' : 'Bank Transfer'}
                   </span>
                 </div>
                 <div>
@@ -977,7 +980,7 @@ export default function DonationManagement() {
               <div className="border-t pt-4 space-y-3">
                 <label className="text-sm font-semibold text-[#0F2D5C]">Update Status</label>
                 <div className="flex gap-2 flex-wrap">
-                  {['pending', 'successful', 'failed', 'cancelled'].map((s) => (
+                  {['pending', 'processing', 'successful', 'failed', 'cancelled'].map((s) => (
                     <Button
                       key={s}
                       variant={selectedDonation.status === s ? 'default' : 'outline'}

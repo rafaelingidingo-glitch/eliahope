@@ -51,3 +51,33 @@ Stage Summary:
 - Removed: Dead code files DonateCTA.tsx and Testimonials.tsx (no longer used)
 - Removed: Unused Heart import from Footer
 - Build verified: compiles successfully with zero errors
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Replace Bank Transfer section with integrated CRDB Bank payment flow
+
+Work Log:
+- Updated Prisma schema: added crdbAccountHolder, crdbAccountNumber, crdbReference fields to Donation model
+- Ran prisma db push to sync database
+- Created new API route: /api/donate/crdb (POST for payment initiation, GET for status polling)
+- Completely rewrote DonationModal.tsx:
+  - Removed: Bank details display, copy account button, download bank details, proof of payment upload
+  - Added: CRDB Bank integrated payment form with fields: Name (optional), Email (optional), Phone (optional), Account Holder Name (required), CRDB Account Number (required), Donation Amount (required)
+  - Changed tab label from "Bank Transfer" to "CRDB Bank" with Landmark icon
+  - Added "Connecting to CRDB Bank..." loading state
+  - Added secure payment badge and encryption notice
+  - Added bank reference in success page
+  - Added Date & Time in success receipt details
+  - Unified polling system for both M-Pesa and CRDB
+- Updated receipt API to show CRDB Bank method and bank reference
+- Updated admin DonationManagement: CRDB method label, processing status, status badge colors
+- Updated admin settings description (no longer publicly displayed)
+
+Stage Summary:
+- Bank account details are NO LONGER displayed to donors
+- CRDB Bank payment is now an integrated flow (like M-Pesa) where donors enter their own CRDB account and authorize payment
+- Payment statuses: pending, processing, successful, failed, cancelled
+- Success page shows: Donor Name, Amount, Transaction ID, Bank Reference, Date & Time, Download Receipt
+- Build passes with zero errors
+- New API route: /api/donate/crdb

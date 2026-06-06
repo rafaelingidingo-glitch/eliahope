@@ -9,11 +9,8 @@ import {
   Phone,
   Mail,
   User,
-  Copy,
   Download,
-  Upload,
   ChevronDown,
-  ChevronUp,
   CheckCircle2,
   Loader2,
   AlertCircle,
@@ -22,6 +19,8 @@ import {
   GraduationCap,
   Baby,
   Users,
+  Landmark,
+  Shield,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
@@ -38,14 +37,8 @@ interface Campaign {
   status: string
 }
 
-interface BankDetails {
-  accountNumber: string
-  branch: string
-  swift: string
-}
-
 type DonationState = 'idle' | 'loading' | 'success' | 'error'
-type PaymentTab = 'mpesa' | 'bank'
+type PaymentTab = 'mpesa' | 'crdb'
 
 interface DonationModalProps {
   isOpen: boolean
@@ -71,24 +64,25 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
   const [donationId, setDonationId] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
-  // Bank transfer form
-  const [bankDetails, setBankDetails] = useState<BankDetails>({
-    accountNumber: '0150234567890',
-    branch: 'Mwanza Main',
-    swift: 'CORUTZTZ',
-  })
-  const [showProofForm, setShowProofForm] = useState(false)
-  const [proofName, setProofName] = useState('')
-  const [proofPhone, setProofPhone] = useState('')
-  const [proofAmount, setProofAmount] = useState('')
-  const [proofReceipt, setProofReceipt] = useState<File | null>(null)
-  const [proofSubmitting, setProofSubmitting] = useState(false)
+  // CRDB Bank form
+  const [crdbName, setCrdbName] = useState('')
+  const [crdbEmail, setCrdbEmail] = useState('')
+  const [crdbPhone, setCrdbPhone] = useState('')
+  const [crdbAccountHolder, setCrdbAccountHolder] = useState('')
+  const [crdbAccountNumber, setCrdbAccountNumber] = useState('')
+  const [crdbAmount, setCrdbAmount] = useState('')
+  const [crdbDonationState, setCrdbDonationState] = useState<DonationState>('idle')
+  const [crdbTransactionId, setCrdbTransactionId] = useState('')
+  const [crdbDonationId, setCrdbDonationId] = useState('')
+  const [crdbErrorMessage, setCrdbErrorMessage] = useState('')
+  const [crdbBankReference, setCrdbBankReference] = useState('')
 
   // Campaigns
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
 
-  // Polling for M-Pesa status
+  // Polling for payment status
   const [polling, setPolling] = useState(false)
+  const [pollingMethod, setPollingMethod] = useState<'mpesa' | 'crdb'>('mpesa')
 
   const fetchCampaigns = useCallback(async () => {
     try {
@@ -102,33 +96,11 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     }
   }, [])
 
-  const fetchBankDetails = useCallback(async () => {
-    try {
-      const res = await fetch('/api/admin/settings')
-      if (res.ok) {
-        const settings = await res.json() as { key: string; value: string }[]
-        const accountNumber = settings.find((s) => s.key === 'crdb_account_number')
-        const branch = settings.find((s) => s.key === 'crdb_branch')
-        const swift = settings.find((s) => s.key === 'crdb_swift')
-        if (accountNumber || branch || swift) {
-          setBankDetails({
-            accountNumber: accountNumber?.value || '0150234567890',
-            branch: branch?.value || 'Mwanza Main',
-            swift: swift?.value || 'CORUTZTZ',
-          })
-        }
-      }
-    } catch {
-      // Use defaults
-    }
-  }, [])
-
   useEffect(() => {
     if (isOpen) {
       fetchCampaigns()
-      fetchBankDetails()
     }
-  }, [isOpen, fetchCampaigns, fetchBankDetails])
+  }, [isOpen, fetchCampaigns])
 
   // Apply preselected campaign
   useEffect(() => {
@@ -141,25 +113,39 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
   useEffect(() => {
     if (prefilledAmount) {
       setMpesaAmount(prefilledAmount)
+      setCrdbAmount(prefilledAmount)
     }
   }, [prefilledAmount])
 
-  // Poll for M-Pesa status
+  // Poll for payment status (both M-Pesa and CRDB)
   useEffect(() => {
     if (!polling || !transactionId) return
 
+    const apiEndpoint = pollingMethod === 'mpesa'
+      ? `/api/donate/mpesa?transactionId=${transactionId}`
+      : `/api/donate/crdb?transactionId=${transactionId}`
+
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`/api/donate/mpesa?transactionId=${transactionId}`)
+        const res = await fetch(apiEndpoint)
         if (res.ok) {
           const data = await res.json()
           if (data.status === 'successful') {
-            setDonationState('success')
+            if (pollingMethod === 'mpesa') {
+              setDonationState('success')
+            } else {
+              setCrdbDonationState('success')
+            }
             setPolling(false)
             fetchCampaigns()
           } else if (data.status === 'failed') {
-            setDonationState('error')
-            setErrorMessage('M-Pesa payment was not completed. Please try again.')
+            if (pollingMethod === 'mpesa') {
+              setDonationState('error')
+              setErrorMessage('M-Pesa payment was not completed. Please try again.')
+            } else {
+              setCrdbDonationState('error')
+              setCrdbErrorMessage('CRDB Bank payment was not completed. Please try again.')
+            }
             setPolling(false)
           }
         }
@@ -169,38 +155,50 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     }, 2000)
 
     return () => clearInterval(interval)
-  }, [polling, transactionId, fetchCampaigns])
+  }, [polling, transactionId, pollingMethod, fetchCampaigns])
 
   // Stop polling after 60 seconds
   useEffect(() => {
     if (!polling) return
     const timeout = setTimeout(() => {
       setPolling(false)
-      if (donationState === 'loading') {
+      if (pollingMethod === 'mpesa' && donationState === 'loading') {
         setDonationState('error')
         setErrorMessage('Payment verification timed out. Your payment may still be processing. Please contact us if you don\'t receive confirmation.')
+      } else if (pollingMethod === 'crdb' && crdbDonationState === 'loading') {
+        setCrdbDonationState('error')
+        setCrdbErrorMessage('Payment verification timed out. Your payment may still be processing. Please contact us if you don\'t receive confirmation.')
       }
     }, 60000)
     return () => clearTimeout(timeout)
-  }, [polling, donationState])
+  }, [polling, pollingMethod, donationState, crdbDonationState])
 
   const resetForm = () => {
+    // M-Pesa
     setDonationState('idle')
     setTransactionId('')
     setDonationId('')
     setErrorMessage('')
-    setPolling(false)
     setMpesaName('')
     setMpesaPhone('')
     setMpesaEmail('')
     setMpesaAmount('')
+    // CRDB
+    setCrdbDonationState('idle')
+    setCrdbTransactionId('')
+    setCrdbDonationId('')
+    setCrdbErrorMessage('')
+    setCrdbName('')
+    setCrdbEmail('')
+    setCrdbPhone('')
+    setCrdbAccountHolder('')
+    setCrdbAccountNumber('')
+    setCrdbAmount('')
+    setCrdbBankReference('')
+    // Common
+    setPolling(false)
     setSelectedCampaign('')
     setActiveTab('mpesa')
-    setShowProofForm(false)
-    setProofName('')
-    setProofPhone('')
-    setProofAmount('')
-    setProofReceipt(null)
   }
 
   const handleClose = () => {
@@ -208,6 +206,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     onClose()
   }
 
+  // M-Pesa submit
   const handleMpesaSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setDonationState('loading')
@@ -236,6 +235,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
 
       setTransactionId(data.transactionId)
       setDonationId(data.donationId)
+      setPollingMethod('mpesa')
       setPolling(true)
     } catch {
       setDonationState('error')
@@ -243,87 +243,60 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     }
   }
 
-  const handleCopyAccount = async () => {
-    try {
-      await navigator.clipboard.writeText(bankDetails.accountNumber)
-      toast({ title: 'Copied!', description: 'Account number copied to clipboard' })
-    } catch {
-      toast({ title: 'Copy failed', description: 'Please copy the account number manually', variant: 'destructive' })
-    }
-  }
-
-  const handleDownloadBankDetails = () => {
-    const text = `ELIA'S HOPE COMMUNITY - BANK TRANSFER DETAILS
-============================================
-Account Name:  Elia's Hope Community
-Bank:          CRDB Bank
-Account Number: ${bankDetails.accountNumber}
-Branch:        ${bankDetails.branch}
-SWIFT Code:    ${bankDetails.swift}
-
-Thank you for your generous donation!
-After making the transfer, please submit proof of payment on our website.`
-    const blob = new Blob([text], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'elias-hope-bank-details.txt'
-    a.click()
-    URL.revokeObjectURL(url)
-    toast({ title: 'Downloaded!', description: 'Bank details saved' })
-  }
-
-  const handleProofSubmit = async (e: React.FormEvent) => {
+  // CRDB Bank submit
+  const handleCrdbSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!proofReceipt) {
-      toast({ title: 'Missing receipt', description: 'Please upload your payment receipt', variant: 'destructive' })
-      return
-    }
-    setProofSubmitting(true)
+    setCrdbDonationState('loading')
+    setCrdbErrorMessage('')
 
     try {
-      const formData = new FormData()
-      formData.append('donorName', proofName || 'Anonymous')
-      formData.append('donorPhone', proofPhone)
-      formData.append('amount', proofAmount)
-      formData.append('receipt', proofReceipt)
-      if (selectedCampaign) formData.append('campaignId', selectedCampaign)
-
-      const res = await fetch('/api/donate/proof', {
+      const res = await fetch('/api/donate/crdb', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          accountHolderName: crdbAccountHolder,
+          crdbAccountNumber: crdbAccountNumber,
+          amount: parseFloat(crdbAmount),
+          name: crdbName || undefined,
+          email: crdbEmail || undefined,
+          phone: crdbPhone || undefined,
+          campaignId: selectedCampaign || undefined,
+        }),
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        toast({ title: 'Error', description: data.error || 'Failed to submit proof', variant: 'destructive' })
+        setCrdbDonationState('error')
+        setCrdbErrorMessage(data.error || 'Failed to process donation')
         return
       }
 
-      toast({ title: 'Submitted!', description: 'Your payment proof has been submitted. We will verify it shortly.' })
-      setProofName('')
-      setProofPhone('')
-      setProofAmount('')
-      setProofReceipt(null)
-      setShowProofForm(false)
+      setCrdbTransactionId(data.transactionId)
+      setCrdbDonationId(data.donationId)
+      setCrdbBankReference(data.bankReference)
+      setTransactionId(data.transactionId)
+      setPollingMethod('crdb')
+      setPolling(true)
     } catch {
-      toast({ title: 'Error', description: 'Network error. Please try again.', variant: 'destructive' })
-    } finally {
-      setProofSubmitting(false)
+      setCrdbDonationState('error')
+      setCrdbErrorMessage('Network error. Please check your connection and try again.')
     }
   }
 
   const handleDownloadReceipt = () => {
-    if (!donationId) return
+    const id = activeTab === 'mpesa' ? donationId : crdbDonationId
+    const tid = activeTab === 'mpesa' ? transactionId : crdbTransactionId
+    if (!id) return
     const a = document.createElement('a')
-    a.href = `/api/donate/receipt?donationId=${donationId}`
-    a.download = `receipt-${transactionId}.txt`
+    a.href = `/api/donate/receipt?donationId=${id}`
+    a.download = `receipt-${tid}.txt`
     a.click()
   }
 
   const handleShare = async () => {
-    const text = `I just donated TZS ${parseFloat(mpesaAmount).toLocaleString()} to Elia's Hope Community! Join me in making a difference.`
+    const amt = activeTab === 'mpesa' ? mpesaAmount : crdbAmount
+    const text = `I just donated TZS ${parseFloat(amt).toLocaleString()} to Elia's Hope Community! Join me in making a difference.`
     if (navigator.share) {
       try {
         await navigator.share({ title: "Elia's Hope Community", text })
@@ -337,12 +310,26 @@ After making the transfer, please submit proof of payment on our website.`
   }
 
   const handleRetry = () => {
-    setDonationState('idle')
-    setTransactionId('')
-    setDonationId('')
-    setErrorMessage('')
+    if (pollingMethod === 'mpesa') {
+      setDonationState('idle')
+      setTransactionId('')
+      setDonationId('')
+      setErrorMessage('')
+    } else {
+      setCrdbDonationState('idle')
+      setCrdbTransactionId('')
+      setCrdbDonationId('')
+      setCrdbErrorMessage('')
+      setCrdbBankReference('')
+    }
     setPolling(false)
   }
+
+  // Determine which success state to show
+  const isSuccess = donationState === 'success' || crdbDonationState === 'success'
+  const successData = donationState === 'success'
+    ? { name: mpesaName, amount: mpesaAmount, tid: transactionId }
+    : { name: crdbName, amount: crdbAmount, tid: crdbTransactionId }
 
   const campaignIcons = [GraduationCap, Building2, Baby, Users, Heart]
 
@@ -375,7 +362,7 @@ After making the transfer, please submit proof of payment on our website.`
         <div className="p-6">
           <AnimatePresence mode="wait">
             {/* Success State */}
-            {donationState === 'success' ? (
+            {isSuccess ? (
               <motion.div
                 key="success"
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -401,19 +388,28 @@ After making the transfer, please submit proof of payment on our website.`
                 <div className="bg-[#f5f3ef] rounded-2xl p-4 text-left max-w-xs mx-auto mb-6 space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-[#44474d]">Donor:</span>
-                    <span className="text-[#031632] font-semibold">{mpesaName || 'Anonymous'}</span>
+                    <span className="text-[#031632] font-semibold">{successData.name || 'Anonymous'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#44474d]">Amount:</span>
-                    <span className="text-[#031632] font-semibold">TZS {parseFloat(mpesaAmount).toLocaleString()}</span>
+                    <span className="text-[#031632] font-semibold">TZS {parseFloat(successData.amount).toLocaleString()}</span>
                   </div>
+                  {crdbBankReference && (
+                    <div className="flex justify-between">
+                      <span className="text-[#44474d]">Bank Ref:</span>
+                      <span className="text-[#031632] font-semibold font-mono text-xs">{crdbBankReference}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-[#44474d]">Transaction ID:</span>
-                    <span className="text-[#031632] font-semibold font-mono text-xs">{transactionId}</span>
+                    <span className="text-[#031632] font-semibold font-mono text-xs">{successData.tid}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#44474d]">Date:</span>
-                    <span className="text-[#031632] font-semibold">{new Date().toLocaleDateString()}</span>
+                    <span className="text-[#44474d]">Date & Time:</span>
+                    <span className="text-[#031632] font-semibold text-xs">
+                      {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}{' '}
+                      {new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
                 </div>
 
@@ -483,19 +479,19 @@ After making the transfer, please submit proof of payment on our website.`
                     M-Pesa
                   </button>
                   <button
-                    onClick={() => setActiveTab('bank')}
+                    onClick={() => setActiveTab('crdb')}
                     className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-colors border-l-2 border-[#c5c6ce] ${
-                      activeTab === 'bank'
+                      activeTab === 'crdb'
                         ? 'bg-[#031632] text-white'
                         : 'bg-white text-[#44474d] hover:bg-gray-50'
                     }`}
                   >
-                    <Building2 className="h-4 w-4" />
-                    Bank Transfer
+                    <Landmark className="h-4 w-4" />
+                    CRDB Bank
                   </button>
                 </div>
 
-                {/* M-Pesa Tab */}
+                {/* ===== M-Pesa Tab ===== */}
                 {activeTab === 'mpesa' && (
                   <form onSubmit={handleMpesaSubmit} className="space-y-4">
                     {/* Full Name - Optional */}
@@ -575,7 +571,6 @@ After making the transfer, please submit proof of payment on our website.`
                           disabled={donationState === 'loading'}
                         />
                       </div>
-                      {/* Quick amount buttons */}
                       <div className="flex gap-2 mt-2">
                         {[5000, 10000, 25000, 50000, 100000].map((amt) => (
                           <button
@@ -651,190 +646,219 @@ After making the transfer, please submit proof of payment on our website.`
                   </form>
                 )}
 
-                {/* Bank Transfer Tab */}
-                {activeTab === 'bank' && (
-                  <div className="space-y-5">
-                    {/* Bank Details Card */}
-                    <div className="bg-[#f5f3ef] rounded-2xl p-5 space-y-3">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="bg-[#031632] p-2 rounded-xl">
-                          <Building2 className="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="text-[#031632] font-bold text-sm">CRDB Bank Transfer</h4>
-                          <p className="text-[#44474d] text-xs">Send your donation via bank transfer</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between items-center py-1.5 border-b border-gray-200">
-                          <span className="text-[#44474d]">Account Name</span>
-                          <span className="text-[#031632] font-semibold">Elia&apos;s Hope Community</span>
-                        </div>
-                        <div className="flex justify-between items-center py-1.5 border-b border-gray-200">
-                          <span className="text-[#44474d]">Bank</span>
-                          <span className="text-[#031632] font-semibold">CRDB Bank</span>
-                        </div>
-                        <div className="flex justify-between items-center py-1.5 border-b border-gray-200">
-                          <span className="text-[#44474d]">Account Number</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[#031632] font-semibold font-mono text-xs">
-                              {bankDetails.accountNumber}
-                            </span>
-                            <button
-                              onClick={handleCopyAccount}
-                              className="p-1 hover:bg-white rounded-lg transition-colors"
-                              title="Copy account number"
-                            >
-                              <Copy className="h-3.5 w-3.5 text-[#ff8928]" />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center py-1.5 border-b border-gray-200">
-                          <span className="text-[#44474d]">Branch</span>
-                          <span className="text-[#031632] font-semibold">{bankDetails.branch}</span>
-                        </div>
-                        <div className="flex justify-between items-center py-1.5">
-                          <span className="text-[#44474d]">SWIFT Code</span>
-                          <span className="text-[#031632] font-semibold font-mono text-xs">{bankDetails.swift}</span>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={handleDownloadBankDetails}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-[#031632] text-[#031632] rounded-none font-semibold hover:bg-[#031632] hover:text-white transition-colors text-sm"
-                      >
-                        <Download className="h-4 w-4" /> Download Bank Details
-                      </button>
+                {/* ===== CRDB Bank Tab ===== */}
+                {activeTab === 'crdb' && (
+                  <form onSubmit={handleCrdbSubmit} className="space-y-4">
+                    {/* Secure badge */}
+                    <div className="flex items-center gap-2 p-3 bg-[#031632]/5 rounded-xl mb-1">
+                      <Shield className="h-4 w-4 text-[#031632]" />
+                      <p className="text-[#031632] text-xs font-medium">
+                        Secure payment processed directly through CRDB Bank
+                      </p>
                     </div>
 
-                    {/* Submit Proof of Payment */}
+                    {/* Full Name - Optional */}
                     <div>
-                      <button
-                        onClick={() => setShowProofForm(!showProofForm)}
-                        className="w-full flex items-center justify-between p-3.5 bg-[#031632] text-white rounded-xl font-semibold text-sm"
-                      >
-                        <span className="flex items-center gap-2">
-                          <Upload className="h-4 w-4" />
-                          Submit Proof of Payment
-                        </span>
-                        {showProofForm ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        )}
-                      </button>
-
-                      <AnimatePresence>
-                        {showProofForm && (
-                          <motion.form
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                            onSubmit={handleProofSubmit}
-                            className="overflow-hidden"
-                          >
-                            <div className="pt-4 space-y-3">
-                              <div>
-                                <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                                  Full Name <span className="text-[#44474d] font-normal">(Optional)</span>
-                                </label>
-                                <input
-                                  type="text"
-                                  value={proofName}
-                                  onChange={(e) => setProofName(e.target.value)}
-                                  className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
-                                  placeholder="Enter your name (optional)"
-                                  disabled={proofSubmitting}
-                                />
-                              </div>
-
-                              <div>
-                                <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                                  Phone Number <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                  type="tel"
-                                  value={proofPhone}
-                                  onChange={(e) => setProofPhone(e.target.value)}
-                                  className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
-                                  placeholder="e.g. 0754123456"
-                                  required
-                                  disabled={proofSubmitting}
-                                />
-                              </div>
-
-                              <div>
-                                <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                                  Amount (TZS) <span className="text-red-500">*</span>
-                                </label>
-                                <div className="relative">
-                                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-sm">
-                                    TSh
-                                  </span>
-                                  <input
-                                    type="number"
-                                    value={proofAmount}
-                                    onChange={(e) => setProofAmount(e.target.value)}
-                                    className="w-full pl-14 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm font-semibold focus:outline-none focus:border-[#ff8928] transition-colors"
-                                    placeholder="Enter amount transferred"
-                                    required
-                                    disabled={proofSubmitting}
-                                  />
-                                </div>
-                              </div>
-
-                              <div>
-                                <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                                  Upload Payment Receipt <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                  type="file"
-                                  accept="image/*,.pdf"
-                                  onChange={(e) => setProofReceipt(e.target.files?.[0] || null)}
-                                  className="w-full px-4 py-2.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors file:mr-4 file:py-1 file:px-3 file:rounded-none file:border-0 file:text-sm file:font-semibold file:bg-[#ff8928] file:text-white hover:file:bg-[#e07820]"
-                                  required
-                                  disabled={proofSubmitting}
-                                />
-                                {proofReceipt && (
-                                  <div className="flex items-center gap-2 mt-1.5 text-xs text-[#44474d]">
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
-                                    {proofReceipt.name}
-                                    <button
-                                      type="button"
-                                      onClick={() => setProofReceipt(null)}
-                                      className="text-red-500 hover:text-red-700"
-                                    >
-                                      <X className="h-3.5 w-3.5" />
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
-
-                              <button
-                                type="submit"
-                                disabled={proofSubmitting}
-                                className="w-full py-3 bg-[#ff8928] text-white rounded-none font-semibold hover:bg-[#e07820] transition-colors flex items-center justify-center gap-2 disabled:opacity-70 text-sm"
-                              >
-                                {proofSubmitting ? (
-                                  <>
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                    Submitting...
-                                  </>
-                                ) : (
-                                  <>
-                                    <Upload className="h-4 w-4" />
-                                    Submit Proof of Payment
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                          </motion.form>
-                        )}
-                      </AnimatePresence>
+                      <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
+                        Full Name <span className="text-[#44474d] font-normal">(Optional)</span>
+                      </label>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
+                        <input
+                          type="text"
+                          value={crdbName}
+                          onChange={(e) => setCrdbName(e.target.value)}
+                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          placeholder="Enter your name (optional)"
+                          disabled={crdbDonationState === 'loading'}
+                        />
+                      </div>
                     </div>
-                  </div>
+
+                    {/* Email - Optional */}
+                    <div>
+                      <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
+                        Email Address <span className="text-[#44474d] font-normal">(Optional)</span>
+                      </label>
+                      <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
+                        <input
+                          type="email"
+                          value={crdbEmail}
+                          onChange={(e) => setCrdbEmail(e.target.value)}
+                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          placeholder="your@email.com"
+                          disabled={crdbDonationState === 'loading'}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Phone - Optional */}
+                    <div>
+                      <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
+                        Phone Number <span className="text-[#44474d] font-normal">(Optional)</span>
+                      </label>
+                      <div className="relative">
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
+                        <input
+                          type="tel"
+                          value={crdbPhone}
+                          onChange={(e) => setCrdbPhone(e.target.value)}
+                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          placeholder="+255 7XX XXX XXX"
+                          disabled={crdbDonationState === 'loading'}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="flex items-center gap-3 py-1">
+                      <div className="flex-1 h-px bg-[#c5c6ce]" />
+                      <span className="text-[#44474d] text-xs font-semibold uppercase tracking-wider">Bank Details</span>
+                      <div className="flex-1 h-px bg-[#c5c6ce]" />
+                    </div>
+
+                    {/* Account Holder Name */}
+                    <div>
+                      <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
+                        Account Holder Name <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
+                        <input
+                          type="text"
+                          value={crdbAccountHolder}
+                          onChange={(e) => setCrdbAccountHolder(e.target.value)}
+                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          placeholder="Name on the CRDB account"
+                          required
+                          disabled={crdbDonationState === 'loading'}
+                        />
+                      </div>
+                    </div>
+
+                    {/* CRDB Account Number */}
+                    <div>
+                      <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
+                        CRDB Account Number <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <Landmark className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
+                        <input
+                          type="text"
+                          value={crdbAccountNumber}
+                          onChange={(e) => setCrdbAccountNumber(e.target.value.replace(/[^\d]/g, ''))}
+                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm font-mono tracking-wider focus:outline-none focus:border-[#ff8928] transition-colors"
+                          placeholder="Enter your CRDB account number"
+                          required
+                          disabled={crdbDonationState === 'loading'}
+                          maxLength={16}
+                        />
+                      </div>
+                      <p className="text-[#44474d] text-xs mt-1">Your CRDB account number (10-16 digits)</p>
+                    </div>
+
+                    {/* Donation Amount */}
+                    <div>
+                      <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
+                        Donation Amount <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-sm">
+                          TSh
+                        </span>
+                        <input
+                          type="number"
+                          value={crdbAmount}
+                          onChange={(e) => setCrdbAmount(e.target.value)}
+                          className="w-full pl-14 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
+                          placeholder="Enter amount"
+                          min="1"
+                          required
+                          disabled={crdbDonationState === 'loading'}
+                        />
+                      </div>
+                      <div className="flex gap-2 mt-2">
+                        {[5000, 10000, 25000, 50000, 100000].map((amt) => (
+                          <button
+                            key={amt}
+                            type="button"
+                            onClick={() => setCrdbAmount(amt.toString())}
+                            className="flex-1 py-1.5 text-xs font-semibold border-2 border-[#c5c6ce] rounded-lg text-[#031632] hover:border-[#ff8928] hover:bg-[#ffdcc6]/30 transition-colors"
+                            disabled={crdbDonationState === 'loading'}
+                          >
+                            {(amt / 1000).toFixed(0)}K
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Error Message */}
+                    {crdbDonationState === 'error' && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl"
+                      >
+                        <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-red-700 text-sm font-medium">{crdbErrorMessage}</p>
+                          <button
+                            onClick={handleRetry}
+                            className="text-red-600 text-xs font-semibold underline mt-1"
+                          >
+                            Try Again
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Submit Button */}
+                    <button
+                      type="submit"
+                      disabled={crdbDonationState === 'loading'}
+                      className="w-full py-3.5 bg-[#031632] text-white rounded-none shadow-xl font-semibold text-base hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      {crdbDonationState === 'loading' ? (
+                        <>
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          Connecting to CRDB Bank...
+                        </>
+                      ) : (
+                        <>
+                          <Landmark className="h-5 w-5" />
+                          Donate via CRDB Bank
+                        </>
+                      )}
+                    </button>
+
+                    {/* Loading hint */}
+                    {crdbDonationState === 'loading' && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex items-center gap-3 p-3 bg-[#031632]/5 border border-[#031632]/10 rounded-xl"
+                      >
+                        <Building2 className="h-5 w-5 text-[#031632] animate-pulse" />
+                        <div>
+                          <p className="text-[#031632] text-sm font-medium">
+                            Connecting to CRDB Bank...
+                          </p>
+                          <p className="text-[#44474d] text-xs mt-0.5">
+                            Please authorize the transaction on the secure CRDB payment page.
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Security note */}
+                    <div className="flex items-center gap-2 p-2.5 bg-green-50 border border-green-200 rounded-xl">
+                      <Shield className="h-3.5 w-3.5 text-green-600 flex-shrink-0" />
+                      <p className="text-green-700 text-xs">
+                        Your bank details are encrypted and processed securely through CRDB Bank&apos;s payment gateway.
+                      </p>
+                    </div>
+                  </form>
                 )}
 
                 {/* Campaign progress at bottom */}
