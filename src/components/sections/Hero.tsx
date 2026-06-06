@@ -33,12 +33,6 @@ export default function Hero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#ffdcc6]/30 text-[#ffdcc6] rounded-full w-fit mb-8 backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#ff8928] animate-pulse" />
-              <span className="uppercase tracking-widest text-[10px] font-bold">MAKING LIVES BETTER</span>
-            </div>
-
             {/* Headline */}
             <h1 className="text-[48px] lg:text-[64px] lg:leading-[1.1] mb-8 drop-shadow-lg font-bold text-white">
               Giving Hope, Education, and a Brighter Future
