@@ -17,6 +17,7 @@ import Footer from '@/components/sections/Footer'
 import AdminDashboard from '@/components/admin/AdminDashboard'
 import AdminLogin from '@/components/admin/AdminLogin'
 import DonationModal from '@/components/DonationModal'
+import CampaignNotification from '@/components/CampaignNotification'
 
 export default function Home() {
   const [loginOpen, setLoginOpen] = useState(false)
@@ -68,6 +69,7 @@ export default function Home() {
       <DonationModal isOpen={donateOpen} onClose={() => setDonateOpen(false)} preselectedCampaignId={donateCampaignId} prefilledAmount={donateAmount} />
       <AdminLogin isOpen={loginOpen} onClose={() => setLoginOpen(false)} onLogin={handleLoginSuccess} />
       <AdminDashboard isOpen={adminOpen} onClose={handleAdminClose} onLogout={handleLogout} />
+      <CampaignNotification onDonateClick={handleDonateClick} />
     </div>
   )
 }
