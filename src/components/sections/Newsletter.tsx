@@ -42,7 +42,7 @@ export default function Newsletter() {
   }
 
   return (
-    <section ref={ref} className="py-20 md:py-28 bg-white relative overflow-hidden">
+    <section id="newsletter" ref={ref} className="py-20 md:py-28 bg-white relative overflow-hidden">
       {/* Decorative background */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
@@ -92,7 +92,7 @@ export default function Newsletter() {
             <Button
               type="submit"
               disabled={status === 'loading'}
-              className="w-full bg-orange hover:bg-orange-dark text-white font-semibold rounded-xl h-12"
+              className="w-full bg-orange hover:bg-orange-dark text-white font-semibold rounded-none h-12"
             >
               {status === 'loading' ? 'Subscribing...' : (
                 <>

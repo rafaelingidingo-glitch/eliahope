@@ -47,7 +47,7 @@ export default function Gallery() {
       : galleryItems.filter((item) => item.category === activeCategory)
 
   return (
-    <section id="gallery" ref={ref} className="py-20 md:py-28 bg-light-gray">
+    <section id="gallery" ref={ref} className="py-20 md:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -75,7 +75,7 @@ export default function Gallery() {
               variant={activeCategory === cat ? 'default' : 'outline'}
               size="sm"
               onClick={() => setActiveCategory(cat)}
-              className={`rounded-full px-4 text-sm font-medium transition-all ${
+              className={`rounded-none px-4 text-sm font-medium transition-all ${
                 activeCategory === cat
                   ? 'bg-navy text-white hover:bg-navy-light'
                   : 'border-navy/20 text-navy hover:bg-navy hover:text-white'

@@ -107,7 +107,7 @@ export default function TakeAction({ onDonateClick }: TakeActionProps) {
                       handleScrollTo(action.href)
                     }
                   }}
-                  className="mt-auto px-6 py-3 bg-[#031632] text-white font-semibold rounded-xl hover:bg-[#1a2b48] transition-colors text-sm"
+                  className="mt-auto px-6 py-3 bg-[#031632] text-white font-semibold rounded-none hover:bg-[#1a2b48] transition-colors text-sm"
                 >
                   {action.cta}
                 </button>

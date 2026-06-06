@@ -17,7 +17,7 @@ export default function Partners() {
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   return (
-    <section ref={ref} className="py-20 md:py-28 bg-light-gray">
+    <section id="partners" ref={ref} className="py-20 md:py-28 bg-[#fbf9f5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

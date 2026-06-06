@@ -76,7 +76,7 @@ export default function Events({ onDonateClick }: EventsProps) {
                 </p>
                 <button
                   onClick={() => onDonateClick?.()}
-                  className="w-full py-4 border-2 border-[#031632] text-[#031632] font-bold rounded-xl hover:bg-[#031632] hover:text-white transition-all"
+                  className="w-full py-4 border-2 border-[#031632] text-[#031632] font-bold rounded-none hover:bg-[#031632] hover:text-white transition-all"
                 >
                   Donate Now
                 </button>

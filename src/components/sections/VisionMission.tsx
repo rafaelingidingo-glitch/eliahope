@@ -9,7 +9,7 @@ export default function VisionMission() {
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   return (
-    <section ref={ref} className="py-20 bg-[#f5f3ef]">
+    <section id="vision-mission" ref={ref} className="py-20 bg-[#f5f3ef]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-6">
           {/* Vision Card */}

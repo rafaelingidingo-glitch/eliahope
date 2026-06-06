@@ -46,7 +46,7 @@ export default function SuccessStories() {
   const story = stories[current]
 
   return (
-    <section id="stories" ref={ref} className="py-20 md:py-28 bg-light-gray">
+    <section id="stories" ref={ref} className="py-20 md:py-28 bg-[#f5f3ef]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -117,7 +117,7 @@ export default function SuccessStories() {
                     variant="outline"
                     size="icon"
                     onClick={prev}
-                    className="rounded-full border-navy/20 hover:bg-navy hover:text-white"
+                    className="rounded-none border-navy/20 hover:bg-navy hover:text-white"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
@@ -125,7 +125,7 @@ export default function SuccessStories() {
                     variant="outline"
                     size="icon"
                     onClick={next}
-                    className="rounded-full border-navy/20 hover:bg-navy hover:text-white"
+                    className="rounded-none border-navy/20 hover:bg-navy hover:text-white"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>

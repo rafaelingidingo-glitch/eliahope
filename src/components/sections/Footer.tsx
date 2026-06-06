@@ -46,7 +46,7 @@ export default function Footer({ onDonateClick }: FooterProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Column 1 - Logo & Description */}
           <div>
-            <img src="/logo.jpeg" alt="Elia's Hope Community" className="h-10 w-10 rounded-full object-cover mb-4" />
+            <img src="/logo.jpeg" alt="Elia's Hope Community" className="h-12 w-12 rounded-full object-cover mb-4" />
             <p className="text-white/60 text-sm leading-relaxed mb-6">
               Elia&apos;s Hope Community is a registered NGO dedicated to transforming the lives 
               of vulnerable children and families in Mwanza, Tanzania through education, nutrition, 

@@ -64,7 +64,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" ref={ref} className="py-20 md:py-28 bg-light-gray">
+    <section id="contact" ref={ref} className="py-20 md:py-28 bg-[#f5f3ef]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -172,7 +172,7 @@ export default function Contact() {
                 <Button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full bg-navy hover:bg-navy-light text-white font-semibold rounded-xl h-12"
+                  className="w-full bg-navy hover:bg-navy-light text-white font-semibold rounded-none h-12"
                 >
                   {status === 'loading' ? 'Sending...' : (
                     <>
