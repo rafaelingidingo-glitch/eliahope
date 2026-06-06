@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, X, Lock } from 'lucide-react'
+import { Menu, X, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 
@@ -97,13 +97,12 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center gap-3">
             <Button
-              variant="ghost"
-              size="icon"
+              variant="outline"
               onClick={onAdminClick}
-              className="text-[#44474d]/50 hover:text-[#ff8928] hover:bg-[#ffdcc6]/20 h-9 w-9"
-              title="Admin Dashboard"
+              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-full px-5 gap-2 transition-all"
             >
-              <Lock className="h-4 w-4" />
+              <Shield className="h-4 w-4" />
+              Admin Login
             </Button>
             <Button
               asChild
@@ -118,13 +117,12 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
           {/* Mobile Menu */}
           <div className="flex items-center gap-2 lg:hidden">
             <Button
-              variant="ghost"
-              size="icon"
+              variant="outline"
               onClick={onAdminClick}
-              className="text-[#44474d]/50 hover:text-[#ff8928] h-9 w-9"
-              title="Admin Dashboard"
+              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-full px-4 gap-1.5 text-xs transition-all"
             >
-              <Lock className="h-4 w-4" />
+              <Shield className="h-3.5 w-3.5" />
+              Admin
             </Button>
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>

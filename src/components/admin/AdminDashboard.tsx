@@ -37,6 +37,7 @@ import ReportsModule from './sections/ReportsModule'
 interface AdminDashboardProps {
   isOpen: boolean
   onClose: () => void
+  onLogout?: () => void
 }
 
 type SectionKey =
@@ -68,9 +69,10 @@ interface SidebarContentProps {
   activeSection: SectionKey
   onNavClick: (key: SectionKey) => void
   onClose: () => void
+  onLogout?: () => void
 }
 
-function SidebarContent({ activeSection, onNavClick, onClose }: SidebarContentProps) {
+function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: SidebarContentProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
@@ -137,7 +139,9 @@ function SidebarContent({ activeSection, onNavClick, onClose }: SidebarContentPr
           <Button
             variant="ghost"
             size="icon"
+            onClick={onLogout}
             className="hidden lg:flex h-8 w-8 text-white/50 hover:text-white hover:bg-white/10"
+            title="Logout"
           >
             <LogOut className="h-4 w-4" />
           </Button>
@@ -147,7 +151,7 @@ function SidebarContent({ activeSection, onNavClick, onClose }: SidebarContentPr
   )
 }
 
-export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps) {
+export default function AdminDashboard({ isOpen, onClose, onLogout }: AdminDashboardProps) {
   const [activeSection, setActiveSection] = useState<SectionKey>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
@@ -201,7 +205,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                 sidebarOpen ? 'w-64' : 'w-16'
               } flex-shrink-0`}
             >
-              <SidebarContent activeSection={activeSection} onNavClick={handleNavClick} onClose={onClose} />
+              <SidebarContent activeSection={activeSection} onNavClick={handleNavClick} onClose={onClose} onLogout={onLogout} />
             </div>
           </div>
 
@@ -223,7 +227,7 @@ export default function AdminDashboard({ isOpen, onClose }: AdminDashboardProps)
                   transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                   className="fixed left-0 top-0 bottom-0 w-64 bg-[#0F2D5C] z-50 md:hidden"
                 >
-                  <SidebarContent activeSection={activeSection} onNavClick={handleNavClick} onClose={onClose} />
+                  <SidebarContent activeSection={activeSection} onNavClick={handleNavClick} onClose={onClose} onLogout={onLogout} />
                 </motion.div>
               </>
             )}

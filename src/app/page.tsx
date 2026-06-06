@@ -17,13 +17,32 @@ import Newsletter from '@/components/sections/Newsletter'
 import Contact from '@/components/sections/Contact'
 import Footer from '@/components/sections/Footer'
 import AdminDashboard from '@/components/admin/AdminDashboard'
+import AdminLogin from '@/components/admin/AdminLogin'
 
 export default function Home() {
+  const [loginOpen, setLoginOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
+
+  const handleAdminClick = () => {
+    setLoginOpen(true)
+  }
+
+  const handleLoginSuccess = () => {
+    setLoginOpen(false)
+    setAdminOpen(true)
+  }
+
+  const handleAdminClose = () => {
+    setAdminOpen(false)
+  }
+
+  const handleLogout = () => {
+    setAdminOpen(false)
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar onAdminClick={() => setAdminOpen(true)} />
+      <Navbar onAdminClick={handleAdminClick} />
       <main className="flex-1">
         <Hero />
         <About />
@@ -40,7 +59,8 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-      <AdminDashboard isOpen={adminOpen} onClose={() => setAdminOpen(false)} />
+      <AdminLogin isOpen={loginOpen} onClose={() => setLoginOpen(false)} onLogin={handleLoginSuccess} />
+      <AdminDashboard isOpen={adminOpen} onClose={handleAdminClose} onLogout={handleLogout} />
     </div>
   )
 }
