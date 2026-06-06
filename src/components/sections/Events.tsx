@@ -7,14 +7,14 @@ import { Calendar } from 'lucide-react'
 const events = [
   {
     title: 'Annual Charity Gala',
-    date: 'Dec 15, 2025',
+    date: 'Aug 15, 2026',
     description:
       'Join us for an evening of celebration, fundraising, and community as we reflect on the year and look ahead to new opportunities to serve.',
     image: '/event-sample.png',
   },
   {
     title: 'Community Health Camp',
-    date: 'Jan 20, 2026',
+    date: 'Sep 20, 2026',
     description:
       'A free health screening and wellness camp for children and families in the Nyamagana district, including vaccinations and nutrition guidance.',
     image: '/event-sample.png',
@@ -22,7 +22,7 @@ const events = [
 ]
 
 interface EventsProps {
-  onDonateClick?: (campaignId?: string) => void
+  onDonateClick?: (campaignId?: string, amount?: string) => void
 }
 
 export default function Events({ onDonateClick }: EventsProps) {

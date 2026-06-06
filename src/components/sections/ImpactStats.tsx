@@ -73,7 +73,7 @@ export default function ImpactStats() {
                 className="p-8 bg-[#f5f3ef] rounded-3xl border border-[#c5c6ce]/30"
               >
                 <div className="text-[#44474d] text-xs font-semibold uppercase tracking-wider mb-1">
-                  2024 Education Goal
+                  2026 Education Goal
                 </div>
                 <div className="text-[#031632] font-bold mb-4">
                   Helping another 50 children get to school

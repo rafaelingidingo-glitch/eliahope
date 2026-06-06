@@ -11,12 +11,12 @@ const navLinks = [
   { label: 'About Us', href: '#about' },
   { label: 'What We Do', href: '#programs' },
   { label: 'Our Impact', href: '#impact' },
-  { label: 'Donate', href: '#donate' },
+  { label: 'Donate', href: '#donate-modal' },
 ]
 
 interface NavbarProps {
   onAdminClick?: () => void
-  onDonateClick?: (campaignId?: string) => void
+  onDonateClick?: (campaignId?: string, amount?: string) => void
 }
 
 export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
@@ -82,7 +82,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                 href={link.href}
                 onClick={(e) => {
                   e.preventDefault()
-                  if (link.href === '#donate') {
+                  if (link.href === '#donate-modal') {
                     onDonateClick?.()
                   } else {
                     handleNavClick(link.href)
@@ -112,7 +112,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
               asChild
               className="bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-none px-6"
             >
-              <a href="#donate" onClick={(e) => { e.preventDefault(); onDonateClick?.() }}>
+              <a href="#donate-modal" onClick={(e) => { e.preventDefault(); onDonateClick?.() }}>
                 Donate Now
               </a>
             </Button>
@@ -150,7 +150,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                         href={link.href}
                         onClick={(e) => {
                           e.preventDefault()
-                          if (link.href === '#donate') {
+                          if (link.href === '#donate-modal') {
                             onDonateClick?.()
                             setMobileOpen(false)
                           } else {
@@ -170,9 +170,9 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                   <div className="p-4 space-y-3 border-t border-[#c5c6ce]/30">
                     <Button
                       asChild
-                      className="w-full bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-full"
+                      className="w-full bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-none"
                     >
-                      <a href="#donate" onClick={(e) => { e.preventDefault(); onDonateClick?.(); setMobileOpen(false) }}>
+                      <a href="#donate-modal" onClick={(e) => { e.preventDefault(); onDonateClick?.(); setMobileOpen(false) }}>
                         Donate Now
                       </a>
                     </Button>

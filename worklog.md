@@ -23,3 +23,31 @@ Stage Summary:
 - All API routes functional and returning data
 - Responsive, mobile-first design with framer-motion animations
 - Brand colors and typography consistently applied
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Full website review and bug fixes
+
+Work Log:
+- Reviewed all 15+ section components, DonationModal, AdminDashboard, AdminLogin, Navbar, Footer, page.tsx, globals.css, layout.tsx
+- Verified build compiles successfully with no errors
+- Identified and fixed 12+ issues across the codebase
+
+Stage Summary:
+- Fixed: Hero "Donate Now" and "Give Now" buttons now pass amount to donation modal
+- Fixed: Hero "Give Now" button changed from rounded-xl to rounded-none (consistent with design)
+- Fixed: DonationModal now accepts prefilledAmount prop to pre-fill amount from Hero
+- Fixed: Navbar "Donate" nav link changed from #donate to #donate-modal (section no longer exists)
+- Fixed: Navbar mobile "Donate Now" button changed from rounded-full to rounded-none
+- Fixed: Footer "Donate" quick link now opens donation modal instead of scrolling to non-existent section
+- Fixed: Footer now accepts onDonateClick prop
+- Fixed: Footer copyright year changed from static 2025 to dynamic new Date().getFullYear()
+- Fixed: Footer logo changed to rounded-full matching navbar
+- Fixed: Admin sidebar logo changed to rounded-full matching navbar
+- Fixed: Events dates updated from Dec 2025/Jan 2026 to Aug 2026/Sep 2026
+- Fixed: ImpactStats "2024 Education Goal" updated to "2026 Education Goal"
+- Fixed: All onDonateClick interface signatures updated to (campaignId?, amount?) for consistency
+- Removed: Dead code files DonateCTA.tsx and Testimonials.tsx (no longer used)
+- Removed: Unused Heart import from Footer
+- Build verified: compiles successfully with zero errors

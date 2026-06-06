@@ -77,7 +77,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="p-4 flex items-center gap-3">
-        <img src="/logo.jpeg" alt="Elia's Hope" className="h-9 w-auto" />
+        <img src="/logo.jpeg" alt="Elia's Hope" className="h-9 w-9 rounded-full object-cover" />
         <div className="hidden lg:block">
           <h2 className="text-white font-bold text-sm leading-tight">Elia&apos;s Hope</h2>
           <p className="text-white/60 text-xs">Admin Panel</p>

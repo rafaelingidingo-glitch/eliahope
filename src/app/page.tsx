@@ -23,6 +23,7 @@ export default function Home() {
   const [adminOpen, setAdminOpen] = useState(false)
   const [donateOpen, setDonateOpen] = useState(false)
   const [donateCampaignId, setDonateCampaignId] = useState<string | undefined>(undefined)
+  const [donateAmount, setDonateAmount] = useState<string | undefined>(undefined)
 
   const handleAdminClick = () => {
     setLoginOpen(true)
@@ -41,8 +42,9 @@ export default function Home() {
     setAdminOpen(false)
   }
 
-  const handleDonateClick = (campaignId?: string) => {
+  const handleDonateClick = (campaignId?: string, amount?: string) => {
     setDonateCampaignId(campaignId)
+    setDonateAmount(amount)
     setDonateOpen(true)
   }
 
@@ -62,8 +64,8 @@ export default function Home() {
         <Newsletter />
         <Contact />
       </main>
-      <Footer />
-      <DonationModal isOpen={donateOpen} onClose={() => setDonateOpen(false)} preselectedCampaignId={donateCampaignId} />
+      <Footer onDonateClick={handleDonateClick} />
+      <DonationModal isOpen={donateOpen} onClose={() => setDonateOpen(false)} preselectedCampaignId={donateCampaignId} prefilledAmount={donateAmount} />
       <AdminLogin isOpen={loginOpen} onClose={() => setLoginOpen(false)} onLogin={handleLoginSuccess} />
       <AdminDashboard isOpen={adminOpen} onClose={handleAdminClose} onLogout={handleLogout} />
     </div>

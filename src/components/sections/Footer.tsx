@@ -1,6 +1,6 @@
 'use client'
 
-import { Facebook, Twitter, Instagram, Youtube, Heart } from 'lucide-react'
+import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react'
 
 const quickLinks = [
   { label: 'About', href: '#about' },
@@ -26,8 +26,16 @@ const socialLinks = [
   { icon: Youtube, href: '#', label: 'YouTube' },
 ]
 
-export default function Footer() {
+interface FooterProps {
+  onDonateClick?: (campaignId?: string, amount?: string) => void
+}
+
+export default function Footer({ onDonateClick }: FooterProps) {
   const handleNavClick = (href: string) => {
+    if (href === '#donate') {
+      onDonateClick?.()
+      return
+    }
     const el = document.querySelector(href)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
@@ -38,7 +46,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Column 1 - Logo & Description */}
           <div>
-            <img src="/logo.jpeg" alt="Elia's Hope Community" className="h-10 w-auto mb-4" />
+            <img src="/logo.jpeg" alt="Elia's Hope Community" className="h-10 w-10 rounded-full object-cover mb-4" />
             <p className="text-white/60 text-sm leading-relaxed mb-6">
               Elia&apos;s Hope Community is a registered NGO dedicated to transforming the lives 
               of vulnerable children and families in Mwanza, Tanzania through education, nutrition, 
@@ -122,7 +130,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
-            <p>Copyright &copy; 2025 Elia&apos;s Hope Community. All rights reserved.</p>
+            <p>Copyright &copy; {new Date().getFullYear()} Elia&apos;s Hope Community. All rights reserved.</p>
             <div className="flex items-center gap-4">
               <a href="#" className="hover:text-orange transition-colors">Privacy Policy</a>
               <span>|</span>

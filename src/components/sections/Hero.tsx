@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { Heart, ArrowRight, Lock } from 'lucide-react'
 
 interface HeroProps {
-  onDonateClick?: (campaignId?: string) => void
+  onDonateClick?: (campaignId?: string, amount?: string) => void
 }
 
 export default function Hero({ onDonateClick }: HeroProps) {
@@ -44,7 +44,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <button
-                onClick={() => onDonateClick?.()}
+                onClick={() => onDonateClick?.(undefined, amount)}
                 className="bg-[#ff8928] text-white px-8 py-4 rounded-none font-semibold flex items-center gap-2 hover:bg-[#964900] shadow-xl active:scale-95 transition-all"
               >
                 <Heart className="h-5 w-5" />
@@ -91,8 +91,8 @@ export default function Hero({ onDonateClick }: HeroProps) {
 
               {/* Give Now Button */}
               <button
-                onClick={() => onDonateClick?.()}
-                className="w-full py-4 bg-[#031632] text-white rounded-xl font-semibold shadow-lg hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                onClick={() => onDonateClick?.(undefined, amount)}
+                className="w-full py-4 bg-[#031632] text-white rounded-none font-semibold shadow-lg hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 <Heart className="h-5 w-5" />
                 Give Now

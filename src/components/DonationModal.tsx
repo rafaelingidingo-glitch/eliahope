@@ -51,9 +51,10 @@ interface DonationModalProps {
   isOpen: boolean
   onClose: () => void
   preselectedCampaignId?: string
+  prefilledAmount?: string
 }
 
-export default function DonationModal({ isOpen, onClose, preselectedCampaignId }: DonationModalProps) {
+export default function DonationModal({ isOpen, onClose, preselectedCampaignId, prefilledAmount }: DonationModalProps) {
   const { toast } = useToast()
 
   // Form states
@@ -135,6 +136,13 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId }
       setSelectedCampaign(preselectedCampaignId)
     }
   }, [preselectedCampaignId])
+
+  // Apply prefilled amount
+  useEffect(() => {
+    if (prefilledAmount) {
+      setMpesaAmount(prefilledAmount)
+    }
+  }, [prefilledAmount])
 
   // Poll for M-Pesa status
   useEffect(() => {

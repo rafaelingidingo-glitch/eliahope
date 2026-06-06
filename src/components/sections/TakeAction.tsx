@@ -40,7 +40,7 @@ const actions = [
 ]
 
 interface TakeActionProps {
-  onDonateClick?: (campaignId?: string) => void
+  onDonateClick?: (campaignId?: string, amount?: string) => void
 }
 
 export default function TakeAction({ onDonateClick }: TakeActionProps) {
