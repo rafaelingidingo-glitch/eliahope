@@ -29,7 +29,6 @@ const campaigns = [
 export default function DonateCTA() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const [donationType, setDonationType] = useState<'one-time' | 'monthly'>('one-time')
   const [amount, setAmount] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -63,30 +62,6 @@ export default function DonateCTA() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="bg-white rounded-3xl soft-shadow p-8 lg:p-10 border border-gray-200/10">
-              {/* One-time / Monthly Toggle */}
-              <div className="flex p-1 bg-[#f5f3ef] rounded-full mb-8">
-                <button
-                  onClick={() => setDonationType('one-time')}
-                  className={`flex-1 py-3 rounded-full text-sm font-semibold transition-all ${
-                    donationType === 'one-time'
-                      ? 'bg-[#031632] text-white shadow-md'
-                      : 'text-[#44474d] hover:text-[#031632]'
-                  }`}
-                >
-                  One-Time
-                </button>
-                <button
-                  onClick={() => setDonationType('monthly')}
-                  className={`flex-1 py-3 rounded-full text-sm font-semibold transition-all ${
-                    donationType === 'monthly'
-                      ? 'bg-[#031632] text-white shadow-md'
-                      : 'text-[#44474d] hover:text-[#031632]'
-                  }`}
-                >
-                  Monthly
-                </button>
-              </div>
-
               {/* Amount Input */}
               <div className="relative mb-4">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-sm">TSh</span>
