@@ -99,7 +99,7 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
             <Button
               variant="outline"
               onClick={onAdminClick}
-              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-full px-5 gap-2 transition-all"
+              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-5 gap-2 transition-all"
             >
               <Shield className="h-4 w-4" />
               Admin Login
@@ -119,7 +119,7 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
             <Button
               variant="outline"
               onClick={onAdminClick}
-              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-full px-4 gap-1.5 text-xs transition-all"
+              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-4 gap-1.5 text-xs transition-all"
             >
               <Shield className="h-3.5 w-3.5" />
               Admin

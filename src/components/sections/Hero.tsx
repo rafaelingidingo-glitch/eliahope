@@ -47,7 +47,7 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <button
                 onClick={() => handleScrollTo('#take-action')}
-                className="bg-[#ff8928] text-white px-8 py-4 rounded-full font-semibold flex items-center gap-2 hover:bg-[#964900] shadow-xl active:scale-95 transition-all"
+                className="bg-[#ff8928] text-white px-8 py-4 rounded-none font-semibold flex items-center gap-2 hover:bg-[#964900] shadow-xl active:scale-95 transition-all"
               >
                 <Heart className="h-5 w-5" />
                 How You Can Help
