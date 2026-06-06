@@ -25,7 +25,7 @@ export default function Hero() {
       <div className="hero-overlay absolute inset-0" />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-24 lg:py-0">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-28 pb-20 lg:pt-36 lg:pb-28">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Text Content */}
           <motion.div
@@ -34,9 +34,14 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
             {/* Headline */}
-            <h1 className="text-[48px] lg:text-[64px] lg:leading-[1.1] mb-8 drop-shadow-lg font-bold text-white">
+            <h1 className="text-[44px] sm:text-[48px] lg:text-[64px] lg:leading-[1.1] mb-6 drop-shadow-lg font-bold text-white">
               Giving Hope, Education, and a Brighter Future
             </h1>
+
+            {/* Description */}
+            <p className="text-white/80 text-lg sm:text-xl leading-relaxed mb-10 max-w-lg">
+              We empower vulnerable children and families in Mwanza, Tanzania through education, healthcare, and community-driven support programs.
+            </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-start gap-4">
