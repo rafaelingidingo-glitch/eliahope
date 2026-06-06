@@ -26,14 +26,11 @@ const campaigns = [
   },
 ]
 
-const presetAmounts = [10000, 50000, 100000, 250000]
-
 export default function DonateCTA() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [donationType, setDonationType] = useState<'one-time' | 'monthly'>('one-time')
-  const [amount, setAmount] = useState('50000')
-  const [presetActive, setPresetActive] = useState(50000)
+  const [amount, setAmount] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
 
@@ -98,31 +95,10 @@ export default function DonateCTA() {
                   value={amount}
                   onChange={(e) => {
                     setAmount(e.target.value)
-                    setPresetActive(0)
                   }}
                   className="w-full pl-14 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
                   placeholder="Enter amount"
                 />
-              </div>
-
-              {/* Preset Amounts */}
-              <div className="grid grid-cols-4 gap-3 mb-6">
-                {presetAmounts.map((preset) => (
-                  <button
-                    key={preset}
-                    onClick={() => {
-                      setAmount(String(preset))
-                      setPresetActive(preset)
-                    }}
-                    className={`py-3 rounded-xl font-semibold text-sm transition-all ${
-                      presetActive === preset
-                        ? 'bg-[#ff8928] text-white shadow-md'
-                        : 'bg-[#f5f3ef] text-[#44474d] hover:bg-[#ffdcc6]/40'
-                    }`}
-                  >
-                    TSh {preset.toLocaleString()}
-                  </button>
-                ))}
               </div>
 
               {/* Name and Email */}
