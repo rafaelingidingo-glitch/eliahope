@@ -26,14 +26,14 @@ const campaigns = [
   },
 ]
 
-const presetAmounts = [20, 50, 100, 250]
+const presetAmounts = [10000, 50000, 100000, 250000]
 
 export default function DonateCTA() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [donationType, setDonationType] = useState<'one-time' | 'monthly'>('one-time')
-  const [amount, setAmount] = useState('50')
-  const [presetActive, setPresetActive] = useState(50)
+  const [amount, setAmount] = useState('50000')
+  const [presetActive, setPresetActive] = useState(50000)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
 
@@ -92,7 +92,7 @@ export default function DonateCTA() {
 
               {/* Amount Input */}
               <div className="relative mb-4">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-lg">$</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-sm">TSh</span>
                 <input
                   type="number"
                   value={amount}
@@ -100,7 +100,7 @@ export default function DonateCTA() {
                     setAmount(e.target.value)
                     setPresetActive(0)
                   }}
-                  className="w-full pl-10 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
+                  className="w-full pl-14 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
                   placeholder="Enter amount"
                 />
               </div>
@@ -120,7 +120,7 @@ export default function DonateCTA() {
                         : 'bg-[#f5f3ef] text-[#44474d] hover:bg-[#ffdcc6]/40'
                     }`}
                   >
-                    ${preset}
+                    TSh {preset.toLocaleString()}
                   </button>
                 ))}
               </div>

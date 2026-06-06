@@ -5,8 +5,8 @@ import { motion } from 'framer-motion'
 import { Heart, ArrowRight, Lock } from 'lucide-react'
 
 export default function Hero() {
-  const [amount, setAmount] = useState('50')
-  const [presetActive, setPresetActive] = useState(50)
+  const [amount, setAmount] = useState('50000')
+  const [presetActive, setPresetActive] = useState(50000)
 
   const handleScrollTo = (id: string) => {
     const el = document.querySelector(id)
@@ -77,7 +77,7 @@ export default function Hero() {
 
               {/* Amount Input */}
               <div className="relative mb-4">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-lg">$</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-sm">TSh</span>
                 <input
                   type="number"
                   value={amount}
@@ -85,14 +85,14 @@ export default function Hero() {
                     setAmount(e.target.value)
                     setPresetActive(0)
                   }}
-                  className="w-full pl-10 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors bg-white"
+                  className="w-full pl-14 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors bg-white"
                   placeholder="Enter amount"
                 />
               </div>
 
               {/* Preset Amounts */}
               <div className="grid grid-cols-3 gap-3 mb-6">
-                {[20, 50, 100].map((preset) => (
+                {[10000, 50000, 100000].map((preset) => (
                   <button
                     key={preset}
                     onClick={() => {
@@ -105,7 +105,7 @@ export default function Hero() {
                         : 'bg-[#f5f3ef] text-[#44474d] hover:bg-[#ffdcc6]/40'
                     }`}
                   >
-                    ${preset}
+                    TSh {preset.toLocaleString()}
                   </button>
                 ))}
               </div>
