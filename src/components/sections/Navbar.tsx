@@ -1,19 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Menu, X, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 
 const navLinks = [
   { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
-  { label: 'Programs', href: '#programs' },
-  { label: 'Stories', href: '#stories' },
-  { label: 'Events', href: '#events' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'About Us', href: '#about' },
+  { label: 'What We Do', href: '#programs' },
+  { label: 'Our Impact', href: '#impact' },
+  { label: 'Donate', href: '#donate' },
 ]
 
 interface NavbarProps {
@@ -23,10 +21,23 @@ interface NavbarProps {
 export default function Navbar({ onAdminClick }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('#home')
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
+
+      const sections = ['#home', '#about', '#programs', '#impact', '#donate']
+      for (const section of sections.reverse()) {
+        const el = document.querySelector(section)
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          if (rect.top <= 150) {
+            setActiveSection(section)
+            break
+          }
+        }
+      }
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
@@ -45,14 +56,10 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-navy shadow-lg'
-          : 'bg-transparent'
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm h-20"
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+        <div className="flex items-center justify-between h-full">
           {/* Logo */}
           <a
             href="#home"
@@ -60,9 +67,10 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
               e.preventDefault()
               handleNavClick('#home')
             }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-3"
           >
-            <img src="/logo.jpeg" alt="Elia's Hope Community" className="h-10 md:h-12 w-auto" />
+            <img src="/logo.jpeg" alt="Elia's Hope Community" className="h-12 w-12 rounded-full object-cover" />
+            <span className="text-[#031632] font-bold text-lg hidden sm:inline">Elia&apos;s Hope</span>
           </a>
 
           {/* Desktop Nav Links */}
@@ -75,7 +83,11 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
                   e.preventDefault()
                   handleNavClick(link.href)
                 }}
-                className="px-3 py-2 text-sm font-medium text-white/90 hover:text-orange transition-colors rounded-md hover:bg-white/10"
+                className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                  activeSection === link.href
+                    ? 'text-[#ff8928] font-bold border-b-2 border-[#ff8928]'
+                    : 'text-[#44474d] hover:text-[#031632]'
+                }`}
               >
                 {link.label}
               </a>
@@ -88,26 +100,17 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
               variant="ghost"
               size="icon"
               onClick={onAdminClick}
-              className="text-white/50 hover:text-orange hover:bg-white/10 h-9 w-9"
+              className="text-[#44474d]/50 hover:text-[#ff8928] hover:bg-[#ffdcc6]/20 h-9 w-9"
               title="Admin Dashboard"
             >
               <Lock className="h-4 w-4" />
             </Button>
             <Button
               asChild
-              className="bg-orange hover:bg-orange-dark text-white font-semibold rounded-full px-5"
+              className="bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-full px-6"
             >
-              <a href="#donate" onClick={(e) => { e.preventDefault(); handleNavClick('#donate') }}>
-                Donate Now
-              </a>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-orange text-orange hover:bg-orange hover:text-white font-semibold rounded-full px-5"
-            >
-              <a href="#programs" onClick={(e) => { e.preventDefault(); handleNavClick('#programs') }}>
-                Sponsor a Child
+              <a href="#take-action" onClick={(e) => { e.preventDefault(); handleNavClick('#take-action') }}>
+                How You Can Help
               </a>
             </Button>
           </div>
@@ -118,31 +121,26 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
               variant="ghost"
               size="icon"
               onClick={onAdminClick}
-              className="text-white/50 hover:text-orange hover:bg-white/10 h-9 w-9"
+              className="text-[#44474d]/50 hover:text-[#ff8928] h-9 w-9"
               title="Admin Dashboard"
             >
               <Lock className="h-4 w-4" />
             </Button>
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                <Button variant="ghost" size="icon" className="text-[#031632] hover:bg-[#ffdcc6]/20">
                   <Menu className="h-6 w-6" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="bg-navy border-navy-light w-72 p-0">
+              <SheetContent side="right" className="bg-white w-72 p-0">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <div className="flex flex-col h-full">
-                  <div className="flex items-center justify-between p-4 border-b border-white/10">
-                    <img src="/logo.jpeg" alt="Elia's Hope" className="h-9 w-auto" />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setMobileOpen(false)}
-                      className="text-white hover:bg-white/10"
-                    >
-                      <X className="h-5 w-5" />
-                    </Button>
+                  <div className="flex items-center justify-between p-4 border-b border-[#c5c6ce]/30">
+                    <div className="flex items-center gap-3">
+                      <img src="/logo.jpeg" alt="Elia's Hope" className="h-9 w-9 rounded-full object-cover" />
+                      <span className="text-[#031632] font-bold">Elia&apos;s Hope</span>
+                    </div>
                   </div>
                   <div className="flex-1 py-4">
                     {navLinks.map((link) => (
@@ -153,28 +151,23 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
                           e.preventDefault()
                           handleNavClick(link.href)
                         }}
-                        className="block px-6 py-3 text-white/90 hover:text-orange hover:bg-white/5 transition-colors font-medium"
+                        className={`block px-6 py-3 font-medium transition-colors ${
+                          activeSection === link.href
+                            ? 'text-[#ff8928] bg-[#ffdcc6]/20 border-r-2 border-[#ff8928]'
+                            : 'text-[#44474d] hover:text-[#031632] hover:bg-[#f5f3ef]'
+                        }`}
                       >
                         {link.label}
                       </a>
                     ))}
                   </div>
-                  <div className="p-4 space-y-3 border-t border-white/10">
+                  <div className="p-4 space-y-3 border-t border-[#c5c6ce]/30">
                     <Button
                       asChild
-                      className="w-full bg-orange hover:bg-orange-dark text-white font-semibold rounded-full"
+                      className="w-full bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-full"
                     >
-                      <a href="#donate" onClick={(e) => { e.preventDefault(); handleNavClick('#donate') }}>
-                        Donate Now
-                      </a>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full border-orange text-orange hover:bg-orange hover:text-white font-semibold rounded-full"
-                    >
-                      <a href="#programs" onClick={(e) => { e.preventDefault(); handleNavClick('#programs') }}>
-                        Sponsor a Child
+                      <a href="#take-action" onClick={(e) => { e.preventDefault(); handleNavClick('#take-action') }}>
+                        How You Can Help
                       </a>
                     </Button>
                   </div>

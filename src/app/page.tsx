@@ -3,14 +3,15 @@
 import { useState } from 'react'
 import Navbar from '@/components/sections/Navbar'
 import Hero from '@/components/sections/Hero'
-import ImpactStats from '@/components/sections/ImpactStats'
 import About from '@/components/sections/About'
+import VisionMission from '@/components/sections/VisionMission'
 import Programs from '@/components/sections/Programs'
-import SuccessStories from '@/components/sections/SuccessStories'
+import ImpactStats from '@/components/sections/ImpactStats'
 import Events from '@/components/sections/Events'
+import SuccessStories from '@/components/sections/SuccessStories'
 import Gallery from '@/components/sections/Gallery'
 import Testimonials from '@/components/sections/Testimonials'
-import Partners from '@/components/sections/Partners'
+import TakeAction from '@/components/sections/TakeAction'
 import DonateCTA from '@/components/sections/DonateCTA'
 import Newsletter from '@/components/sections/Newsletter'
 import Contact from '@/components/sections/Contact'
@@ -25,14 +26,15 @@ export default function Home() {
       <Navbar onAdminClick={() => setAdminOpen(true)} />
       <main className="flex-1">
         <Hero />
-        <ImpactStats />
         <About />
+        <VisionMission />
         <Programs />
-        <SuccessStories />
+        <ImpactStats />
         <Events />
+        <SuccessStories />
         <Gallery />
         <Testimonials />
-        <Partners />
+        <TakeAction />
         <DonateCTA />
         <Newsletter />
         <Contact />

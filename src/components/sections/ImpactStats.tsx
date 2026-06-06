@@ -2,15 +2,25 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { GraduationCap, UtensilsCrossed, Users, Heart, Home } from 'lucide-react'
-import AnimatedCounter from './AnimatedCounter'
+import { CheckCircle } from 'lucide-react'
 
-const stats = [
-  { icon: GraduationCap, value: 500, suffix: '+', label: 'Children Supported' },
-  { icon: UtensilsCrossed, value: 15000, suffix: '+', label: 'Meals Served' },
-  { icon: Users, value: 25, suffix: '+', label: 'Volunteers' },
-  { icon: Heart, value: 10, suffix: '+', label: 'Community Programs' },
-  { icon: Home, value: 100, suffix: '+', label: 'Families Assisted' },
+const checklistItems = [
+  {
+    title: '100% Transition Rate',
+    description: 'Every child in our program has successfully moved to the next grade level',
+  },
+  {
+    title: 'Reduced Malnutrition',
+    description: 'Significant health improvements observed',
+  },
+  {
+    title: '500+ Children Supported',
+    description: 'Reaching the most vulnerable in Mwanza',
+  },
+  {
+    title: '15,000+ Meals Served',
+    description: 'Nutritious meals provided to children',
+  },
 ]
 
 export default function ImpactStats() {
@@ -18,55 +28,88 @@ export default function ImpactStats() {
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   return (
-    <section ref={ref} className="relative bg-navy py-20 md:py-28 overflow-hidden">
-      {/* Subtle pattern overlay */}
-      <div className="absolute inset-0 opacity-5">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.15) 1px, transparent 1px), radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
-        />
-      </div>
+    <section id="impact" ref={ref} className="py-20 bg-[#fbf9f5]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-3xl soft-shadow border border-gray-200/10 overflow-hidden">
+          <div className="grid lg:grid-cols-2 gap-0">
+            {/* Left - Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.6 }}
+              className="p-8 lg:p-12"
+            >
+              <span className="text-[#ff8928] font-bold text-xs uppercase tracking-widest mb-4 block">
+                OUR IMPACT
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-[#031632] mb-8">
+                Creating Real Change
+              </h2>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-14"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Our <span className="text-orange">Impact</span>
-          </h2>
-          <div className="w-16 h-1 bg-orange mx-auto rounded-full" />
-        </motion.div>
+              {/* Checklist Items */}
+              <div className="space-y-5 mb-8">
+                {checklistItems.map((item, i) => (
+                  <motion.div
+                    key={item.title}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 0.4, delay: 0.2 + i * 0.1 }}
+                    className="flex items-start gap-3"
+                  >
+                    <CheckCircle className="h-6 w-6 text-green-500 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-[#031632] font-bold text-sm">{item.title}</div>
+                      <div className="text-[#44474d] text-sm">{item.description}</div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-          {stats.map((stat, i) => {
-            const Icon = stat.icon
-            return (
+              {/* Progress Card */}
               <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-white/15 transition-colors"
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="p-8 bg-[#f5f3ef] rounded-3xl border border-[#c5c6ce]/30"
               >
-                <div className="flex justify-center mb-4">
-                  <div className="bg-orange/20 p-3 rounded-full">
-                    <Icon className="h-7 w-7 text-orange" />
-                  </div>
+                <div className="text-[#44474d] text-xs font-semibold uppercase tracking-wider mb-1">
+                  2024 Education Goal
                 </div>
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">
-                  <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+                <div className="text-[#031632] font-bold mb-4">
+                  Helping another 50 children get to school
                 </div>
-                <p className="text-white/70 text-sm">{stat.label}</p>
+                <div className="text-[#ff8928] text-5xl font-bold mb-4">75%</div>
+                <div className="w-full h-4 bg-white rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={isInView ? { width: '75%' } : {}}
+                    transition={{ duration: 1.2, delay: 0.8, ease: 'easeOut' }}
+                    className="h-full bg-[#ff8928] rounded-full"
+                  />
+                </div>
               </motion.div>
-            )
-          })}
+            </motion.div>
+
+            {/* Right - Image */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative p-8 lg:p-12 flex items-center"
+            >
+              <div className="relative w-full">
+                <div className="rounded-3xl overflow-hidden aspect-[4/3]">
+                  <img
+                    src="/success-story.png"
+                    alt="Our Impact - Children Success Stories"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* White frame overlay decoration */}
+                <div className="absolute -top-4 -right-4 w-full h-full border-4 border-white rounded-3xl -z-10" />
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

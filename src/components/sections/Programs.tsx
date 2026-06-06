@@ -3,52 +3,13 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { GraduationCap, UtensilsCrossed, Heart, BookOpen, Users } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-
-const programs = [
-  {
-    title: 'Education',
-    image: '/program-education.png',
-    icon: GraduationCap,
-    description:
-      'Providing quality education, school supplies, and tuition support to ensure every child has the opportunity to learn and succeed academically.',
-  },
-  {
-    title: 'Feeding Program',
-    image: '/program-feeding.png',
-    icon: UtensilsCrossed,
-    description:
-      'Ensuring no child goes hungry by providing nutritious daily meals to vulnerable children and families in our community.',
-  },
-  {
-    title: 'Child Care & Protection',
-    image: '/program-childcare.png',
-    icon: Heart,
-    description:
-      'Creating a safe and nurturing environment for children, protecting them from abuse, neglect, and exploitation.',
-  },
-  {
-    title: 'Bible Study & Spiritual Development',
-    image: '/program-bible.png',
-    icon: BookOpen,
-    description:
-      'Nurturing the spiritual growth of children and families through Bible study, prayer, and faith-based mentorship programs.',
-  },
-  {
-    title: 'Community Support',
-    image: '/program-community.png',
-    icon: Users,
-    description:
-      'Empowering families and communities through skills training, health education, and sustainable livelihood programs.',
-  },
-]
 
 export default function Programs() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   return (
-    <section id="programs" ref={ref} className="py-20 md:py-28 bg-white">
+    <section id="programs" ref={ref} className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -56,56 +17,124 @@ export default function Programs() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
-          <span className="inline-block text-orange font-semibold text-sm uppercase tracking-wider mb-3">
-            What We Do
+          <span className="text-[#ff8928] font-bold text-xs uppercase tracking-widest mb-4 block">
+            OUR PROGRAMS
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">
-            Our Programs
+          <h2 className="text-3xl md:text-4xl font-bold text-[#031632] mb-4">
+            Nurturing Growth in Five Key Areas
           </h2>
-          <div className="w-16 h-1 bg-orange mx-auto rounded-full mb-4" />
-          <p className="text-text-secondary max-w-2xl mx-auto">
-            Through our comprehensive programs, we address the holistic needs of children and families, 
-            creating pathways to a brighter future.
-          </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {programs.map((program, i) => {
-            const Icon = program.icon
-            return (
-              <motion.div
-                key={program.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-1"
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={program.image}
-                    alt={program.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
-                  <div className="absolute bottom-4 left-4 bg-orange p-2.5 rounded-full shadow-lg">
-                    <Icon className="h-5 w-5 text-white" />
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="text-lg font-bold text-navy mb-2">{program.title}</h3>
-                  <p className="text-text-secondary text-sm leading-relaxed mb-4">
-                    {program.description}
-                  </p>
-                  <Button
-                    variant="link"
-                    className="text-orange hover:text-orange-dark p-0 font-semibold text-sm"
-                  >
-                    Learn More →
-                  </Button>
-                </div>
-              </motion.div>
-            )
-          })}
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+          {/* Education Card - 3 cols */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="md:col-span-3 bg-white p-8 lg:p-12 rounded-3xl soft-shadow border border-gray-200/10"
+          >
+            <div className="w-14 h-14 bg-[#ffdcc6]/50 rounded-2xl flex items-center justify-center mb-6">
+              <GraduationCap className="h-7 w-7 text-[#ff8928]" />
+            </div>
+            <h3 className="text-2xl font-bold text-[#031632] mb-3">Education</h3>
+            <p className="text-[#44474d] leading-relaxed mb-6">
+              Providing quality education, school supplies, and tuition support to ensure every child 
+              has the opportunity to learn and succeed academically.
+            </p>
+            <div className="overflow-hidden rounded-2xl aspect-video">
+              <img
+                src="/program-education.png"
+                alt="Education Program"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+          </motion.div>
+
+          {/* Feeding Program Card - 3 cols, Navy */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="md:col-span-3 bg-[#031632] text-white p-8 lg:p-12 rounded-3xl"
+          >
+            <div className="w-14 h-14 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center mb-6">
+              <UtensilsCrossed className="h-7 w-7 text-[#ff8928]" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">Feeding Program</h3>
+            <p className="text-white/80 leading-relaxed mb-6">
+              Ensuring no child goes hungry by providing nutritious daily meals to vulnerable children 
+              and families in our community.
+            </p>
+            <div className="overflow-hidden rounded-2xl aspect-video mb-6">
+              <img
+                src="/program-feeding.png"
+                alt="Feeding Program"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+            {/* Stat Cards */}
+            <div className="flex gap-4">
+              <div className="bg-white/10 p-5 rounded-2xl flex-1 border border-white/10">
+                <div className="text-3xl font-bold text-[#ff8928]">300+</div>
+                <div className="text-white/80 text-sm mt-1">Weekly Meals</div>
+              </div>
+              <div className="bg-white/10 p-5 rounded-2xl flex-1 border border-white/10">
+                <div className="text-3xl font-bold text-[#ff8928]">Nutritious</div>
+                <div className="text-white/80 text-sm mt-1">Healthy Diet</div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Child Care - 2 cols */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="md:col-span-2 bg-white p-8 rounded-3xl soft-shadow border border-gray-200/10"
+          >
+            <div className="w-14 h-14 bg-[#ffdcc6]/50 rounded-2xl flex items-center justify-center mb-6">
+              <Heart className="h-7 w-7 text-[#ff8928]" />
+            </div>
+            <h3 className="text-xl font-bold text-[#031632] mb-3">Child Care</h3>
+            <p className="text-[#44474d] text-sm leading-relaxed">
+              Creating a safe and nurturing environment for children, protecting them from abuse, 
+              neglect, and exploitation.
+            </p>
+          </motion.div>
+
+          {/* Bible Study - 2 cols */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="md:col-span-2 bg-white p-8 rounded-3xl soft-shadow border border-gray-200/10"
+          >
+            <div className="w-14 h-14 bg-[#ffdcc6]/50 rounded-2xl flex items-center justify-center mb-6">
+              <BookOpen className="h-7 w-7 text-[#ff8928]" />
+            </div>
+            <h3 className="text-xl font-bold text-[#031632] mb-3">Bible Study</h3>
+            <p className="text-[#44474d] text-sm leading-relaxed">
+              Nurturing the spiritual growth of children and families through Bible study, 
+              prayer, and faith-based mentorship programs.
+            </p>
+          </motion.div>
+
+          {/* Community Support - 2 cols */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="md:col-span-2 bg-white p-8 rounded-3xl soft-shadow border border-gray-200/10"
+          >
+            <div className="w-14 h-14 bg-[#ffdcc6]/50 rounded-2xl flex items-center justify-center mb-6">
+              <Users className="h-7 w-7 text-[#ff8928]" />
+            </div>
+            <h3 className="text-xl font-bold text-[#031632] mb-3">Community Support</h3>
+            <p className="text-[#44474d] text-sm leading-relaxed">
+              Empowering families and communities through skills training, health education, 
+              and sustainable livelihood programs.
+            </p>
+          </motion.div>
         </div>
       </div>
     </section>
