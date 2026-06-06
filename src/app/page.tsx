@@ -10,7 +10,6 @@ import ImpactStats from '@/components/sections/ImpactStats'
 import Events from '@/components/sections/Events'
 import SuccessStories from '@/components/sections/SuccessStories'
 import Gallery from '@/components/sections/Gallery'
-import Testimonials from '@/components/sections/Testimonials'
 import TakeAction from '@/components/sections/TakeAction'
 import DonateCTA from '@/components/sections/DonateCTA'
 import Newsletter from '@/components/sections/Newsletter'
@@ -52,7 +51,6 @@ export default function Home() {
         <Events />
         <SuccessStories />
         <Gallery />
-        <Testimonials />
         <TakeAction />
         <DonateCTA />
         <Newsletter />
