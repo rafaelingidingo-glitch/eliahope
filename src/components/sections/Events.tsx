@@ -21,7 +21,11 @@ const events = [
   },
 ]
 
-export default function Events() {
+interface EventsProps {
+  onDonateClick?: (campaignId?: string) => void
+}
+
+export default function Events({ onDonateClick }: EventsProps) {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
@@ -70,7 +74,10 @@ export default function Events() {
                 <p className="text-[#44474d] text-sm leading-relaxed mb-6">
                   {event.description}
                 </p>
-                <button className="w-full py-4 border-2 border-[#031632] text-[#031632] font-bold rounded-xl hover:bg-[#031632] hover:text-white transition-all">
+                <button
+                  onClick={() => onDonateClick?.()}
+                  className="w-full py-4 border-2 border-[#031632] text-[#031632] font-bold rounded-xl hover:bg-[#031632] hover:text-white transition-all"
+                >
                   Donate Now
                 </button>
               </div>

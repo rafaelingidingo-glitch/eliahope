@@ -33,20 +33,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json() as {
       phone: string
       amount: number
-      name: string
+      name?: string
       email?: string
       campaignId?: string
     }
 
     const { phone, amount, name, email, campaignId } = body
 
-    // Validate name
-    if (!name || name.trim().length < 2) {
-      return NextResponse.json(
-        { error: 'Please provide your full name' },
-        { status: 400 }
-      )
-    }
+    // Name is optional — default to "Anonymous"
+    const donorName = (name && name.trim().length >= 2) ? name.trim() : 'Anonymous'
 
     // Validate phone
     if (!phone) {
@@ -87,7 +82,7 @@ export async function POST(request: NextRequest) {
     // Create donation record
     const donation = await db.donation.create({
       data: {
-        donorName: name.trim(),
+        donorName: donorName,
         donorEmail: email?.trim() || null,
         donorPhone: normalizedPhone,
         amount,

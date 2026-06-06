@@ -4,13 +4,12 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Heart, ArrowRight, Lock } from 'lucide-react'
 
-export default function Hero() {
-  const [amount, setAmount] = useState('')
+interface HeroProps {
+  onDonateClick?: (campaignId?: string) => void
+}
 
-  const handleScrollTo = (id: string) => {
-    const el = document.querySelector(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
-  }
+export default function Hero({ onDonateClick }: HeroProps) {
+  const [amount, setAmount] = useState('')
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
@@ -45,19 +44,23 @@ export default function Hero() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <button
-                onClick={() => handleScrollTo('#take-action')}
+                onClick={() => onDonateClick?.()}
                 className="bg-[#ff8928] text-white px-8 py-4 rounded-none font-semibold flex items-center gap-2 hover:bg-[#964900] shadow-xl active:scale-95 transition-all"
               >
                 <Heart className="h-5 w-5" />
-                How You Can Help
+                Donate Now
               </button>
-              <button
-                onClick={() => handleScrollTo('#about')}
+              <a
+                href="#about"
+                onClick={(e) => {
+                  e.preventDefault()
+                  document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })
+                }}
                 className="group inline-flex items-center gap-2 text-white font-bold hover:text-[#ffdcc6] transition-colors py-4"
               >
                 Learn More
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </a>
             </div>
           </motion.div>
 
@@ -80,9 +83,7 @@ export default function Hero() {
                 <input
                   type="number"
                   value={amount}
-                  onChange={(e) => {
-                    setAmount(e.target.value)
-                  }}
+                  onChange={(e) => setAmount(e.target.value)}
                   className="w-full pl-14 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors bg-white"
                   placeholder="Enter amount"
                 />
@@ -90,7 +91,7 @@ export default function Hero() {
 
               {/* Give Now Button */}
               <button
-                onClick={() => handleScrollTo('#donate')}
+                onClick={() => onDonateClick?.()}
                 className="w-full py-4 bg-[#031632] text-white rounded-xl font-semibold shadow-lg hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 <Heart className="h-5 w-5" />

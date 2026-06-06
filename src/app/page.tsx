@@ -11,16 +11,18 @@ import Events from '@/components/sections/Events'
 import SuccessStories from '@/components/sections/SuccessStories'
 import Gallery from '@/components/sections/Gallery'
 import TakeAction from '@/components/sections/TakeAction'
-import DonateCTA from '@/components/sections/DonateCTA'
 import Newsletter from '@/components/sections/Newsletter'
 import Contact from '@/components/sections/Contact'
 import Footer from '@/components/sections/Footer'
 import AdminDashboard from '@/components/admin/AdminDashboard'
 import AdminLogin from '@/components/admin/AdminLogin'
+import DonationModal from '@/components/DonationModal'
 
 export default function Home() {
   const [loginOpen, setLoginOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
+  const [donateOpen, setDonateOpen] = useState(false)
+  const [donateCampaignId, setDonateCampaignId] = useState<string | undefined>(undefined)
 
   const handleAdminClick = () => {
     setLoginOpen(true)
@@ -39,24 +41,29 @@ export default function Home() {
     setAdminOpen(false)
   }
 
+  const handleDonateClick = (campaignId?: string) => {
+    setDonateCampaignId(campaignId)
+    setDonateOpen(true)
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar onAdminClick={handleAdminClick} />
+      <Navbar onAdminClick={handleAdminClick} onDonateClick={handleDonateClick} />
       <main className="flex-1">
-        <Hero />
+        <Hero onDonateClick={handleDonateClick} />
         <About />
         <VisionMission />
         <Programs />
         <ImpactStats />
-        <Events />
+        <Events onDonateClick={handleDonateClick} />
         <SuccessStories />
         <Gallery />
-        <TakeAction />
-        <DonateCTA />
+        <TakeAction onDonateClick={handleDonateClick} />
         <Newsletter />
         <Contact />
       </main>
       <Footer />
+      <DonationModal isOpen={donateOpen} onClose={() => setDonateOpen(false)} preselectedCampaignId={donateCampaignId} />
       <AdminLogin isOpen={loginOpen} onClose={() => setLoginOpen(false)} onLogin={handleLoginSuccess} />
       <AdminDashboard isOpen={adminOpen} onClose={handleAdminClose} onLogout={handleLogout} />
     </div>

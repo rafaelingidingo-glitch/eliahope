@@ -16,9 +16,10 @@ const navLinks = [
 
 interface NavbarProps {
   onAdminClick?: () => void
+  onDonateClick?: (campaignId?: string) => void
 }
 
-export default function Navbar({ onAdminClick }: NavbarProps) {
+export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('#home')
@@ -81,7 +82,11 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
                 href={link.href}
                 onClick={(e) => {
                   e.preventDefault()
-                  handleNavClick(link.href)
+                  if (link.href === '#donate') {
+                    onDonateClick?.()
+                  } else {
+                    handleNavClick(link.href)
+                  }
                 }}
                 className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
                   activeSection === link.href
@@ -107,8 +112,8 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
               asChild
               className="bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-none px-6"
             >
-              <a href="#take-action" onClick={(e) => { e.preventDefault(); handleNavClick('#take-action') }}>
-                How You Can Help
+              <a href="#donate" onClick={(e) => { e.preventDefault(); onDonateClick?.() }}>
+                Donate Now
               </a>
             </Button>
           </div>
@@ -145,7 +150,12 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
                         href={link.href}
                         onClick={(e) => {
                           e.preventDefault()
-                          handleNavClick(link.href)
+                          if (link.href === '#donate') {
+                            onDonateClick?.()
+                            setMobileOpen(false)
+                          } else {
+                            handleNavClick(link.href)
+                          }
                         }}
                         className={`block px-6 py-3 font-medium transition-colors ${
                           activeSection === link.href
@@ -162,8 +172,8 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
                       asChild
                       className="w-full bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-full"
                     >
-                      <a href="#take-action" onClick={(e) => { e.preventDefault(); handleNavClick('#take-action') }}>
-                        How You Can Help
+                      <a href="#donate" onClick={(e) => { e.preventDefault(); onDonateClick?.(); setMobileOpen(false) }}>
+                        Donate Now
                       </a>
                     </Button>
                   </div>

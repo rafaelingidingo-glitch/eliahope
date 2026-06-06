@@ -39,7 +39,11 @@ const actions = [
   },
 ]
 
-export default function TakeAction() {
+interface TakeActionProps {
+  onDonateClick?: (campaignId?: string) => void
+}
+
+export default function TakeAction({ onDonateClick }: TakeActionProps) {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
@@ -96,7 +100,13 @@ export default function TakeAction() {
                   {action.description}
                 </p>
                 <button
-                  onClick={() => handleScrollTo(action.href)}
+                  onClick={() => {
+                    if (action.href === '#donate') {
+                      onDonateClick?.()
+                    } else {
+                      handleScrollTo(action.href)
+                    }
+                  }}
                   className="mt-auto px-6 py-3 bg-[#031632] text-white font-semibold rounded-xl hover:bg-[#1a2b48] transition-colors text-sm"
                 >
                   {action.cta}
