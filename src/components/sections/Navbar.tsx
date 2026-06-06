@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, X, Shield } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 
@@ -99,14 +99,13 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
             <Button
               variant="outline"
               onClick={onAdminClick}
-              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-5 gap-2 transition-all"
+              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-5 transition-all"
             >
-              <Shield className="h-4 w-4" />
-              Admin Login
+              Login
             </Button>
             <Button
               asChild
-              className="bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-full px-6"
+              className="bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-none px-6"
             >
               <a href="#take-action" onClick={(e) => { e.preventDefault(); handleNavClick('#take-action') }}>
                 How You Can Help
@@ -119,10 +118,9 @@ export default function Navbar({ onAdminClick }: NavbarProps) {
             <Button
               variant="outline"
               onClick={onAdminClick}
-              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-4 gap-1.5 text-xs transition-all"
+              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-4 text-xs transition-all"
             >
-              <Shield className="h-3.5 w-3.5" />
-              Admin
+              Login
             </Button>
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
