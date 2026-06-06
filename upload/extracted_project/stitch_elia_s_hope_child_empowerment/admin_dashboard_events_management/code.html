@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Impact Admin | Event Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Merriweather:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#642f00",
+                    "surface-container-highest": "#e4e2de",
+                    "on-primary-fixed": "#081b38",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e4e2de",
+                    "surface": "#fbf9f5",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#340400",
+                    "tertiary-fixed": "#ffdad3",
+                    "on-tertiary-fixed-variant": "#7c2d1c",
+                    "on-primary-container": "#8293b5",
+                    "surface-tint": "#4e5f7e",
+                    "inverse-primary": "#b6c7eb",
+                    "background": "#fbf9f5",
+                    "secondary": "#964900",
+                    "secondary-container": "#ff8928",
+                    "surface-bright": "#fbf9f5",
+                    "secondary-fixed-dim": "#ffb786",
+                    "primary-container": "#1a2b48",
+                    "tertiary-container": "#561104",
+                    "surface-container": "#efeeea",
+                    "on-background": "#1b1c1a",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#eae8e4",
+                    "secondary-fixed": "#ffdcc6",
+                    "on-primary-fixed-variant": "#374765",
+                    "inverse-surface": "#30312e",
+                    "on-surface-variant": "#44474d",
+                    "primary": "#031632",
+                    "on-secondary-fixed-variant": "#723600",
+                    "on-tertiary-fixed": "#3e0500",
+                    "on-surface": "#1b1c1a",
+                    "on-tertiary-container": "#db755f",
+                    "on-primary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#75777e",
+                    "inverse-on-surface": "#f2f0ed",
+                    "primary-fixed": "#d7e2ff",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#311300",
+                    "tertiary-fixed-dim": "#ffb4a4",
+                    "surface-dim": "#dbdad6",
+                    "outline-variant": "#c5c6ce",
+                    "surface-container-low": "#f5f3ef",
+                    "primary-fixed-dim": "#b6c7eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "container-max": "1200px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "stack-sm": "12px",
+                    "stack-md": "24px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Merriweather"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "body-md": ["Merriweather"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e4e2de; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #c5c6ce; }
+        
+        .modal-overlay {
+            backdrop-filter: blur(4px);
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md overflow-x-hidden">
+<!-- Sidebar Navigation -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-surface-container-low shadow-sm z-50 py-base">
+<div class="px-6 py-8 flex flex-col gap-2">
+<h1 class="text-headline-md font-headline-md text-primary">Impact Admin</h1>
+<p class="text-label-md font-label-md text-on-surface-variant opacity-70">Community Support</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary font-bold border-r-4 border-secondary bg-secondary-fixed/10 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-lg text-label-lg">Events</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-lg text-label-lg">Visitors</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="volunteer_activism">volunteer_activism</span>
+<span class="font-label-lg text-label-lg">Donations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full py-3 px-4 bg-secondary text-on-secondary rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-md" onclick="openModal()">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Campaign
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 min-h-screen flex flex-col">
+<!-- Top Bar -->
+<header class="h-16 bg-surface flex justify-between items-center px-margin-desktop w-full sticky top-0 z-40">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md font-label-md w-full ml-2" placeholder="Search events..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-secondary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-error ring-2 ring-surface"></span>
+</button>
+<button class="text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+<div class="text-right hidden sm:block">
+<p class="font-label-lg text-label-lg text-primary">Admin User</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Super Admin</p>
+</div>
+<img alt="Admin Profile" class="h-10 w-10 rounded-full border-2 border-surface-container-highest object-cover" data-alt="A professional headshot of a smiling administrator in a clean office environment. The image is brightly lit with a soft-focus background, adhering to the humanitarian brand's warm and transparent aesthetic using a natural color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGvuyaF0yOk6AGL-wK2inWz3dwUcGmiGE5RqbG9I8vaNw_3PgOBn1HvlQ_MCK8an44SYnPA2mYSlU6TSoHUEA6hlXWmCm1MRKJbWOibZaXjXKyc2846TnieluH3uleX68J5OL9fpDTE2OEmdxakMQY1k02Wosuup5GUVVoE-qYRx3iY5cjTHIS3jhj_UsigFrx4GbSbj-LniBie6qJiiYS-P0f_L1-n_9dZohSVAGLa_LyyGi7d6FFLos689kBo6EV02a9eJcPRgA"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<section class="p-margin-desktop flex flex-col gap-stack-md animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Events Management</h2>
+<p class="text-on-surface-variant mt-2 max-w-xl">Organize community outreach, workshops, and support programs for the Elia's Hope families.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-6 py-2.5 bg-surface-container-high text-primary font-label-lg text-label-lg rounded-full hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+                        Filter
+                    </button>
+<button class="flex items-center gap-2 px-6 py-2.5 bg-secondary text-on-secondary font-label-lg text-label-lg rounded-full shadow-md hover:shadow-lg active:scale-95 transition-all" onclick="openModal()">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+                        Add New Event
+                    </button>
+</div>
+</div>
+<!-- Bento-style Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="md:col-span-1 p-6 bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-high">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Total Events</p>
+<h3 class="text-headline-lg font-headline-lg text-primary mt-2">124</h3>
+<div class="mt-4 flex items-center text-green-600 text-label-md font-label-md">
+<span class="material-symbols-outlined text-[18px] mr-1" data-icon="trending_up">trending_up</span>
+                        12% from last month
+                    </div>
+</div>
+<div class="md:col-span-1 p-6 bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-high">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Upcoming</p>
+<h3 class="text-headline-lg font-headline-lg text-secondary mt-2">8</h3>
+<p class="text-on-surface-variant text-label-md mt-4">Next: Community Outreach</p>
+</div>
+<div class="md:col-span-2 p-6 bg-primary-container text-on-primary-fixed rounded-xl shadow-sm flex justify-between items-center overflow-hidden relative">
+<div class="relative z-10">
+<p class="text-label-md font-label-md text-on-primary-container uppercase tracking-widest">Global Attendance</p>
+<h3 class="text-headline-lg font-headline-lg text-white mt-2">2,480+</h3>
+<p class="text-on-primary-container text-label-md mt-4">Engaged community members this year</p>
+</div>
+<div class="opacity-10 absolute -right-4 -bottom-4">
+<span class="material-symbols-outlined !text-[120px]" data-icon="groups" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+</div>
+</div>
+<!-- Events Table Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-high overflow-hidden">
+<div class="px-6 py-4 border-b border-surface-container-high flex justify-between items-center bg-surface-container-low/50">
+<span class="font-label-lg text-label-lg text-primary">All Activity</span>
+<div class="flex gap-4">
+<button class="text-label-md font-label-md text-on-surface-variant hover:text-primary">Download Report</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low/30 text-on-surface-variant font-label-lg text-label-lg border-b border-surface-container-high">
+<tr>
+<th class="px-6 py-4 font-semibold">Event Name</th>
+<th class="px-6 py-4 font-semibold">Date</th>
+<th class="px-6 py-4 font-semibold">Category</th>
+<th class="px-6 py-4 font-semibold">Status</th>
+<th class="px-6 py-4 font-semibold">Attendance</th>
+<th class="px-6 py-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high">
+<!-- Event Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-secondary-fixed/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="handshake">handshake</span>
+</div>
+<span class="font-semibold text-primary">Refugee Welcome Workshop</span>
+</div>
+</td>
+<td class="px-6 py-5 text-on-surface-variant">Oct 24, 2023</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full bg-secondary-container/20 text-on-secondary-container text-[12px] font-medium">Refugee Support</span>
+</td>
+<td class="px-6 py-5">
+<span class="flex items-center gap-1.5 text-green-600 text-[12px] font-bold">
+<span class="h-1.5 w-1.5 rounded-full bg-green-600"></span> Completed
+                                    </span>
+</td>
+<td class="px-6 py-5 text-on-surface-variant font-medium">142</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-outline hover:text-secondary transition-colors" title="View Attendance">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 text-outline hover:text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 text-outline hover:text-error transition-colors" title="Delete">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Event Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+</div>
+<span class="font-semibold text-primary">Youth Education Seminar</span>
+</div>
+</td>
+<td class="px-6 py-5 text-on-surface-variant">Nov 15, 2023</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full bg-primary-fixed/50 text-primary text-[12px] font-medium">Education</span>
+</td>
+<td class="px-6 py-5">
+<span class="flex items-center gap-1.5 text-secondary text-[12px] font-bold">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span> Upcoming
+                                    </span>
+</td>
+<td class="px-6 py-5 text-on-surface-variant font-medium">85 (Pending)</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-outline hover:text-secondary transition-colors" title="View Attendance">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 text-outline hover:text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 text-outline hover:text-error transition-colors" title="Delete">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Event Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-tertiary-fixed/30 flex items-center justify-center text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined" data-icon="construction">construction</span>
+</div>
+<span class="font-semibold text-primary">Community Skills Workshop</span>
+</div>
+</td>
+<td class="px-6 py-5 text-on-surface-variant">Dec 02, 2023</td>
+<td class="px-6 py-5">
+<span class="px-3 py-1 rounded-full bg-tertiary-fixed/50 text-on-tertiary-fixed-variant text-[12px] font-medium">Workshop</span>
+</td>
+<td class="px-6 py-5">
+<span class="flex items-center gap-1.5 text-secondary text-[12px] font-bold">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span> Upcoming
+                                    </span>
+</td>
+<td class="px-6 py-5 text-on-surface-variant font-medium">--</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-outline hover:text-secondary transition-colors" title="View Attendance">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 text-outline hover:text-primary transition-colors" title="Edit">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 text-outline hover:text-error transition-colors" title="Delete">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 border-t border-surface-container-high bg-surface-container-low/30 flex justify-between items-center">
+<p class="text-label-md text-on-surface-variant">Showing 1-10 of 124 events</p>
+<div class="flex gap-2">
+<button class="h-8 w-8 rounded flex items-center justify-center border border-outline-variant text-on-surface-variant hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="h-8 w-8 rounded flex items-center justify-center bg-secondary text-on-secondary text-label-md font-bold">1</button>
+<button class="h-8 w-8 rounded flex items-center justify-center border border-outline-variant text-on-surface-variant hover:bg-surface-container-high text-label-md">2</button>
+<button class="h-8 w-8 rounded flex items-center justify-center border border-outline-variant text-on-surface-variant hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Decoration -->
+<footer class="mt-auto p-margin-desktop text-center opacity-50">
+<p class="text-label-md text-on-surface-variant">© 2023 Elia's Hope Community. Empowering vulnerable children through sustainable action.</p>
+</footer>
+</main>
+<!-- Create Event Modal -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4" id="eventModal">
+<div class="modal-overlay absolute inset-0 bg-primary/40 backdrop-blur-sm" onclick="closeModal()"></div>
+<div class="relative bg-surface rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+<div class="px-8 py-6 bg-primary text-on-primary flex justify-between items-center">
+<div>
+<h3 class="text-headline-md font-headline-md">Create New Event</h3>
+<p class="text-on-primary-container text-label-md">Schedule a new impact activity</p>
+</div>
+<button class="h-10 w-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors" onclick="closeModal()">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<form class="p-8 space-y-6 max-h-[716px] overflow-y-auto" id="eventForm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="md:col-span-2">
+<label class="block text-label-lg font-label-lg text-primary mb-2">Event Title</label>
+<input class="w-full bg-white border border-outline-variant rounded-lg px-4 py-3 focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all font-body-md" placeholder="e.g. Community Support Day" type="text"/>
+</div>
+<div>
+<label class="block text-label-lg font-label-lg text-primary mb-2">Date &amp; Time</label>
+<input class="w-full bg-white border border-outline-variant rounded-lg px-4 py-3 focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all font-body-md" type="datetime-local"/>
+</div>
+<div>
+<label class="block text-label-lg font-label-lg text-primary mb-2">Category</label>
+<select class="w-full bg-white border border-outline-variant rounded-lg px-4 py-3 focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all font-body-md">
+<option value="">Select Category</option>
+<option value="refugee">Refugee Support</option>
+<option value="education">Education</option>
+<option value="workshop">Workshop</option>
+</select>
+</div>
+<div class="md:col-span-2">
+<label class="block text-label-lg font-label-lg text-primary mb-2">Description</label>
+<textarea class="w-full bg-white border border-outline-variant rounded-lg px-4 py-3 focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all font-body-md" placeholder="Detail the purpose and details of the event..." rows="4"></textarea>
+</div>
+<div class="md:col-span-2">
+<label class="block text-label-lg font-label-lg text-primary mb-2">Event Image</label>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-8 text-center hover:bg-surface-container-low hover:border-secondary transition-all cursor-pointer group">
+<div class="flex flex-col items-center gap-2">
+<span class="material-symbols-outlined !text-[48px] text-outline group-hover:text-secondary transition-colors" data-icon="cloud_upload">cloud_upload</span>
+<p class="text-label-lg font-label-lg text-on-surface-variant">Click to upload or drag and drop</p>
+<p class="text-[10px] text-outline uppercase tracking-tighter">PNG, JPG up to 10MB</p>
+</div>
+</div>
+</div>
+</div>
+</form>
+<div class="px-8 py-6 bg-surface-container-low border-t border-surface-container-high flex justify-end gap-4">
+<button class="px-6 py-2.5 text-primary font-label-lg text-label-lg hover:underline transition-all" onclick="closeModal()">Cancel</button>
+<button class="px-8 py-2.5 bg-secondary text-on-secondary font-label-lg text-label-lg rounded-full shadow-md hover:shadow-lg active:scale-95 transition-all">
+                    Publish Event
+                </button>
+</div>
+</div>
+</div>
+<script>
+        function openModal() {
+            const modal = document.getElementById('eventModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('eventModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close on Esc key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Simple form interaction simulation
+        document.getElementById('eventForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Logic to handle event creation would go here
+            closeModal();
+            alert('Event successfully created!');
+        });
+    </script>
+</body></html>

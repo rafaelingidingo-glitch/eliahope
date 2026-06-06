@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Impact Admin | Elia’s Hope Community</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Merriweather:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#642f00",
+                    "surface-container-highest": "#e4e2de",
+                    "on-primary-fixed": "#081b38",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e4e2de",
+                    "surface": "#fbf9f5",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#340400",
+                    "tertiary-fixed": "#ffdad3",
+                    "on-tertiary-fixed-variant": "#7c2d1c",
+                    "on-primary-container": "#8293b5",
+                    "surface-tint": "#4e5f7e",
+                    "inverse-primary": "#b6c7eb",
+                    "background": "#fbf9f5",
+                    "secondary": "#964900",
+                    "secondary-container": "#ff8928",
+                    "surface-bright": "#fbf9f5",
+                    "secondary-fixed-dim": "#ffb786",
+                    "primary-container": "#1a2b48",
+                    "tertiary-container": "#561104",
+                    "surface-container": "#efeeea",
+                    "on-background": "#1b1c1a",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#eae8e4",
+                    "secondary-fixed": "#ffdcc6",
+                    "on-primary-fixed-variant": "#374765",
+                    "inverse-surface": "#30312e",
+                    "on-surface-variant": "#44474d",
+                    "primary": "#031632",
+                    "on-secondary-fixed-variant": "#723600",
+                    "on-tertiary-fixed": "#3e0500",
+                    "on-surface": "#1b1c1a",
+                    "on-tertiary-container": "#db755f",
+                    "on-primary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#75777e",
+                    "inverse-on-surface": "#f2f0ed",
+                    "primary-fixed": "#d7e2ff",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#311300",
+                    "tertiary-fixed-dim": "#ffb4a4",
+                    "surface-dim": "#dbdad6",
+                    "outline-variant": "#c5c6ce",
+                    "surface-container-low": "#f5f3ef",
+                    "primary-fixed-dim": "#b6c7eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "container-max": "1200px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "stack-sm": "12px",
+                    "stack-md": "24px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Merriweather"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "body-md": ["Merriweather"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chart-bar {
+            transition: height 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- Side Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest shadow-sm dark:shadow-none flex flex-col h-full py-base z-50">
+<div class="px-6 py-8 flex flex-col gap-2">
+<h1 class="text-headline-md font-headline-md text-primary dark:text-primary-fixed">Impact Admin</h1>
+<p class="font-label-lg text-label-lg text-on-surface-variant">Community Support</p>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<!-- Active: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary font-bold border-r-4 border-secondary bg-secondary-fixed/10 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline hover:text-primary hover:bg-surface-container-high transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-lg text-label-lg">Events</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline hover:text-primary hover:bg-surface-container-high transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-lg text-label-lg">Visitors</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline hover:text-primary hover:bg-surface-container-high transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="volunteer_activism">volunteer_activism</span>
+<span class="font-label-lg text-label-lg">Donations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline hover:text-primary hover:bg-surface-container-high transition-colors active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto mb-8">
+<button class="w-full bg-secondary text-on-secondary py-3 px-6 rounded-xl font-label-lg text-label-lg shadow-md hover:bg-on-secondary-container transition-all active:scale-95">
+                New Campaign
+            </button>
+</div>
+</aside>
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface dark:bg-surface-dim flex justify-between items-center px-margin-desktop w-full z-40 border-b border-surface-container-highest">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md font-label-md w-full ml-2" placeholder="Search data, reports, or donors..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-on-surface-variant hover:text-secondary transition-colors active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-secondary transition-colors active:opacity-80">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="flex items-center gap-3 ml-4 border-l pl-6 border-surface-container-highest">
+<div class="text-right">
+<p class="font-label-lg text-label-lg text-primary">Sarah Jenkins</p>
+<p class="text-[10px] uppercase tracking-wider text-outline">Super Admin</p>
+</div>
+<img alt="Admin Profile" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" data-alt="A professional headshot of a friendly female administrator in her late 30s, smiling warmly in a bright, modern office setting. The lighting is soft and natural, emphasizing a light-mode humanitarian brand aesthetic. The background is slightly blurred, showing hints of a clean, minimalist workspace with warm wood accents and green plants." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNCh6WKkdlF6fSSJo-QFaYwIT_x95XzAQqsS-cl5d8XEZRrN18QsP7cab2Yd5kUfjR8KGTdS6EctKiO1ZCXsqwAEYXn16jUuin1KAoXnAtaNqn9uCdZrZ8DpdyysrX5IpWaEWWw7E321aVpkqsnpXYbfsXR_27tjCMkDCP3V2EXn3nM0yr2kVDGJWgwwFMlsOlMU-nuBeMCouKpLaVbJ0sPS6rYlV1gH_qaU0kjpqIRRtICNP1O_z3IjiZj5c8Pxrc_adLSlqPnt4"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-16 p-margin-desktop min-h-screen">
+<!-- Dashboard Header -->
+<div class="mb-stack-lg flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-display-lg text-primary">Community Impact</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 max-w-2xl">Welcome back, Sarah. Here is a summary of Elia’s Hope progress and active humanitarian efforts for the current period.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 bg-surface-container-lowest border border-outline-variant px-4 py-2 rounded-lg font-label-lg text-label-lg hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                    Export PDF
+                </button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-lg text-label-lg shadow-lg hover:bg-primary-container transition-all">
+                    Generate Report
+                </button>
+</div>
+</div>
+<!-- Key Stats Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-stack-lg">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-surface-container-high group hover:border-secondary transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-secondary-fixed/30 rounded-lg text-secondary">
+<span class="material-symbols-outlined" data-icon="volunteer_activism" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span>
+</div>
+<span class="text-green-600 font-label-md text-label-md flex items-center">+12.5%</span>
+</div>
+<p class="font-label-lg text-label-lg text-on-surface-variant">Total Charity Amount</p>
+<h3 class="font-headline-lg text-headline-lg text-primary mt-1">$482,950</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-surface-container-high group hover:border-secondary transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary-fixed/30 rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+</div>
+<span class="text-green-600 font-label-md text-label-md flex items-center">+4.2%</span>
+</div>
+<p class="font-label-lg text-label-lg text-on-surface-variant">Total Visitors</p>
+<h3 class="font-headline-lg text-headline-lg text-primary mt-1">12,840</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-surface-container-high group hover:border-secondary transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-secondary-fixed/30 rounded-lg text-secondary">
+<span class="material-symbols-outlined" data-icon="event" style="font-variation-settings: 'FILL' 1;">event</span>
+</div>
+<span class="text-on-surface-variant font-label-md text-label-md">Current</span>
+</div>
+<p class="font-label-lg text-label-lg text-on-surface-variant">Active Events</p>
+<h3 class="font-headline-lg text-headline-lg text-primary mt-1">24</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-surface-container-high group hover:border-secondary transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary-fixed/30 rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="child_care" style="font-variation-settings: 'FILL' 1;">child_care</span>
+</div>
+<span class="text-green-600 font-label-md text-label-md flex items-center">+8</span>
+</div>
+<p class="font-label-lg text-label-lg text-on-surface-variant">Children Supported</p>
+<h3 class="font-headline-lg text-headline-lg text-primary mt-1">1,402</h3>
+</div>
+</div>
+<!-- Main Dashboard Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Recent Donations Table -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container-high overflow-hidden">
+<div class="px-6 py-5 border-b border-surface-container-high flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-primary">Recent Donations</h3>
+<a class="text-secondary font-label-lg text-label-lg hover:underline" href="#">View All</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant uppercase text-[10px] tracking-wider font-label-lg">
+<th class="px-6 py-4">Donor Name</th>
+<th class="px-6 py-4">Amount</th>
+<th class="px-6 py-4">Date</th>
+<th class="px-6 py-4">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high font-label-lg text-label-lg">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary text-[10px]">AM</div>
+<span class="text-on-surface">Alice Montgomery</span>
+</td>
+<td class="px-6 py-4 text-primary font-bold">$2,500.00</td>
+<td class="px-6 py-4 text-outline">Oct 24, 2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-bold">Completed</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary text-[10px]">RP</div>
+<span class="text-on-surface">Robert Patterson</span>
+</td>
+<td class="px-6 py-4 text-primary font-bold">$120.00</td>
+<td class="px-6 py-4 text-outline">Oct 23, 2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-bold">Completed</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary text-[10px]">SW</div>
+<span class="text-on-surface">Sophia Williams</span>
+</td>
+<td class="px-6 py-4 text-primary font-bold">$5,000.00</td>
+<td class="px-6 py-4 text-outline">Oct 23, 2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-[11px] font-bold">Processing</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary text-[10px]">JK</div>
+<span class="text-on-surface">James Knight</span>
+</td>
+<td class="px-6 py-4 text-primary font-bold">$450.00</td>
+<td class="px-6 py-4 text-outline">Oct 22, 2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-bold">Completed</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Sidebar Content -->
+<div class="flex flex-col gap-gutter">
+<!-- Impact Growth Chart Visualization -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-surface-container-high">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-primary">Impact Growth</h3>
+<span class="material-symbols-outlined text-outline" data-icon="trending_up">trending_up</span>
+</div>
+<div class="h-48 flex items-end gap-3 px-2">
+<div class="flex-1 bg-primary-fixed/20 rounded-t-lg relative group h-1/4 hover:bg-secondary-fixed/50 transition-all">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-md text-label-md opacity-0 group-hover:opacity-100">12k</span>
+</div>
+<div class="flex-1 bg-primary-fixed/30 rounded-t-lg relative group h-2/5 hover:bg-secondary-fixed/50 transition-all">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-md text-label-md opacity-0 group-hover:opacity-100">18k</span>
+</div>
+<div class="flex-1 bg-primary-fixed/40 rounded-t-lg relative group h-3/5 hover:bg-secondary-fixed/50 transition-all">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-md text-label-md opacity-0 group-hover:opacity-100">22k</span>
+</div>
+<div class="flex-1 bg-primary-fixed/60 rounded-t-lg relative group h-4/5 hover:bg-secondary-fixed/50 transition-all">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-md text-label-md opacity-0 group-hover:opacity-100">28k</span>
+</div>
+<div class="flex-1 bg-secondary rounded-t-lg relative group h-full hover:brightness-110 transition-all">
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-md text-label-md opacity-0 group-hover:opacity-100">35k</span>
+</div>
+</div>
+<div class="flex justify-between mt-4 font-label-md text-label-md text-outline">
+<span>Jun</span>
+<span>Jul</span>
+<span>Aug</span>
+<span>Sep</span>
+<span>Oct</span>
+</div>
+</div>
+<!-- Upcoming Events Management -->
+<div class="bg-primary-container p-6 rounded-xl shadow-xl text-on-primary">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-headline-md text-headline-md text-white">Next Event</h3>
+<p class="text-on-primary-container font-label-lg text-label-lg mt-1">Community Outreach</p>
+</div>
+<div class="bg-white/10 p-2 rounded-lg">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+</div>
+</div>
+<div class="flex gap-4 items-center mb-6">
+<div class="bg-secondary-container text-on-secondary-container px-3 py-2 rounded-lg text-center">
+<span class="block text-2xl font-bold leading-none">12</span>
+<span class="text-[10px] uppercase font-bold">Nov</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-white">Winter Education Drive</p>
+<p class="text-on-primary-container font-label-md text-label-md">8:00 AM • City Hall Central</p>
+</div>
+</div>
+<div class="mb-6">
+<div class="flex justify-between text-label-md mb-2">
+<span class="text-on-primary-container">Fundraising Goal</span>
+<span class="text-white">75%</span>
+</div>
+<div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container w-3/4 rounded-full"></div>
+</div>
+</div>
+<button class="w-full bg-white text-primary py-3 rounded-lg font-label-lg text-label-lg hover:bg-secondary-fixed transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                        Create New Event
+                    </button>
+</div>
+</div>
+</div>
+<!-- Additional Impact Section -->
+<section class="mt-stack-lg">
+<div class="bg-white p-8 rounded-2xl border border-surface-container-high flex flex-col md:flex-row items-center gap-8 overflow-hidden relative">
+<div class="relative z-10 md:w-3/5">
+<span class="bg-secondary-fixed/50 text-on-secondary-fixed-variant px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Story of the Month</span>
+<h3 class="font-headline-lg text-headline-lg text-primary mt-4">Kofi's Journey to School</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-4">Through your coordination of the Education Drive, Kofi has received a full scholarship and supplies for the academic year. His story is just one of many successes this quarter.</p>
+<div class="mt-6 flex gap-4">
+<button class="text-secondary font-label-lg text-label-lg flex items-center gap-2 hover:translate-x-1 transition-transform">
+                            Read the full case study
+                            <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="md:w-2/5 w-full h-64 rounded-xl overflow-hidden shadow-lg border-4 border-white">
+<img alt="Child Support" class="w-full h-full object-cover" data-alt="A heartwarming, high-quality photograph of a young boy in Ghana smiling brightly as he holds a new stack of school books. The lighting is golden-hour warm, creating a dignified and hopeful atmosphere. The scene is set in a vibrant outdoor schoolyard, reflecting a clean and modern humanitarian aesthetic with soft focus on the background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeoSOWUUbutnF1MvmAPueEraJBn59EDvMsL4S_4blvZbODVtEnqXZ1xabCawqddzsd8q0bxBsa7arGsxU2Mvdw58zlAu5Q0VJsHB9Y8at9-pciYZtyqtcOP1K1zDP8eXlLzau_CZp1n1PJLxo_-IcCC0zR6Lr4xJV9OnJnye3duwwSPbwmHYznua6d0lsA2meqWRGQlrsn_eS_bBxEF_sJTmeBJIl4sZuyYyFzbUnMFtESQRDxTAUQauTU5ZRz_dls5Tmefubse-A"/>
+</div>
+<!-- Decorative background element -->
+<div class="absolute -right-24 -bottom-24 w-64 h-64 bg-secondary-fixed/10 rounded-full blur-3xl"></div>
+</div>
+</section>
+<!-- Footer Info -->
+<footer class="mt-stack-lg pt-8 border-t border-surface-container-high flex justify-between items-center text-outline font-label-md text-label-md">
+<p>© 2023 Elia’s Hope Community. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">System Status</a>
+<a class="hover:text-primary" href="#">Support Desk</a>
+</div>
+</footer>
+</main>
+<script>
+        // Simple micro-interaction for the search bar
+        const searchInput = document.querySelector('input[type="text"]');
+        const searchContainer = searchInput.parentElement;
+        
+        searchInput.addEventListener('focus', () => {
+            searchContainer.classList.add('ring-2', 'ring-secondary-container', 'bg-white');
+        });
+        
+        searchInput.addEventListener('blur', () => {
+            searchContainer.classList.remove('ring-2', 'ring-secondary-container', 'bg-white');
+        });
+
+        // Hover effect for table rows
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transform = 'scale(1.005)';
+                row.style.boxShadow = '0 4px 6px -1px rgba(26, 43, 72, 0.05)';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.transform = 'scale(1)';
+                row.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body></html>

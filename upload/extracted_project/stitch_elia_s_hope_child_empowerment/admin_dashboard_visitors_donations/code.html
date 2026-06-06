@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Impact Admin | Visitors &amp; Donations</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#642f00",
+                    "surface-container-highest": "#e4e2de",
+                    "on-primary-fixed": "#081b38",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e4e2de",
+                    "surface": "#fbf9f5",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#340400",
+                    "tertiary-fixed": "#ffdad3",
+                    "on-tertiary-fixed-variant": "#7c2d1c",
+                    "on-primary-container": "#8293b5",
+                    "surface-tint": "#4e5f7e",
+                    "inverse-primary": "#b6c7eb",
+                    "background": "#fbf9f5",
+                    "secondary": "#964900",
+                    "secondary-container": "#ff8928",
+                    "surface-bright": "#fbf9f5",
+                    "secondary-fixed-dim": "#ffb786",
+                    "primary-container": "#1a2b48",
+                    "tertiary-container": "#561104",
+                    "surface-container": "#efeeea",
+                    "on-background": "#1b1c1a",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#eae8e4",
+                    "secondary-fixed": "#ffdcc6",
+                    "on-primary-fixed-variant": "#374765",
+                    "inverse-surface": "#30312e",
+                    "on-surface-variant": "#44474d",
+                    "primary": "#031632",
+                    "on-secondary-fixed-variant": "#723600",
+                    "on-tertiary-fixed": "#3e0500",
+                    "on-surface": "#1b1c1a",
+                    "on-tertiary-container": "#db755f",
+                    "on-primary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#75777e",
+                    "inverse-on-surface": "#f2f0ed",
+                    "primary-fixed": "#d7e2ff",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#311300",
+                    "tertiary-fixed-dim": "#ffb4a4",
+                    "surface-dim": "#dbdad6",
+                    "outline-variant": "#c5c6ce",
+                    "surface-container-low": "#f5f3ef",
+                    "primary-fixed-dim": "#b6c7eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "container-max": "1200px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "stack-sm": "12px",
+                    "stack-md": "24px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Merriweather"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "body-md": ["Merriweather"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #fbf9f5; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .shadow-soft { shadow-radius: 20px; box-shadow: 0 10px 30px rgba(26, 43, 72, 0.06); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e4e2de; border-radius: 10px; }
+        .glass-header { backdrop-filter: blur(10px); background: rgba(251, 249, 245, 0.8); }
+    </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col py-base bg-surface-container-low dark:bg-surface-container-lowest shadow-sm dark:shadow-none z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="volunteer_activism">volunteer_activism</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md text-primary dark:text-primary-fixed">Impact Admin</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">Community Support</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-lg text-label-lg">Events</span>
+</a>
+<a class="flex items-center px-4 py-3 rounded-xl text-secondary font-bold border-r-4 border-secondary bg-secondary-fixed/10 group transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+<span class="font-label-lg text-label-lg">Visitors</span>
+</a>
+<a class="flex items-center px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="volunteer_activism">volunteer_activism</span>
+<span class="font-label-lg text-label-lg">Donations</span>
+</a>
+<a class="flex items-center px-4 py-3 rounded-xl text-on-surface-variant dark:text-outline hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full py-3 bg-secondary text-on-secondary rounded-xl font-label-lg text-label-lg hover:shadow-lg transition-all active:scale-95">
+                New Campaign
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface dark:bg-surface-dim z-40 glass-header flex justify-between items-center px-margin-desktop">
+<div class="flex-1 max-w-xl">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-secondary transition-all font-label-md text-label-md" placeholder="Search visitors or donations..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant dark:text-outline hover:text-secondary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant dark:text-outline hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-label-lg text-label-lg text-primary">Admin User</p>
+<p class="text-[10px] uppercase tracking-wider text-outline">Super Admin</p>
+</div>
+<img alt="Admin Profile" class="w-10 h-10 rounded-full border-2 border-surface-container-highest shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIhmE_tl31lEVJ5NxsSXmNfnfQq8RHOcYITkwdaIkTSBwGjGnhZ5IJ1WrEaavCDZ_KqZn7BI0KmWokc9o7gmWHbXnmukJfFTAGRizDHd1z3QjuxEltigy8rsM5mDhW4MvJfTG8W4J1uncidCQOz-IKBaRsRSJKC8jR_fj4HaMtMC9rNYN5OPHyY_MGra3Fft0-Nkj6VXdFn1Qe2mBs652PQT6OccKNJiVYLoWJD7l4DQsiFwawDB5I7KmBPEc8B6knsaL9smBtrjA"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="pt-24 pb-stack-lg px-margin-desktop space-y-stack-md">
+<!-- Page Header & Summary Bento Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Welcome/Title Card -->
+<div class="lg:col-span-2 bg-primary-container text-on-primary rounded-xl p-8 flex flex-col justify-between overflow-hidden relative">
+<div class="z-10">
+<h2 class="font-headline-lg text-headline-lg mb-2">Visitor Insights &amp; Charity Flow</h2>
+<p class="text-on-primary-container max-w-md font-body-md opacity-90">Review donor activity and track the community impact goals for Elia’s Hope. Your transparency builds lasting trust.</p>
+</div>
+<div class="z-10 flex gap-4 mt-6">
+<button class="px-6 py-2.5 bg-secondary text-white rounded-lg font-label-lg text-label-lg hover:bg-secondary-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="download">download</span>
+                            Export to CSV
+                        </button>
+<button class="px-6 py-2.5 border border-white/20 text-white rounded-lg font-label-lg text-label-lg hover:bg-white/10 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="picture_as_pdf">picture_as_pdf</span>
+                            Download PDF Report
+                        </button>
+</div>
+<!-- Abstract Background Pattern -->
+<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-secondary rounded-full opacity-10 blur-3xl"></div>
+</div>
+<!-- Summary Card -->
+<div class="bg-white rounded-xl p-8 shadow-soft border border-surface-container-highest flex flex-col justify-center text-center">
+<span class="material-symbols-outlined text-secondary text-display-lg mb-4" data-icon="volunteer_activism">volunteer_activism</span>
+<h3 class="text-outline font-label-lg text-label-lg uppercase tracking-widest mb-2">Total Amount Collected</h3>
+<div class="text-primary font-display-lg text-display-lg">$142,850.00</div>
+<p class="text-secondary font-label-md text-label-md mt-4 flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+                        +12% from last month
+                    </p>
+<div class="w-full h-2 bg-surface-container rounded-full mt-6 overflow-hidden">
+<div class="h-full bg-secondary w-3/4 rounded-full"></div>
+</div>
+<p class="text-outline font-label-md text-label-md mt-2">75% of yearly goal reached</p>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="bg-white rounded-xl p-4 shadow-soft border border-surface-container-highest flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-4 flex-wrap">
+<div class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-outline" data-icon="date_range">date_range</span>
+<input class="bg-transparent border-none p-0 text-label-md font-label-md focus:ring-0" type="date"/>
+<span class="text-outline mx-1">—</span>
+<input class="bg-transparent border-none p-0 text-label-md font-label-md focus:ring-0" type="date"/>
+</div>
+<select class="bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant text-label-md font-label-md focus:ring-secondary min-w-[160px]">
+<option>All Impact Areas</option>
+<option>Education</option>
+<option>Feeding Program</option>
+<option>Clean Water</option>
+<option>Health Clinic</option>
+</select>
+<div class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant">
+<span class="text-label-md font-label-md text-outline">Amount:</span>
+<input class="accent-secondary w-24" type="range"/>
+<span class="text-label-md font-label-md text-primary">$1k+</span>
+</div>
+</div>
+<button class="flex items-center gap-2 text-primary font-label-lg text-label-lg hover:text-secondary transition-colors px-4 py-2">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+                    More Filters
+                </button>
+</div>
+<!-- Visitors & Donations Table -->
+<div class="bg-white rounded-xl shadow-soft border border-surface-container-highest overflow-hidden">
+<div class="px-6 py-4 border-b border-surface-container-highest flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-primary">Detailed Transaction History</h3>
+<div class="flex items-center gap-2">
+<span class="text-label-md text-outline">Showing 1-10 of 1,284 visitors</span>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-container-highest">
+<th class="px-6 py-4 font-label-lg text-label-lg text-outline uppercase tracking-wider">Visitor Name</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-outline uppercase tracking-wider">Contact Email</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-outline uppercase tracking-wider">Visit Date</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-outline uppercase tracking-wider">Impact Area</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-outline uppercase tracking-wider">Total Donated</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-outline uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-outline uppercase tracking-wider">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-highest">
+<!-- Table Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary font-bold">SM</div>
+<span class="font-label-lg text-label-lg text-primary">Sarah Mitchell</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">s.mitchell@globalreach.org</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 24, 2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-label-md font-label-md">Education</span>
+</td>
+<td class="px-6 py-4 font-label-lg text-label-lg text-primary">$2,500.00</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-green-600 font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-green-500"></span> Verified
+                                    </div>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 text-outline hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">JK</div>
+<span class="font-label-lg text-label-lg text-primary">James Kwesi</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">james.k@community.net</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 22, 2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-secondary-fixed text-on-secondary-fixed-variant rounded-full text-label-md font-label-md">Feeding Program</span>
+</td>
+<td class="px-6 py-4 font-label-lg text-label-lg text-primary">$1,200.00</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-green-600 font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-green-500"></span> Verified
+                                    </div>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 text-outline hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="Visitor" class="w-9 h-9 rounded-full object-cover" data-alt="A professional headshot of a middle-aged woman with a warm, sincere smile, photographed in soft outdoor natural lighting. She has a look of kindness and dignity that fits a humanitarian context. The background is a soft-focus garden with rich greens and warm highlights, maintaining the brand's earthy and nurturing aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcTo8-E3CxoEZ4_GP4J_JEbdy2BrthrjKRLORYxNySi4lCEsSOrcB4bmjt2WVikspvOlzIcL3oBzaRgmTdOFYKtl64Ba7eHUrhoj5F3KnSry4bzx2DoOHwIpQf-9zIGxSK4YaeGZ3Q8VVVSnuQ-eVI18OmdtTNAXUdKUqTuTRDXz4rVxKSRwiNVCNebrChIf4rtIZjgGuBSZZxzxf4DIngqjQs2I0tOsGANbNZHtZKSs6w1ZKK6bLquD1jg5_OxXV3P7PHclth6Eo"/>
+<span class="font-label-lg text-label-lg text-primary">Elena Rodriguez</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">elena.rod@foundation.com</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 20, 2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded-full text-label-md font-label-md">Clean Water</span>
+</td>
+<td class="px-6 py-4 font-label-lg text-label-lg text-primary">$5,000.00</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-orange-600 font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span> Processing
+                                    </div>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 text-outline hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-outline font-bold">LW</div>
+<span class="font-label-lg text-label-lg text-primary">Liam Wilson</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">liam.w@techpulse.io</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">Oct 18, 2023</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-label-md font-label-md">Education</span>
+</td>
+<td class="px-6 py-4 font-label-lg text-label-lg text-primary">$750.00</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-green-600 font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-green-500"></span> Verified
+                                    </div>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 text-outline hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 border-t border-surface-container-highest flex items-center justify-between">
+<div class="flex gap-2">
+<button class="p-2 rounded-lg hover:bg-surface-container-low text-outline transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded-lg bg-secondary text-white text-label-md font-label-md">1</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container-low text-primary text-label-md font-label-md transition-colors">2</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container-low text-primary text-label-md font-label-md transition-colors">3</button>
+<span class="px-2 text-outline">...</span>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container-low text-primary text-label-md font-label-md transition-colors">48</button>
+<button class="p-2 rounded-lg hover:bg-surface-container-low text-outline transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-label-md text-outline">Go to page:</span>
+<input class="w-12 h-8 px-2 border border-outline-variant rounded-lg text-label-md focus:ring-secondary" type="number" value="1"/>
+</div>
+</div>
+</div>
+<!-- Impact Area Distribution (Sub-Visual) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="bg-white p-6 rounded-xl shadow-soft border border-surface-container-highest">
+<div class="flex justify-between items-start mb-4">
+<h4 class="font-label-lg text-label-lg text-primary">Education</h4>
+<span class="text-secondary font-bold">$45.2k</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full">
+<div class="h-full bg-primary w-2/3 rounded-full"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-soft border border-surface-container-highest">
+<div class="flex justify-between items-start mb-4">
+<h4 class="font-label-lg text-label-lg text-primary">Feeding Program</h4>
+<span class="text-secondary font-bold">$32.8k</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full">
+<div class="h-full bg-secondary w-1/2 rounded-full"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-soft border border-surface-container-highest">
+<div class="flex justify-between items-start mb-4">
+<h4 class="font-label-lg text-label-lg text-primary">Clean Water</h4>
+<span class="text-secondary font-bold">$18.4k</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full">
+<div class="h-full bg-on-tertiary-container w-1/3 rounded-full"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-soft border border-surface-container-highest">
+<div class="flex justify-between items-start mb-4">
+<h4 class="font-label-lg text-label-lg text-primary">Health Clinic</h4>
+<span class="text-secondary font-bold">$12.1k</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full">
+<div class="h-full bg-on-primary-container w-1/4 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                row.classList.toggle('bg-surface-container');
+            });
+        });
+
+        // Search bar animation focus
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+        });
+    </script>
+</body></html>

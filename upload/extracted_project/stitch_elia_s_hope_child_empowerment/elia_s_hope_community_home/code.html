@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Elia’s Hope Community | Empowering Children in Mwanza</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Merriweather:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hero-gradient {
+            background: linear-gradient(to right, rgba(3, 22, 50, 0.9) 0%, rgba(3, 22, 50, 0.4) 100%);
+        }
+    </style>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#7c2d1c",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#4e5f7e",
+                    "inverse-surface": "#30312e",
+                    "secondary-fixed": "#ffdcc6",
+                    "on-primary-fixed-variant": "#374765",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#964900",
+                    "on-surface-variant": "#44474d",
+                    "surface": "#fbf9f5",
+                    "surface-container-high": "#eae8e4",
+                    "on-tertiary-fixed": "#3e0500",
+                    "outline-variant": "#c5c6ce",
+                    "inverse-primary": "#b6c7eb",
+                    "tertiary-fixed-dim": "#ffb4a4",
+                    "surface-dim": "#dbdad6",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#e4e2de",
+                    "secondary-container": "#ff8928",
+                    "primary-fixed-dim": "#b6c7eb",
+                    "primary-container": "#1a2b48",
+                    "outline": "#75777e",
+                    "on-surface": "#1b1c1a",
+                    "primary-fixed": "#d7e2ff",
+                    "tertiary-fixed": "#ffdad3",
+                    "tertiary": "#340400",
+                    "on-primary-container": "#8293b5",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#561104",
+                    "surface-container": "#efeeea",
+                    "surface-container-low": "#f5f3ef",
+                    "on-background": "#1b1c1a",
+                    "surface-container-highest": "#e4e2de",
+                    "on-primary-fixed": "#081b38",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#ffb786",
+                    "primary": "#031632",
+                    "on-error-container": "#93000a",
+                    "background": "#fbf9f5",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#723600",
+                    "on-tertiary-container": "#db755f",
+                    "on-secondary-fixed": "#311300",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#f2f0ed",
+                    "on-secondary-container": "#642f00",
+                    "surface-bright": "#fbf9f5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "base": "8px",
+                    "stack-lg": "48px",
+                    "margin-desktop": "40px",
+                    "stack-sm": "12px",
+                    "stack-md": "24px",
+                    "margin-mobile": "16px",
+                    "container-max": "1200px"
+            },
+            "fontFamily": {
+                    "label-md": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Merriweather"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-md": ["Merriweather"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "26px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/95 dark:bg-surface-container-low/95 backdrop-blur-sm shadow-sm h-20">
+<div class="flex justify-between items-center max-w-container-max mx-auto px-margin-desktop h-full">
+<div class="flex items-center gap-3">
+<img alt="Elia's Hope Community Logo" class="h-12 w-12 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOxZm-5cbDHtirozO3_oNAY7Etubk_M6LC7eT6Epfxu9XO9KfrEubHETw3e6z29jhqPsEmo2o3zMV3gOcxdakISPs7wTEiZFyWb9seIGZqaUxDR4b7vyPZGWQLKGBMqjlcmNm_dxg01UN16lDaojuEMMarHF1uKwcMIMTgVe7dtQgqyy-aVRXFlYe8VOHCoOlmFvqx9tiFi1OWi57Mc-p9hatZpHyzqcNfGL6ta5TCfi2KS016PLm4XbfURVaLnIFQEM5-nhvJThk"/>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Elia’s Hope Community</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-label-lg text-label-lg text-secondary dark:text-secondary-fixed-dim font-bold border-b-2 border-secondary" href="#home">Home</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors duration-200" href="#about">About Us</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors duration-200" href="#whatwedo">What We Do</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors duration-200" href="#impact">Our Impact</a>
+<a class="bg-secondary-container text-on-secondary px-6 py-2.5 rounded-full font-label-lg text-label-lg hover:shadow-lg active:scale-95 transition-all" href="#help">How You Can Help</a>
+</div>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-primary" onclick="document.getElementById('mobile-nav').classList.toggle('hidden')">
+<span class="material-symbols-outlined text-3xl">menu</span>
+</button>
+</div>
+</nav>
+<!-- Mobile Nav Overlay -->
+<div class="hidden fixed inset-0 z-[60] bg-surface-container-highest flex flex-col items-center justify-center gap-8" id="mobile-nav">
+<button class="absolute top-6 right-6" onclick="document.getElementById('mobile-nav').classList.add('hidden')">
+<span class="material-symbols-outlined text-4xl">close</span>
+</button>
+<a class="font-headline-md text-primary" href="#home" onclick="document.getElementById('mobile-nav').classList.add('hidden')">Home</a>
+<a class="font-headline-md text-primary" href="#about" onclick="document.getElementById('mobile-nav').classList.add('hidden')">About Us</a>
+<a class="font-headline-md text-primary" href="#whatwedo" onclick="document.getElementById('mobile-nav').classList.add('hidden')">What We Do</a>
+<a class="font-headline-md text-primary" href="#impact" onclick="document.getElementById('mobile-nav').classList.add('hidden')">Our Impact</a>
+<a class="bg-secondary-container text-on-secondary px-8 py-4 rounded-full font-headline-md" href="#help" onclick="document.getElementById('mobile-nav').classList.add('hidden')">How You Can Help</a>
+</div>
+<main>
+<!-- Section 1: Hero -->
+<section class="relative h-screen flex items-center pt-20" id="home">
+<div class="absolute inset-0 z-0 overflow-hidden">
+<div class="absolute inset-0 hero-gradient z-10"></div>
+<img class="w-full h-full object-cover" data-alt="A group of smiling, joyful school children in Mwanza, Tanzania, wearing clean school uniforms and sitting together in a sun-drenched outdoor classroom. The lighting is warm, golden hour sun, emphasizing a sense of hope and educational progress. The visual style is high-fidelity documentary photography, capturing genuine human connection and community spirit with soft, shallow depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBAzdKncj4htTOefxII0b4a9Afxa2x1BZqB8FeOEarRe_vBpcH27gtyQF4fk4ZjXdVuhX-dini6lcRgyAOLW3UlY5jKt1udSz920gUIWpek06HlImN3i2bFFUm_LTPkXp8qkusP-V-hN_FcMYhqO82Y3x4Rbnq0fnk3t3lYReTUOsNLrhU_SMFqvFd76bF0XsJF4qYlt_k4iKpWFpNV6fk_Kor1_-JA5wREgy0U-ML5eJdlkA1v21s4qiZOXUlFD9jP6OnniXOEfQ"/>
+</div>
+<div class="relative z-20 max-w-container-max mx-auto px-margin-desktop text-white">
+<div class="max-w-2xl">
+<h1 class="font-display-lg text-display-lg mb-6 leading-tight">Welcome to Elia’s Hope Community</h1>
+<p class="font-body-lg text-body-lg mb-10 text-surface-variant">Giving Hope, Education, and a Brighter Future to Children in the heart of Mwanza.</p>
+<div class="flex flex-wrap gap-4">
+<a class="bg-secondary-container text-on-secondary px-8 py-4 rounded-full font-label-lg text-label-lg flex items-center gap-2 hover:bg-secondary transition-all shadow-xl" href="#help">
+                            How You Can Help
+                            <span class="material-symbols-outlined">favorite</span>
+</a>
+<a class="border-2 border-white/40 hover:border-white text-white px-8 py-4 rounded-full font-label-lg text-label-lg backdrop-blur-md transition-all" href="#about">
+                            Learn More
+                        </a>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: About Us -->
+<section class="py-stack-lg bg-surface" id="about">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid lg:grid-cols-2 gap-stack-lg items-center">
+<div class="relative">
+<div class="absolute -top-6 -left-6 w-32 h-32 bg-secondary-fixed/30 rounded-full blur-3xl"></div>
+<img class="rounded-xl shadow-2xl relative z-10 w-full aspect-[4/3] object-cover" data-alt="A portrait of the organization's founder interacting warmly with a young child in a local Mwanza village. The lighting is natural and bright, conveying sincerity and grassroots dedication. The composition focuses on the exchange of hope and dignity, reflecting a human-first humanitarian approach with earthy tones and a soft, clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJzYjJB6p5PzMKpi9oLR6frI0iZsol1MDgGuG-zPbxqqSteaQ4l2PO17AB6Rw6A6luRA7GtwhTwMch7Rc0OX5eFNztstAeucUZ-4_VH9o495aNlBbN9Fxbjt-VaevZhunjJzAKaOMS3xgwX6ZvWet_a2TOXwz9M3V0pzsF9fc6lLXfWbUlEIGtJlptGbyArErX16uW9w6eGTfLhgu0TInWgDox1JCqMmcwQ2yWug_dV-SLPHGMZ0Mhg-YKdcnGesEJYIgr8vBtA-I"/>
+<div class="absolute -bottom-8 -right-8 bg-primary p-8 rounded-xl shadow-xl hidden md:block">
+<span class="text-white font-display-lg text-display-lg block">100+</span>
+<span class="text-secondary-fixed font-label-lg">Children Supported</span>
+</div>
+</div>
+<div class="space-y-6">
+<span class="text-secondary font-label-lg uppercase tracking-widest">Our Story</span>
+<h2 class="font-headline-lg text-headline-lg text-primary">Supporting Vulnerable Children in Mwanza</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                            Elia’s Hope Community was founded with a singular, powerful mission: to restore dignity and provide a future for the most vulnerable children in Mwanza, Tanzania. 
+                        </p>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Registered as an NGO (Reg No: ooNGO/R/6243), we operate at the grassroots level, identifying children who have been overlooked and providing them with the essential pillars of life—stability, education, and nutrition. Our approach is not just about relief; it's about sustainable transformation within the community.
+                        </p>
+<div class="pt-4">
+<div class="p-4 bg-surface-container rounded-lg border-l-4 border-secondary">
+<span class="font-label-lg text-primary">Registered NGO</span>
+<p class="text-on-surface-variant">Reg No: ooNGO/R/6243 | Mwanza, Tanzania</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Vision & Mission -->
+<section class="py-stack-lg bg-primary-container text-white overflow-hidden relative">
+<div class="max-w-container-max mx-auto px-margin-desktop relative z-10">
+<div class="grid md:grid-cols-2 gap-gutter">
+<div class="bg-white/5 backdrop-blur-sm p-10 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-secondary-container text-5xl mb-6">visibility</span>
+<h3 class="font-headline-lg text-headline-lg mb-4">Our Vision</h3>
+<p class="font-body-lg text-body-lg text-on-primary-container leading-relaxed">
+                            To create a community where every child, regardless of their background, has the opportunity to thrive, learn, and grow into a leader of tomorrow, fueled by hope and supported by a loving community.
+                        </p>
+</div>
+<div class="bg-white/5 backdrop-blur-sm p-10 rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-secondary-container text-5xl mb-6">flag</span>
+<h3 class="font-headline-lg text-headline-lg mb-4">Our Mission</h3>
+<p class="font-body-lg text-body-lg text-on-primary-container leading-relaxed">
+                            To provide holistic care for vulnerable children through education, nutrition, spiritual guidance, and emotional support, while empowering families in Mwanza to build a self-sustaining future.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Atmospheric element -->
+<div class="absolute top-1/2 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] -translate-y-1/2 -translate-x-1/2"></div>
+</section>
+<!-- Section 4: Core Values -->
+<section class="py-stack-lg bg-surface-container-low">
+<div class="max-w-container-max mx-auto px-margin-desktop text-center mb-stack-md">
+<span class="text-secondary font-label-lg uppercase tracking-widest">Foundation</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-2">What We Stand For</h2>
+</div>
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="w-16 h-16 bg-tertiary-fixed rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant text-3xl">volunteer_activism</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Love</h4>
+<p class="text-on-surface-variant font-body-md">The heartbeat of everything we do for our children.</p>
+</div>
+<div class="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-on-primary-fixed-variant text-3xl">handshake</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Compassion</h4>
+<p class="text-on-surface-variant font-body-md">Acting with empathy for the struggles of the vulnerable.</p>
+</div>
+<div class="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="w-16 h-16 bg-secondary-fixed rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant text-3xl">verified</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Integrity</h4>
+<p class="text-on-surface-variant font-body-md">Absolute transparency in our impact and finances.</p>
+</div>
+<div class="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="w-16 h-16 bg-tertiary-fixed-dim rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant text-3xl">shield_person</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Child Protection</h4>
+<p class="text-on-surface-variant font-body-md">Ensuring a safe, nurturing environment for growth.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: What We Do -->
+<section class="py-stack-lg" id="whatwedo">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="flex flex-col md:flex-row justify-between items-end mb-stack-md gap-4">
+<div class="max-w-xl">
+<span class="text-secondary font-label-lg uppercase tracking-widest">Our Programs</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-2">Nurturing Growth in Five Key Areas</h2>
+</div>
+</div>
+<!-- Bento-style Grid -->
+<div class="grid grid-cols-1 md:grid-cols-6 gap-gutter">
+<div class="md:col-span-3 bg-surface-container-high p-8 rounded-2xl flex flex-col justify-between group overflow-hidden relative">
+<div>
+<span class="material-symbols-outlined text-secondary text-5xl mb-6">school</span>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-4">Education</h3>
+<p class="text-on-surface-variant font-body-md">Providing school fees, uniforms, and stationery to ensure every child has a seat in the classroom.</p>
+</div>
+<div class="mt-8">
+<img class="rounded-lg w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A bright, modern classroom scene with high-quality educational materials spread across low tables. The environment is clean and white, with pops of sunset orange accents. High-key lighting creates a positive, forward-looking atmosphere suitable for a modern humanitarian organization's website." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArKdRUzJXIpNbQreIEOHnMfBk3pMxoPRLdRwscf1xNfOF52qCRNi2zWrptioCI3IWYQwVAcUtf4RxuI-f-qqC7gW24nlnoOUJfm8E_tncf60BwV-QSI7I-2pmPpOdlWdWUBMU6nNzu-FA7OaevqrAUwcSQf_jz5WG4ALHgou21WPrY_ImlPUZ6jBG9R0qhjguGqnfxMX1YG_gPM0s5KSd6F9vdmXAZyj01wnMwEjg77xY1hNivjRzlrDjpee8rCfYhMfJ8H8Ip3qI"/>
+</div>
+</div>
+<div class="md:col-span-3 bg-primary text-white p-8 rounded-2xl flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary-container text-5xl mb-6">restaurant</span>
+<h3 class="font-headline-lg text-headline-lg mb-4">Feeding Program</h3>
+<p class="text-on-primary-container font-body-md">Daily nutritious meals for children who often go without. Good health starts with a full belly.</p>
+</div>
+<div class="mt-8 flex gap-4 overflow-hidden">
+<div class="bg-white/10 p-4 rounded-lg flex-1">
+<span class="font-bold text-headline-md">300+</span>
+<p class="text-label-md">Meals Served Weekly</p>
+</div>
+<div class="bg-white/10 p-4 rounded-lg flex-1">
+<span class="font-bold text-headline-md">Nutritious</span>
+<p class="text-label-md">Balanced Diets</p>
+</div>
+</div>
+</div>
+<div class="md:col-span-2 bg-surface-container p-8 rounded-2xl">
+<span class="material-symbols-outlined text-secondary text-4xl mb-4">home</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Child Care</h3>
+<p class="text-on-surface-variant font-body-md">Emotional and psychosocial support for orphans and vulnerable children.</p>
+</div>
+<div class="md:col-span-2 bg-surface-container p-8 rounded-2xl">
+<span class="material-symbols-outlined text-secondary text-4xl mb-4">menu_book</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Bible Study</h3>
+<p class="text-on-surface-variant font-body-md">Spiritual growth and moral foundation-building through weekly gatherings.</p>
+</div>
+<div class="md:col-span-2 bg-surface-container p-8 rounded-2xl">
+<span class="material-symbols-outlined text-secondary text-4xl mb-4">groups</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Community Support</h3>
+<p class="text-on-surface-variant font-body-md">Working with families to create stable home environments for our children.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 6: Our Impact -->
+<section class="py-stack-lg bg-surface relative" id="impact">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="bg-surface-container-low rounded-3xl p-8 md:p-16 border border-outline-variant/30 shadow-sm">
+<div class="grid lg:grid-cols-2 gap-stack-lg items-center">
+<div class="space-y-6">
+<span class="text-secondary font-label-lg uppercase tracking-widest">Momentum</span>
+<h2 class="font-headline-lg text-headline-lg text-primary">Creating Real Change</h2>
+<ul class="space-y-4">
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary-container mt-1">check_circle</span>
+<p class="font-body-md text-on-surface-variant"><strong class="text-primary">100% Transition Rate:</strong> Every child in our program has successfully moved to the next grade level.</p>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary-container mt-1">check_circle</span>
+<p class="font-body-md text-on-surface-variant"><strong class="text-primary">Reduced Malnutrition:</strong> Significant health improvements observed in children through our feeding initiative.</p>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary-container mt-1">check_circle</span>
+<p class="font-body-md text-on-surface-variant"><strong class="text-primary">Empowered Families:</strong> Parents are now more involved in their children's educational success.</p>
+</li>
+</ul>
+<!-- Fundraising Progress Placeholder -->
+<div class="mt-8 p-6 bg-white rounded-xl shadow-sm">
+<div class="flex justify-between mb-2">
+<span class="font-label-lg text-primary">2024 Education Goal</span>
+<span class="font-label-lg text-secondary">75%</span>
+</div>
+<div class="w-full h-4 bg-surface-container-high rounded-full overflow-hidden">
+<div class="w-3/4 h-full bg-secondary-container rounded-full"></div>
+</div>
+<p class="mt-2 text-label-md text-on-surface-variant">Helping another 50 children get to school this year.</p>
+</div>
+</div>
+<div class="relative">
+<img class="rounded-2xl shadow-lg w-full aspect-square object-cover" data-alt="A vibrant landscape image of a Mwanza community gathering, showing local leaders and organization staff engaged in a positive discussion with families. The setting is earthy and authentic, with a deep sense of dignity and mutual respect. Soft shadows and warm ambient lighting create an integrated, heartfelt brand feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8GHXhYRy-s7T_iHQ7GoWpIqchL8sV1uu5I0xMd16OHBhXwe3f4WxJTmGxQYH8rRS_HtRnSEpO_P68ZQdKL8BNRAJ4VtU_YFiAuhV7yaPiJG5kjfQ7P72Uh_5JEHTF8yXYBx1q2PPvDJ38b6stPW_JmGUZDhtgHYqmDvRwH8FQVfqEPk-jZizn0g3KSZCP-YkpDLU1PRCF9VIERG5KPsAglhmTmFdwPXMqqVXqcmQgR29YdZ8Q2E3xxsLmqWpen635oa9RJEnUztE"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 7: How You Can Help -->
+<section class="py-stack-lg bg-primary" id="help">
+<div class="max-w-container-max mx-auto px-margin-desktop text-center mb-stack-md">
+<span class="text-secondary-fixed font-label-lg uppercase tracking-widest">Take Action</span>
+<h2 class="font-headline-lg text-headline-lg text-white mt-2">Become Part of the Hope</h2>
+</div>
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Card 1: Donate -->
+<div class="bg-white rounded-2xl p-8 flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
+<div class="w-16 h-16 bg-secondary-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-white text-3xl">payments</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Donate</h3>
+<p class="text-on-surface-variant font-body-md mb-8">One-time or monthly gifts to keep our programs running.</p>
+<button class="mt-auto w-full py-3 border-2 border-secondary text-secondary font-bold rounded-lg group-hover:bg-secondary group-hover:text-white transition-colors">Give Now</button>
+</div>
+<!-- Card 2: Sponsor -->
+<div class="bg-white rounded-2xl p-8 flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
+<div class="w-16 h-16 bg-secondary-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-white text-3xl">child_care</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Sponsor a Child</h3>
+<p class="text-on-surface-variant font-body-md mb-8">Directly support a child's education and needs.</p>
+<button class="mt-auto w-full py-3 border-2 border-secondary text-secondary font-bold rounded-lg group-hover:bg-secondary group-hover:text-white transition-colors">Start Sponsorship</button>
+</div>
+<!-- Card 3: Volunteer -->
+<div class="bg-white rounded-2xl p-8 flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
+<div class="w-16 h-16 bg-secondary-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-white text-3xl">handshake</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Volunteer</h3>
+<p class="text-on-surface-variant font-body-md mb-8">Bring your skills to Mwanza and serve with us locally.</p>
+<button class="mt-auto w-full py-3 border-2 border-secondary text-secondary font-bold rounded-lg group-hover:bg-secondary group-hover:text-white transition-colors">Apply Now</button>
+</div>
+<!-- Card 4: Partner -->
+<div class="bg-white rounded-2xl p-8 flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
+<div class="w-16 h-16 bg-secondary-container rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-white text-3xl">corporate_fare</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Partner With Us</h3>
+<p class="text-on-surface-variant font-body-md mb-8">For organizations looking to make a massive impact.</p>
+<button class="mt-auto w-full py-3 border-2 border-secondary text-secondary font-bold rounded-lg group-hover:bg-secondary group-hover:text-white transition-colors">Contact Us</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-stack-lg bg-primary dark:bg-primary-container border-t border-outline-variant/10">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter max-w-container-max mx-auto px-margin-desktop">
+<div class="space-y-4">
+<div class="flex items-center gap-3 mb-6">
+<img alt="Logo" class="h-10 w-10 brightness-0 invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOxZm-5cbDHtirozO3_oNAY7Etubk_M6LC7eT6Epfxu9XO9KfrEubHETw3e6z29jhqPsEmo2o3zMV3gOcxdakISPs7wTEiZFyWb9seIGZqaUxDR4b7vyPZGWQLKGBMqjlcmNm_dxg01UN16lDaojuEMMarHF1uKwcMIMTgVe7dtQgqyy-aVRXFlYe8VOHCoOlmFvqx9tiFi1OWi57Mc-p9hatZpHyzqcNfGL6ta5TCfi2KS016PLm4XbfURVaLnIFQEM5-nhvJThk"/>
+<span class="font-headline-md text-headline-md text-on-primary">Elia’s Hope</span>
+</div>
+<p class="font-body-md text-on-primary/80">Empowering children in Mwanza through education, love, and community support. Every child deserves a chance.</p>
+</div>
+<div class="space-y-4">
+<h4 class="text-on-primary font-bold">Quick Links</h4>
+<ul class="space-y-2">
+<li><a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#about">About Us</a></li>
+<li><a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#whatwedo">What We Do</a></li>
+<li><a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#impact">Our Impact</a></li>
+<li><a class="text-on-primary/80 dark:text-on-primary-container/80 hover:text-secondary-fixed transition-colors" href="#help">How You Can Help</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="text-on-primary font-bold">Contact Us</h4>
+<ul class="space-y-2">
+<li class="flex items-center gap-2 text-on-primary/80">
+<span class="material-symbols-outlined text-sm">call</span>
+                        Phone: +255 754 208 639
+                    </li>
+<li class="flex items-center gap-2 text-on-primary/80">
+<span class="material-symbols-outlined text-sm">mail</span>
+                        Email: elianixsonl27@gmail.com
+                    </li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="text-on-primary font-bold">Newsletter</h4>
+<p class="text-on-primary/80 text-label-md">Join our mailing list for updates on our impact in Mwanza.</p>
+<div class="flex">
+<input class="bg-white/10 border-white/20 rounded-l-lg p-2 text-white placeholder-white/50 focus:ring-secondary-container w-full" placeholder="Your email" type="email"/>
+<button class="bg-secondary-container text-white px-4 rounded-r-lg hover:bg-secondary transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-margin-desktop mt-stack-lg pt-8 border-t border-white/10 text-center">
+<p class="font-body-md text-body-md text-on-primary/60">
+                © 2024 Elia’s Hope Community. Reg No: ooNGO/R/6243. Mwanza, Tanzania.
+            </p>
+</div>
+</footer>
+<script>
+        // Simple scroll reveal effect for cards
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.group, .bento-item').forEach(el => {
+            el.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-10');
+            observer.observe(el);
+        });
+    </script>
+</body></html>
