@@ -86,6 +86,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
                   onChange={(e) => setAmount(e.target.value)}
                   className="w-full pl-14 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors bg-white"
                   placeholder="Enter amount"
+                  min="1"
                 />
               </div>
 

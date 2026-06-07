@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 
@@ -20,16 +20,13 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
-  const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('#home')
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-
       const sections = ['#home', '#about', '#programs', '#impact']
-      for (const section of sections.reverse()) {
+      for (const section of [...sections].reverse()) {
         const el = document.querySelector(section)
         if (el) {
           const rect = el.getBoundingClientRect()

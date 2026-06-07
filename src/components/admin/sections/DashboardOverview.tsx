@@ -66,7 +66,12 @@ interface RecentActivity {
   time: string
 }
 
-export default function DashboardOverview() {
+interface DashboardOverviewProps {
+  onNavigate?: (section: string) => void
+  onClose?: () => void
+}
+
+export default function DashboardOverview({ onNavigate, onClose }: DashboardOverviewProps = {}) {
   const [stats, setStats] = useState<DashboardStats>({
     totalDonations: 0,
     childrenSupported: 0,
@@ -252,19 +257,19 @@ export default function DashboardOverview() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-orange hover:text-white hover:border-orange transition-all">
+              <Button variant="outline" onClick={() => onNavigate?.('events')} className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-orange hover:text-white hover:border-orange transition-all">
                 <Plus className="h-5 w-5" />
                 <span className="text-xs">Add Event</span>
               </Button>
-              <Button variant="outline" className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-orange hover:text-white hover:border-orange transition-all">
+              <Button variant="outline" onClick={() => onNavigate?.('donations')} className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-orange hover:text-white hover:border-orange transition-all">
                 <DollarSign className="h-5 w-5" />
                 <span className="text-xs">View Donations</span>
               </Button>
-              <Button variant="outline" className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-orange hover:text-white hover:border-orange transition-all">
+              <Button variant="outline" onClick={() => onNavigate?.('newsletter')} className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-orange hover:text-white hover:border-orange transition-all">
                 <Mail className="h-5 w-5" />
                 <span className="text-xs">Send Newsletter</span>
               </Button>
-              <Button variant="outline" className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-orange hover:text-white hover:border-orange transition-all">
+              <Button variant="outline" onClick={onClose} className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-orange hover:text-white hover:border-orange transition-all">
                 <ExternalLink className="h-5 w-5" />
                 <span className="text-xs">View Website</span>
               </Button>

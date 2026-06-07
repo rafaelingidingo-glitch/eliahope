@@ -65,6 +65,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const id = request.nextUrl.searchParams.get('id')
+    const type = request.nextUrl.searchParams.get('type') // 'campaign' or 'donation'
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
 
     const body = await request.json() as {
@@ -75,8 +76,10 @@ export async function PUT(request: NextRequest) {
       raised?: number
     }
 
-    // Check if it's a campaign update or donation update
-    if (body.title || body.goal !== undefined) {
+    // Determine update type: explicit type param takes precedence, otherwise infer from body
+    const isCampaignUpdate = type === 'campaign' || (!type && (body.title !== undefined || body.goal !== undefined))
+
+    if (isCampaignUpdate) {
       // Campaign update
       const campaign = await db.campaign.update({
         where: { id },
@@ -91,7 +94,12 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(campaign)
     }
 
-    // Donation update
+    // Donation update - validate status
+    const validStatuses = ['pending', 'processing', 'successful', 'failed', 'cancelled']
+    if (body.status && !validStatuses.includes(body.status)) {
+      return NextResponse.json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` }, { status: 400 })
+    }
+
     const donation = await db.donation.update({
       where: { id },
       data: { ...(body.status && { status: body.status }) },

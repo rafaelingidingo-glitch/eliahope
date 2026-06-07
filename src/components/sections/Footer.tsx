@@ -119,7 +119,7 @@ export default function Footer({ onDonateClick }: FooterProps) {
               <p>+255 754 208 639</p>
               <p>elianixsonl27@gmail.com</p>
               <div className="pt-2">
-                <p className="text-white/40 text-xs">Registration: ooNGO/R/6243</p>
+                <p className="text-white/40 text-xs">Registration: OONGO/R/6243</p>
               </div>
             </div>
           </div>

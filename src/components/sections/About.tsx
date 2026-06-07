@@ -30,8 +30,8 @@ export default function About() {
                 />
                 {/* Overlay stat card */}
                 <div className="absolute bottom-6 left-6 right-6 p-6 bg-[#031632]/95 backdrop-blur-sm rounded-xl text-white">
-                  <div className="text-4xl font-bold">100+</div>
-                  <div className="text-[#ff8928] font-medium">Children Empowered</div>
+                  <div className="text-4xl font-bold">500+</div>
+                  <div className="text-[#ff8928] font-medium">Children Supported</div>
                 </div>
               </div>
             </motion.div>
@@ -67,7 +67,7 @@ export default function About() {
                 </div>
                 <div>
                   <div className="text-[#031632] font-bold text-sm">Registered NGO</div>
-                  <div className="text-[#44474d] text-xs">Reg No: ooNGO/R/6243 | Mwanza, Tanzania</div>
+                  <div className="text-[#44474d] text-xs">Reg No: OONGO/R/6243 | Mwanza, Tanzania</div>
                 </div>
               </div>
             </motion.div>

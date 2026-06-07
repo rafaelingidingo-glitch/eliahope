@@ -139,7 +139,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
           <Button
             variant="ghost"
             size="icon"
-            onClick={onLogout}
+            onClick={onLogout ?? undefined}
             className="hidden lg:flex h-8 w-8 text-white/50 hover:text-white hover:bg-white/10"
             title="Logout"
           >
@@ -164,7 +164,7 @@ export default function AdminDashboard({ isOpen, onClose, onLogout }: AdminDashb
   const renderSection = () => {
     switch (activeSection) {
       case 'dashboard':
-        return <DashboardOverview />
+        return <DashboardOverview onNavigate={(section) => handleNavClick(section as SectionKey)} onClose={onClose} />
       case 'content':
         return <ContentManagement />
       case 'events':
