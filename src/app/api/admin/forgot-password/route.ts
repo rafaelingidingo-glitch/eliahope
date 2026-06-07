@@ -10,6 +10,24 @@ import {
 import { forgotPasswordSchema } from '@/lib/validations'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@eliashope.org'
+const MAX_OTP_ATTEMPTS = 5
+const OTP_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
+
+// Simple in-memory rate limiter for OTP requests (per-IP)
+const otpAttempts = new Map<string, { count: number; resetAt: number }>()
+
+function isOtpRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const entry = otpAttempts.get(ip)
+
+  if (!entry || now > entry.resetAt) {
+    otpAttempts.set(ip, { count: 1, resetAt: now + OTP_WINDOW_MS })
+    return false
+  }
+
+  entry.count++
+  return entry.count > MAX_OTP_ATTEMPTS
+}
 
 /**
  * POST /api/admin/forgot-password
@@ -26,18 +44,35 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@eliashope.org'
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as {
-      action: 'send_otp' | 'resend_otp' | 'verify_otp' | 'reset_password'
-      email: string
-      otp?: string
-      newPassword?: string
-      emailLogId?: string
+    // ─── Rate limiting for OTP send/resend actions ───
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown'
+
+    // ─── Input validation with Zod ───
+    const rawBody = await request.json()
+    const parseResult = forgotPasswordSchema.safeParse(rawBody)
+
+    if (!parseResult.success) {
+      const firstError = parseResult.error.issues[0]?.message || 'Invalid input'
+      return NextResponse.json(
+        { error: firstError },
+        { status: 400 }
+      )
     }
 
-    const { action, email } = body
+    const { action, email } = parseResult.data
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
+    }
+
+    // Apply rate limiting only to OTP send/resend actions
+    if ((action === 'send_otp' || action === 'resend_otp') && isOtpRateLimited(clientIp)) {
+      return NextResponse.json(
+        { error: 'Too many OTP requests. Please try again later.' },
+        { status: 429 }
+      )
     }
 
     const normalizedInput = email.trim().toLowerCase()
@@ -78,7 +113,7 @@ export async function POST(request: NextRequest) {
       const result = await resendAdminOtpEmail(
         ADMIN_EMAIL,
         otp,
-        body.emailLogId || ''
+        parseResult.data.emailLogId || ''
       )
 
       if (!result.success) {
@@ -106,13 +141,13 @@ export async function POST(request: NextRequest) {
     switch (action) {
       // ─── Verify OTP ──────────────────────────────────────
       case 'verify_otp': {
-        if (!body.otp) {
+        if (!parseResult.data.otp) {
           return NextResponse.json({ error: 'OTP code is required' }, { status: 400 })
         }
 
         const verification = await verifyOtp(
           adminEmail,
-          body.otp,
+          parseResult.data.otp,
           'forgot_password'
         )
 
@@ -131,24 +166,19 @@ export async function POST(request: NextRequest) {
 
       // ─── Reset Password ──────────────────────────────────
       case 'reset_password': {
-        if (!body.otp || !body.newPassword) {
+        if (!parseResult.data.otp || !parseResult.data.newPassword) {
           return NextResponse.json(
             { error: 'OTP and new password are required' },
             { status: 400 }
           )
         }
 
-        if (body.newPassword.length < 8) {
-          return NextResponse.json(
-            { error: 'Password must be at least 8 characters long' },
-            { status: 400 }
-          )
-        }
+        // Password strength already validated by Zod schema (8+ chars, letter+digit)
 
         // Verify OTP first
         const verification = await verifyOtp(
           adminEmail,
-          body.otp,
+          parseResult.data.otp,
           'forgot_password'
         )
 
@@ -160,7 +190,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Hash the new password with bcrypt before storing
-        const hashedPassword = await bcrypt.hash(body.newPassword, 12)
+        const hashedPassword = await bcrypt.hash(parseResult.data.newPassword, 12)
 
         // Update or create the admin user in DB with hashed password
         const existingUser = await db.user.findUnique({

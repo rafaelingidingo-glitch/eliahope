@@ -3,6 +3,9 @@
  * 
  * Provides authenticated fetch functions that automatically include
  * the admin Bearer token from localStorage.
+ * 
+ * On 401 (unauthorized), automatically clears the token and redirects
+ * to the login page since the session is no longer valid.
  */
 
 const TOKEN_KEY = 'admin_token'
@@ -29,6 +32,19 @@ export function getAdminHeaders(): Record<string, string> {
   return headers
 }
 
+/** Force logout — clear token and redirect to login */
+function forceLogout() {
+  try {
+    localStorage.removeItem(TOKEN_KEY)
+  } catch {
+    // Ignore storage errors
+  }
+  // Only redirect if in browser context
+  if (typeof window !== 'undefined') {
+    window.location.href = '/admin/login'
+  }
+}
+
 /** Authenticated fetch wrapper for admin API calls */
 export async function adminFetch(url: string, options: RequestInit = {}): Promise<Response> {
   const headers = getAdminHeaders()
@@ -49,11 +65,9 @@ export async function adminFetch(url: string, options: RequestInit = {}): Promis
     headers: mergedHeaders,
   })
 
-  // Only clear token on 401 (unauthorized), NOT on 403 (forbidden).
-  // A 403 might mean the user lacks permission for a specific action,
-  // not that their entire session is invalid.
+  // On 401, the token is no longer valid — force logout and redirect
   if (response.status === 401) {
-    localStorage.removeItem(TOKEN_KEY)
+    forceLogout()
   }
 
   return response

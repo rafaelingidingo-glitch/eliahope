@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { db } from '@/lib/db'
+import { loginSchema } from '@/lib/validations'
 
 /**
  * Admin Login API
@@ -18,23 +19,62 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@eliashope.org'
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ''
 const ADMIN_API_TOKEN = process.env.ADMIN_API_TOKEN || ''
 const SALT_ROUNDS = 12
+const MAX_LOGIN_ATTEMPTS = 10
+const LOGIN_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
+
+// Simple in-memory rate limiter (per-IP)
+const loginAttempts = new Map<string, { count: number; resetAt: number }>()
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const entry = loginAttempts.get(ip)
+
+  if (!entry || now > entry.resetAt) {
+    loginAttempts.set(ip, { count: 1, resetAt: now + LOGIN_WINDOW_MS })
+    return false
+  }
+
+  entry.count++
+  return entry.count > MAX_LOGIN_ATTEMPTS
+}
+
+// Periodically clean up stale entries to prevent memory leaks
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    const now = Date.now()
+    for (const [ip, entry] of loginAttempts.entries()) {
+      if (now > entry.resetAt) loginAttempts.delete(ip)
+    }
+  }, LOGIN_WINDOW_MS).unref?.()
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as {
-      email: string
-      password: string
+    // ─── Rate limiting ───
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown'
+
+    if (isRateLimited(clientIp)) {
+      return NextResponse.json(
+        { error: 'Too many login attempts. Please try again later.' },
+        { status: 429 }
+      )
     }
 
-    const { email, password } = body
+    // ─── Input validation with Zod ───
+    const rawBody = await request.json()
+    const parseResult = loginSchema.safeParse(rawBody)
 
-    if (!email || !password) {
+    if (!parseResult.success) {
+      const firstError = parseResult.error.issues[0]?.message || 'Invalid input'
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: firstError },
         { status: 400 }
       )
     }
 
+    const { email, password } = parseResult.data
     const normalizedEmail = email.trim().toLowerCase()
 
     // Must be the admin email
@@ -63,25 +103,33 @@ export async function POST(request: NextRequest) {
     }
 
     // ─── Step 2: Fallback to env var credentials (initial setup) ───
-    if (!authenticated && ADMIN_PASSWORD && password === ADMIN_PASSWORD) {
-      authenticated = true
+    // NOTE: This uses a timing-unsafe comparison, which is acceptable here
+    // because the ADMIN_PASSWORD env var is a deployment secret, not a
+    // user-chosen password. Timing attacks require many requests against a
+    // known target, and the rate limiter above mitigates this.
+    if (!authenticated && ADMIN_PASSWORD) {
+      const isEnvMatch = await bcrypt.compare(password, await bcrypt.hash(ADMIN_PASSWORD, 1))
+        .catch(() => password === ADMIN_PASSWORD) // fallback for edge cases
+      if (isEnvMatch) {
+        authenticated = true
 
-      // Hash and sync to DB so future logins use bcrypt
-      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
-      if (!dbUser) {
-        await db.user.create({
-          data: {
-            email: normalizedEmail,
-            name: 'Administrator',
-            password: hashedPassword,
-            role: 'admin',
-          },
-        })
-      } else {
-        await db.user.update({
-          where: { email: normalizedEmail },
-          data: { password: hashedPassword },
-        })
+        // Hash and sync to DB so future logins use bcrypt
+        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+        if (!dbUser) {
+          await db.user.create({
+            data: {
+              email: normalizedEmail,
+              name: 'Administrator',
+              password: hashedPassword,
+              role: 'admin',
+            },
+          })
+        } else {
+          await db.user.update({
+            where: { email: normalizedEmail },
+            data: { password: hashedPassword },
+          })
+        }
       }
     }
 
@@ -109,7 +157,7 @@ export async function POST(request: NextRequest) {
       token: ADMIN_API_TOKEN,
       user: {
         email: ADMIN_EMAIL,
-        name: 'Administrator',
+        name: dbUser?.name || 'Administrator',
       },
     })
 
@@ -125,6 +173,7 @@ export async function POST(request: NextRequest) {
     return response
   } catch (error) {
     console.error('Admin login error:', error)
+    // Avoid leaking internal error details
     return NextResponse.json(
       { error: 'Login failed. Please try again.' },
       { status: 500 }

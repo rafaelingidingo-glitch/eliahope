@@ -48,7 +48,10 @@ export default function AdminLoginPage() {
   useEffect(() => {
     const token = localStorage.getItem('admin_token')
     if (token) {
-      router.push('/admin/dashboard')
+      // Check if redirected from a protected page — go back there after login
+      const params = new URLSearchParams(window.location.search)
+      const redirectTo = params.get('from') || '/admin/dashboard'
+      router.replace(redirectTo)
     }
   }, [router])
 
@@ -84,7 +87,10 @@ export default function AdminLoginPage() {
         setEmail('')
         setPassword('')
         setError('')
-        router.push('/admin/dashboard')
+        // Check if redirected from a specific admin page
+        const params = new URLSearchParams(window.location.search)
+        const redirectTo = params.get('from') || '/admin/dashboard'
+        router.replace(redirectTo)
       } else {
         setError(data.error || t.admin.invalidCredentials)
       }
