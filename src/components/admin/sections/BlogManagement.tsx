@@ -25,6 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useToast } from '@/hooks/use-toast'
+import { adminFetch } from '@/lib/admin-api'
 import ImageUpload from '@/components/admin/ImageUpload'
 
 interface BlogPostItem {
@@ -60,7 +61,7 @@ export default function BlogManagement() {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch('/api/admin/blog')
+      const res = await adminFetch('/api/admin/blog')
       if (res.ok) setPosts(await res.json())
     } catch {
       toast({ title: 'Error', description: 'Failed to load blog posts', variant: 'destructive' })
@@ -96,9 +97,8 @@ export default function BlogManagement() {
       }
       const url = editingId ? `/api/admin/blog?id=${editingId}` : '/api/admin/blog'
       const method = editingId ? 'PUT' : 'POST'
-      const res = await fetch(url, {
+      const res = await adminFetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
       if (res.ok) {
@@ -135,7 +135,7 @@ export default function BlogManagement() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this post?')) return
     try {
-      const res = await fetch(`/api/admin/blog?id=${id}`, { method: 'DELETE' })
+      const res = await adminFetch(`/api/admin/blog?id=${id}`, { method: 'DELETE' })
       if (res.ok) {
         toast({ title: 'Success', description: 'Post deleted' })
         fetchPosts()

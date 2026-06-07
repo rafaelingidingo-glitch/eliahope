@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
+import { adminFetch } from '@/lib/admin-api'
 
 interface VolunteerItem {
   id: string
@@ -50,7 +51,7 @@ export default function VolunteerManagement() {
 
   const fetchVolunteers = async () => {
     try {
-      const res = await fetch('/api/admin/volunteers')
+      const res = await adminFetch('/api/admin/volunteers')
       if (res.ok) setVolunteers(await res.json())
     } catch {
       toast({ title: 'Error', description: 'Failed to load volunteers', variant: 'destructive' })
@@ -66,9 +67,8 @@ export default function VolunteerManagement() {
     try {
       const body: Record<string, string> = { status }
       if (programId) body.programId = programId
-      const res = await fetch(`/api/admin/volunteers?id=${id}`, {
+      const res = await adminFetch(`/api/admin/volunteers?id=${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
       if (res.ok) {

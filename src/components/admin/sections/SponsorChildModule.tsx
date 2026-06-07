@@ -33,6 +33,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Label } from '@/components/ui/label'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useToast } from '@/hooks/use-toast'
+import { adminFetch } from '@/lib/admin-api'
 import ImageUpload from '@/components/admin/ImageUpload'
 
 interface ChildItem {
@@ -79,8 +80,8 @@ export default function SponsorChildModule() {
   const fetchData = async () => {
     try {
       const [childrenRes, sponsorsRes] = await Promise.all([
-        fetch('/api/admin/children'),
-        fetch('/api/admin/sponsors'),
+        adminFetch('/api/admin/children'),
+        adminFetch('/api/admin/sponsors'),
       ])
       if (childrenRes.ok) setChildren(await childrenRes.json())
       if (sponsorsRes.ok) setSponsors(await sponsorsRes.json())
@@ -107,9 +108,8 @@ export default function SponsorChildModule() {
       }
       const url = editingChildId ? `/api/admin/children?id=${editingChildId}` : '/api/admin/children'
       const method = editingChildId ? 'PUT' : 'POST'
-      const res = await fetch(url, {
+      const res = await adminFetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
       if (res.ok) {
@@ -140,9 +140,8 @@ export default function SponsorChildModule() {
       }
       const url = editingSponsorId ? `/api/admin/sponsors?id=${editingSponsorId}` : '/api/admin/sponsors'
       const method = editingSponsorId ? 'PUT' : 'POST'
-      const res = await fetch(url, {
+      const res = await adminFetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
       if (res.ok) {
@@ -162,7 +161,7 @@ export default function SponsorChildModule() {
   const handleDeleteChild = async (id: string) => {
     if (!confirm('Are you sure you want to delete this child?')) return
     try {
-      const res = await fetch(`/api/admin/children?id=${id}`, { method: 'DELETE' })
+      const res = await adminFetch(`/api/admin/children?id=${id}`, { method: 'DELETE' })
       if (res.ok) { toast({ title: 'Success', description: 'Child deleted' }); fetchData() }
     } catch {
       toast({ title: 'Error', description: 'Failed to delete', variant: 'destructive' })
@@ -172,7 +171,7 @@ export default function SponsorChildModule() {
   const handleDeleteSponsor = async (id: string) => {
     if (!confirm('Are you sure you want to delete this sponsor?')) return
     try {
-      const res = await fetch(`/api/admin/sponsors?id=${id}`, { method: 'DELETE' })
+      const res = await adminFetch(`/api/admin/sponsors?id=${id}`, { method: 'DELETE' })
       if (res.ok) { toast({ title: 'Success', description: 'Sponsor deleted' }); fetchData() }
     } catch {
       toast({ title: 'Error', description: 'Failed to delete', variant: 'destructive' })

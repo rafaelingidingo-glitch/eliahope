@@ -27,6 +27,7 @@ import {
   LineChart,
   Line,
 } from 'recharts'
+import { adminFetch } from '@/lib/admin-api'
 
 const monthlyDonationData = [
   { month: 'Jul', amount: 1200000 },
@@ -86,7 +87,7 @@ export default function DashboardOverview({ onNavigate, onClose }: DashboardOver
   useEffect(() => {
     async function fetchStats() {
       try {
-        const res = await fetch('/api/admin/dashboard')
+        const res = await adminFetch('/api/admin/dashboard')
         if (res.ok) {
           const data = await res.json()
           setStats(data.stats)

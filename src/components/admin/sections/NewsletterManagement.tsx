@@ -18,6 +18,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
+import { adminFetch } from '@/lib/admin-api'
 
 interface SubscriberItem {
   id: string
@@ -36,7 +37,7 @@ export default function NewsletterManagement() {
 
   const fetchSubscribers = async () => {
     try {
-      const res = await fetch('/api/admin/newsletter')
+      const res = await adminFetch('/api/admin/newsletter')
       if (res.ok) setSubscribers(await res.json())
     } catch {
       toast({ title: 'Error', description: 'Failed to load subscribers', variant: 'destructive' })
@@ -68,9 +69,8 @@ export default function NewsletterManagement() {
     }
     setSending(true)
     try {
-      const res = await fetch('/api/admin/newsletter', {
+      const res = await adminFetch('/api/admin/newsletter', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(emailForm),
       })
       if (res.ok) {
@@ -89,7 +89,7 @@ export default function NewsletterManagement() {
   const handleDeleteSubscriber = async (id: string) => {
     if (!confirm('Are you sure you want to remove this subscriber?')) return
     try {
-      const res = await fetch(`/api/admin/newsletter?id=${id}`, { method: 'DELETE' })
+      const res = await adminFetch(`/api/admin/newsletter?id=${id}`, { method: 'DELETE' })
       if (res.ok) {
         toast({ title: 'Success', description: 'Subscriber removed' })
         fetchSubscribers()

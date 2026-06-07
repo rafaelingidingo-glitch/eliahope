@@ -41,6 +41,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate file type (receipts should be images or PDFs)
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf']
+    if (!allowedTypes.includes(receipt.type)) {
+      return NextResponse.json(
+        { error: 'Invalid file type. Please upload a JPEG, PNG, GIF, WebP image or PDF.' },
+        { status: 400 }
+      )
+    }
+
+    // Validate file size (max 10MB)
+    if (receipt.size > 10 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'File too large. Maximum size is 10MB.' },
+        { status: 400 }
+      )
+    }
+
     // Save receipt file
     const bytes = await receipt.arrayBuffer()
     const buffer = Buffer.from(bytes)

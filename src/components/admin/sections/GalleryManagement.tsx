@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
+import { adminFetch } from '@/lib/admin-api'
 import ImageUpload from '@/components/admin/ImageUpload'
 
 interface GalleryItem {
@@ -48,7 +49,7 @@ export default function GalleryManagement() {
 
   const fetchImages = async () => {
     try {
-      const res = await fetch('/api/admin/gallery')
+      const res = await adminFetch('/api/admin/gallery')
       if (res.ok) setImages(await res.json())
     } catch {
       toast({ title: 'Error', description: 'Failed to load gallery', variant: 'destructive' })
@@ -67,9 +68,8 @@ export default function GalleryManagement() {
     setSaving(true)
     try {
       const body = { ...form, title: form.title || null, description: form.description || null }
-      const res = await fetch('/api/admin/gallery', {
+      const res = await adminFetch('/api/admin/gallery', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
       if (res.ok) {
@@ -90,7 +90,7 @@ export default function GalleryManagement() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this image?')) return
     try {
-      const res = await fetch(`/api/admin/gallery?id=${id}`, { method: 'DELETE' })
+      const res = await adminFetch(`/api/admin/gallery?id=${id}`, { method: 'DELETE' })
       if (res.ok) {
         toast({ title: 'Success', description: 'Image deleted' })
         fetchImages()

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { verifyWebhookSignature } from '@/lib/auth'
 import type { AzamPayWebhookData } from '@/lib/azampay'
 
 /**
@@ -15,9 +16,9 @@ import type { AzamPayWebhookData } from '@/lib/azampay'
  *   "amount": "5000",
  *   "message": "Success",
  *   "utilityref": "1292-123",
- *   "operator": "Mpesa",        // or "CRDB", "NMB", "Airtel", "Tigo"
- *   "reference": "123-123",     // Our externalId / transactionId
- *   "transactionstatus": "success",  // or "failed"
+ *   "operator": "Mpesa",
+ *   "reference": "123-123",
+ *   "transactionstatus": "success",
  *   "submerchantAcc": "01723113"
  * }
  * 
@@ -26,52 +27,26 @@ import type { AzamPayWebhookData } from '@/lib/azampay'
  * - Live: https://checkout.azampay.co.tz → Settings → Callback URL
  * - URL should be: https://yourdomain.com/api/donate/azampay/callback
  * 
- * SECURITY: Set AZAMPAY_WEBHOOK_SECRET env var to enable signature verification.
- * AzamPay may include a signature header (e.g., X-Azampay-Signature) in webhook requests.
- * When configured, requests without a valid signature will be rejected.
+ * SECURITY: Set AZAMPAY_WEBHOOK_SECRET env var to enable HMAC-SHA256
+ * signature verification. When configured, requests without a valid
+ * X-Azampay-Signature header will be rejected.
  */
 
-/** Verify webhook signature if AZAMPAY_WEBHOOK_SECRET is configured */
-function verifyWebhookSignature(request: NextRequest): boolean {
-  const secret = process.env.AZAMPAY_WEBHOOK_SECRET
-  
-  // If no secret configured, skip verification (development mode)
-  if (!secret) {
-    console.warn('AZAMPAY_WEBHOOK_SECRET not set — webhook signature verification is disabled')
-    return true
-  }
-  
-  // TODO: Implement signature verification based on AzamPay's documentation
-  // when they provide the signing algorithm. Typically:
-  // 1. Read the raw request body
-  // 2. Compute HMAC-SHA256(rawBody, secret)
-  // 3. Compare with the signature header value
-  // Example:
-  // const signature = request.headers.get('X-Azampay-Signature')
-  // const computed = crypto.createHmac('sha256', secret).update(rawBody).digest('hex')
-  // return signature === computed
-  
-  const signature = request.headers.get('X-Azampay-Signature')
-  if (!signature) {
-    console.error('AzamPay webhook: Missing signature header')
-    return false
-  }
-  
-  // Placeholder: when AzamPay provides signing details, implement real verification
-  console.warn('AzamPay webhook signature verification is not fully implemented yet — accepting all signed requests')
-  return true
-}
 export async function POST(request: NextRequest) {
   try {
+    // Read raw body for signature verification
+    const rawBody = await request.text()
+
     // Verify webhook signature
-    if (!verifyWebhookSignature(request)) {
+    if (!verifyWebhookSignature(request, rawBody)) {
       return NextResponse.json(
         { error: 'Invalid webhook signature' },
         { status: 401 }
       )
     }
 
-    const body = await request.json() as AzamPayWebhookData
+    // Parse the body
+    const body = JSON.parse(rawBody) as AzamPayWebhookData
 
     console.log('AzamPay webhook received:', JSON.stringify(body))
 
@@ -120,7 +95,6 @@ export async function POST(request: NextRequest) {
         data: {
           status: 'successful',
           mpesaReceipt: utilityref || donation.mpesaReceipt,
-          // Store AzamPay transaction reference
           crdbReference: operator === 'CRDB' || operator === 'NMB'
             ? (utilityref || donation.crdbReference)
             : donation.crdbReference,

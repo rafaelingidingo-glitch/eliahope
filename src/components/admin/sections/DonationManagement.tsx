@@ -44,6 +44,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
+import { adminFetch } from '@/lib/admin-api'
 
 interface DonationItem {
   id: string
@@ -121,7 +122,7 @@ export default function DonationManagement() {
 
   const fetchDonations = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/donations')
+      const res = await adminFetch('/api/admin/donations')
       if (res.ok) {
         const data = await res.json()
         setDonations(data.donations || [])
@@ -134,7 +135,7 @@ export default function DonationManagement() {
 
   const fetchProofs = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/payment-proofs')
+      const res = await adminFetch('/api/admin/payment-proofs')
       if (res.ok) {
         const data = await res.json()
         setProofs(data.proofs || [])
@@ -146,7 +147,7 @@ export default function DonationManagement() {
 
   const fetchSettings = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/settings')
+      const res = await adminFetch('/api/admin/settings')
       if (res.ok) {
         const settings = await res.json() as { key: string; value: string }[]
         const acc = settings.find((s) => s.key === 'crdb_account_number')
@@ -259,9 +260,8 @@ export default function DonationManagement() {
   const handleCreateCampaign = async () => {
     setCampaignSaving(true)
     try {
-      const res = await fetch('/api/admin/donations', {
+      const res = await adminFetch('/api/admin/donations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: campaignTitle,
           description: campaignDesc,
@@ -288,9 +288,8 @@ export default function DonationManagement() {
     if (!editingCampaign) return
     setCampaignSaving(true)
     try {
-      const res = await fetch(`/api/admin/donations?id=${editingCampaign.id}`, {
+      const res = await adminFetch(`/api/admin/donations?id=${editingCampaign.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: campaignTitle,
           description: campaignDesc,
@@ -317,9 +316,8 @@ export default function DonationManagement() {
   const handleToggleCampaignStatus = async (campaign: CampaignItem) => {
     const newStatus = campaign.status === 'active' ? 'completed' : 'active'
     try {
-      const res = await fetch(`/api/admin/donations?id=${campaign.id}&type=campaign`, {
+      const res = await adminFetch(`/api/admin/donations?id=${campaign.id}&type=campaign`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       })
       if (!res.ok) {
@@ -336,7 +334,7 @@ export default function DonationManagement() {
   const handleDeleteCampaign = async (id: string) => {
     if (!confirm('Are you sure you want to delete this campaign?')) return
     try {
-      const res = await fetch(`/api/admin/donations?id=${id}&type=campaign`, { method: 'DELETE' })
+      const res = await adminFetch(`/api/admin/donations?id=${id}&type=campaign`, { method: 'DELETE' })
       if (!res.ok) {
         toast({ title: 'Error', description: 'Failed to delete campaign', variant: 'destructive' })
         return
@@ -366,9 +364,8 @@ export default function DonationManagement() {
   const handleProofAction = async (proofId: string, status: 'verified' | 'rejected') => {
     setProofActionLoading(true)
     try {
-      const res = await fetch('/api/admin/payment-proofs', {
+      const res = await adminFetch('/api/admin/payment-proofs', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: proofId, status, adminNotes: proofNotes || undefined }),
       })
       const data = await res.json()
@@ -395,9 +392,8 @@ export default function DonationManagement() {
   const handleSaveSettings = async () => {
     setSettingsSaving(true)
     try {
-      const res = await fetch('/api/admin/settings', {
+      const res = await adminFetch('/api/admin/settings', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           settings: {
             crdb_account_number: bankAccount,
@@ -422,7 +418,7 @@ export default function DonationManagement() {
   const handleDeleteDonation = async (id: string) => {
     if (!confirm('Are you sure you want to delete this donation?')) return
     try {
-      const res = await fetch(`/api/admin/donations?id=${id}&type=donation`, { method: 'DELETE' })
+      const res = await adminFetch(`/api/admin/donations?id=${id}&type=donation`, { method: 'DELETE' })
       if (!res.ok) {
         toast({ title: 'Error', description: 'Failed to delete donation', variant: 'destructive' })
         return
@@ -438,9 +434,8 @@ export default function DonationManagement() {
   // Update donation status
   const handleUpdateDonationStatus = async (id: string, status: string) => {
     try {
-      const res = await fetch(`/api/admin/donations?id=${id}`, {
+      const res = await adminFetch(`/api/admin/donations?id=${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       })
       if (!res.ok) {

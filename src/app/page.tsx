@@ -30,7 +30,7 @@ export default function Home() {
     setLoginOpen(true)
   }
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (token: string) => {
     setLoginOpen(false)
     setAdminOpen(true)
   }
@@ -40,6 +40,7 @@ export default function Home() {
   }
 
   const handleLogout = () => {
+    localStorage.removeItem('admin_token')
     setAdminOpen(false)
   }
 

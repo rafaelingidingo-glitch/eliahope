@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
+import { adminFetch } from '@/lib/admin-api'
 import ImageUpload from '@/components/admin/ImageUpload'
 
 interface EventItem {
@@ -64,7 +65,7 @@ export default function EventManagement() {
 
   const fetchEvents = async () => {
     try {
-      const res = await fetch('/api/admin/events')
+      const res = await adminFetch('/api/admin/events')
       if (res.ok) {
         const data = await res.json()
         setEvents(data)
@@ -84,9 +85,8 @@ export default function EventManagement() {
       const body = { ...form, image: form.image || null }
       const url = editingId ? `/api/admin/events?id=${editingId}` : '/api/admin/events'
       const method = editingId ? 'PUT' : 'POST'
-      const res = await fetch(url, {
+      const res = await adminFetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
       if (res.ok) {
@@ -121,7 +121,7 @@ export default function EventManagement() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this event?')) return
     try {
-      const res = await fetch(`/api/admin/events?id=${id}`, { method: 'DELETE' })
+      const res = await adminFetch(`/api/admin/events?id=${id}`, { method: 'DELETE' })
       if (res.ok) {
         toast({ title: 'Success', description: 'Event deleted' })
         fetchEvents()

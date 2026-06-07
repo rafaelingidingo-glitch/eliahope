@@ -203,3 +203,36 @@ Stage Summary:
 - Drag-and-drop upload with instant preview
 - Images saved to /public/uploads/{gallery|events|blog|children|images}/
 - Child profile cards now show actual photos when available
+
+---
+Task ID: payment-security-review
+Agent: Main Agent
+Task: Review and secure the payment system with env-secured APIs
+
+Work Log:
+- Reviewed all payment-related files: mpesa/route.ts, crdb/route.ts, azampay.ts, callback/route.ts, proof/route.ts, receipt/route.ts, campaigns/route.ts
+- Reviewed all admin API routes (13 total) for auth protection
+- Reviewed AdminLogin.tsx — found hardcoded credentials
+- Reviewed auth.ts — found requireAdmin() exists but was NEVER used
+- Created /api/admin/login route.ts — server-side credential validation against ADMIN_EMAIL/ADMIN_PASSWORD env vars, returns ADMIN_API_TOKEN
+- Updated .env with: ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_API_TOKEN, AZAMPAY_WEBHOOK_SECRET
+- Added requireAdmin() auth check to ALL 12 admin API routes (dashboard, settings, gallery, events, blog, donations, payment-proofs, volunteers, children, sponsors, newsletter, upload)
+- Secured POST /api/donate/campaigns (campaign creation) with requireAdmin()
+- Updated auth.ts with proper HMAC-SHA256 webhook signature verification (verifyWebhookSignature function with timing-safe comparison)
+- Updated AdminLogin.tsx — removed hardcoded credentials, now calls /api/admin/login API, stores token in localStorage
+- Created /lib/admin-api.ts — adminFetch helper that auto-includes Bearer token from localStorage, handles 401/403 token cleanup
+- Updated all 9 admin section components + ImageUpload to use adminFetch for all admin API calls (34 fetch calls replaced)
+- Added file type + size validation to payment proof upload (/api/donate/proof)
+- Updated AzamPay callback to use verifyWebhookSignature with raw body reading
+- Updated page.tsx logout handler to clear admin_token from localStorage
+- Build verified: passes with zero errors
+
+Stage Summary:
+- All admin API routes now require Bearer token auth via requireAdmin()
+- Admin credentials moved from hardcoded frontend to server-side env vars (ADMIN_EMAIL, ADMIN_PASSWORD)
+- Admin login now uses server-side API with timing-attack protection
+- Bearer token (ADMIN_API_TOKEN) sent with all admin API requests
+- AzamPay webhook HMAC-SHA256 signature verification implemented
+- Payment proof upload secured with file type + size validation
+- Campaign creation endpoint secured (was public, now admin-only)
+- .env contains all required secrets: ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_API_TOKEN, AZAMPAY_WEBHOOK_SECRET, AZAMPAY_APP_NAME, AZAMPAY_CLIENT_ID, AZAMPAY_CLIENT_SECRET, AZAMPAY_API_KEY, AZAMPAY_ENV

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/hooks/use-toast'
+import { adminFetch } from '@/lib/admin-api'
 
 interface SiteSetting {
   id: string
@@ -48,7 +49,7 @@ export default function ContentManagement() {
   useEffect(() => {
     async function fetchSettings() {
       try {
-        const res = await fetch('/api/admin/settings')
+        const res = await adminFetch('/api/admin/settings')
         if (res.ok) {
           const data: SiteSetting[] = await res.json()
           const map: Record<string, string> = {}
@@ -67,9 +68,8 @@ export default function ContentManagement() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const res = await fetch('/api/admin/settings', {
+      const res = await adminFetch('/api/admin/settings', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ settings }),
       })
       if (res.ok) {

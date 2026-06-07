@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAdmin } from '@/lib/auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authError = requireAdmin(request)
+  if (authError) return authError
+
   try {
     const events = await db.event.findMany({ orderBy: { date: 'desc' } })
     return NextResponse.json(events)
@@ -12,6 +16,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const authError = requireAdmin(request)
+  if (authError) return authError
+
   try {
     const body = await request.json() as {
       title: string
@@ -41,6 +48,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  const authError = requireAdmin(request)
+  if (authError) return authError
+
   try {
     const id = request.nextUrl.searchParams.get('id')
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
@@ -74,6 +84,9 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const authError = requireAdmin(request)
+  if (authError) return authError
+
   try {
     const id = request.nextUrl.searchParams.get('id')
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/hooks/use-toast'
+import { adminFetch } from '@/lib/admin-api'
 
 interface ImageUploadProps {
   value: string
@@ -64,7 +65,7 @@ export default function ImageUpload({
         formData.append('file', file)
         formData.append('subfolder', subfolder)
 
-        const res = await fetch('/api/admin/upload', {
+        const res = await adminFetch('/api/admin/upload', {
           method: 'POST',
           body: formData,
         })

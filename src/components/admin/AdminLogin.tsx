@@ -10,7 +10,7 @@ import { useLanguage } from '@/lib/i18n'
 interface AdminLoginProps {
   isOpen: boolean
   onClose: () => void
-  onLogin: () => void
+  onLogin: (token: string) => void
 }
 
 export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps) {
@@ -32,19 +32,29 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
 
     setIsLoading(true)
 
-    // Simulate a brief loading state
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password }),
+      })
 
-    // Check credentials
-    if (email === 'admin@eliashope.org' && password === 'EliaHope2024!') {
+      const data = await res.json()
+
+      if (res.ok && data.success && data.token) {
+        // Store the admin token in localStorage
+        localStorage.setItem('admin_token', data.token)
+        setEmail('')
+        setPassword('')
+        setError('')
+        onLogin(data.token)
+      } else {
+        setError(data.error || t.admin.invalidCredentials)
+      }
+    } catch {
+      setError('Network error. Please try again.')
+    } finally {
       setIsLoading(false)
-      setEmail('')
-      setPassword('')
-      setError('')
-      onLogin()
-    } else {
-      setIsLoading(false)
-      setError(t.admin.invalidCredentials)
     }
   }
 
