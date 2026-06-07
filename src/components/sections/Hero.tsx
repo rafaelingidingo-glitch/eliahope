@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Heart, ArrowRight, ShieldCheck, ChevronDown } from 'lucide-react'
+import { Heart, ArrowRight, ShieldCheck } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
 
 interface HeroProps {
@@ -204,23 +204,6 @@ export default function Hero({ onDonateClick }: HeroProps) {
         </div>
       </div>
 
-      {/* Scroll Down Indicator */}
-      <motion.a
-        href="#about"
-        onClick={(e) => {
-          e.preventDefault()
-          document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })
-        }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 cursor-pointer group"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        aria-label={t.hero.scrollDown}
-      >
-        <span className="text-white/60 text-xs font-medium tracking-widest uppercase group-hover:text-white/90 transition-colors">
-          {t.hero.scrollDown}
-        </span>
-        <ChevronDown className="h-5 w-5 text-white/60 group-hover:text-white/90 transition-colors" />
-      </motion.a>
     </section>
   )
 }
