@@ -94,24 +94,23 @@ export async function POST(request: NextRequest) {
 
     let authenticated = false
 
-    if (dbUser && dbUser.password) {
+    if (dbUser?.password) {
       // User exists in DB — compare using bcrypt
       const isMatch = await bcrypt.compare(password, dbUser.password)
+      console.log('[Login] DB bcrypt compare:', isMatch, 'for email:', normalizedEmail)
       if (isMatch) {
         authenticated = true
       }
     }
 
     // ─── Step 2: Fallback to env var credentials (initial setup) ───
-    // NOTE: This uses a timing-unsafe comparison, which is acceptable here
-    // because the ADMIN_PASSWORD env var is a deployment secret, not a
-    // user-chosen password. Timing attacks require many requests against a
-    // known target, and the rate limiter above mitigates this.
+    // This allows first-time login before the admin user exists in the DB.
+    // The ADMIN_PASSWORD env var is a deployment secret, not a user-chosen password.
+    // Timing attacks are mitigated by the per-IP rate limiter above.
     if (!authenticated && ADMIN_PASSWORD) {
-      const isEnvMatch = await bcrypt.compare(password, await bcrypt.hash(ADMIN_PASSWORD, 1))
-        .catch(() => password === ADMIN_PASSWORD) // fallback for edge cases
-      if (isEnvMatch) {
+      if (password === ADMIN_PASSWORD) {
         authenticated = true
+        console.log('[Login] Authenticated via ADMIN_PASSWORD env var, syncing to DB...')
 
         // Hash and sync to DB so future logins use bcrypt
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
