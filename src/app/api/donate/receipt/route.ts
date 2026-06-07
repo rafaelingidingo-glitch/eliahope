@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
+import { requireAdmin } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
+  // Require admin auth — receipts contain donor personal information
+  const authError = requireAdmin(request)
+  if (authError) return authError
+
   try {
     const donationId = request.nextUrl.searchParams.get('donationId')
 
@@ -52,7 +57,7 @@ Phone:         ${donation.donorPhone || 'N/A'}
 ────────────────────────────────────────────
 DONATION DETAILS
 ────────────────────────────────────────────
-Amount:        TZS ${Number(donation.amount).toLocaleString()}
+Amount:        TZS ${toNumber(donation.amount).toLocaleString()}
 Currency:      ${donation.currency}
 Method:        ${donation.method === 'mpesa' ? 'M-Pesa' : donation.method === 'crdb' ? 'CRDB Bank' : 'Bank Transfer'}
 Type:          ${donation.type}

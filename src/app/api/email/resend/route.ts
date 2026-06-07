@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
 import {
   resendNewsletterWelcomeEmail,
-  isResendConfigured,
+  sendDonationConfirmationEmail,
+  resendDonationConfirmationEmail,
 } from '@/lib/resend'
 
 /**
  * POST /api/email/resend
  *
  * Generic resend endpoint for various email types.
+ * Calls email functions directly — no internal HTTP fetch.
  *
  * Request body:
  *   { type: 'newsletter_welcome', to: string, name: string, emailLogId?: string }
  *   { type: 'donation_confirmation', donationId: string, emailLogId?: string }
- *     (for donation_confirmation, delegates to /api/email/donation-confirm)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -78,22 +79,57 @@ export async function POST(request: NextRequest) {
           )
         }
 
-        // Delegate to the donation-confirm endpoint
-        const confirmRes = await fetch(
-          `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/email/donation-confirm`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'resend',
-              donationId: body.donationId,
-              emailLogId: body.emailLogId,
-            }),
-          }
+        // Look up the donation directly (no internal HTTP fetch)
+        const donation = await db.donation.findUnique({
+          where: { id: body.donationId },
+          include: { campaign: { select: { title: true } } },
+        })
+
+        if (!donation) {
+          return NextResponse.json(
+            { error: 'Donation not found' },
+            { status: 404 }
+          )
+        }
+
+        if (!donation.donorEmail) {
+          return NextResponse.json(
+            { error: 'This donation has no email address on file.' },
+            { status: 400 }
+          )
+        }
+
+        const emailData = {
+          to: donation.donorEmail,
+          name: donation.donorName || 'Donor',
+          amount: toNumber(donation.amount),
+          transactionId: donation.transactionId || donation.id,
+          method: donation.method,
+          date: donation.createdAt.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+          }),
+          campaign: donation.campaign?.title || undefined,
+        }
+
+        const result = await resendDonationConfirmationEmail(
+          emailData,
+          body.emailLogId || ''
         )
 
-        const confirmData = await confirmRes.json()
-        return NextResponse.json(confirmData, { status: confirmRes.status })
+        if (!result.success) {
+          return NextResponse.json(
+            { error: 'Failed to resend donation confirmation email.' },
+            { status: 500 }
+          )
+        }
+
+        return NextResponse.json({
+          success: true,
+          message: 'Donation confirmation email resent successfully.',
+          emailLogId: result.id,
+        })
       }
 
       default:

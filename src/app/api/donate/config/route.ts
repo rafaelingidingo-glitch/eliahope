@@ -1,37 +1,33 @@
-import { NextResponse } from 'next/server'
-import { getAzamPayStatus, getMerchantBankDetails } from '@/lib/azampay'
-
 /**
  * Payment Configuration Status Endpoint
  *
  * Returns the current status of the AzamPay payment integration.
- * Useful for the admin dashboard to display whether payments are
- * in sandbox/live mode and which credentials are still missing.
- *
- * NOTE: This does NOT expose actual credential values — only
- * whether they are configured or not.
+ * Only exposes non-sensitive configuration info for the public donate page.
+ * Detailed config (callback URLs, missing vars) requires admin auth.
  */
+
+import { NextResponse } from 'next/server'
+import { getPaymentLimits, getMerchantBankDetails, shouldSimulate } from '@/lib/azampay'
+
 export async function GET() {
   try {
-    const azampayStatus = getAzamPayStatus()
+    const limits = getPaymentLimits()
     const bankDetails = getMerchantBankDetails()
 
     return NextResponse.json({
-      azampay: {
-        configured: azampayStatus.configured,
-        env: azampayStatus.env,
-        missingVars: azampayStatus.missingVars,
-        callbackUrl: azampayStatus.callbackUrl,
-        webhookSecretConfigured: !!process.env.AZAMPAY_WEBHOOK_SECRET,
+      // Public info: payment limits & available methods
+      limits,
+      simulated: shouldSimulate(),
+      methods: {
+        mpesa: true,
+        crdb: true,
+        bankTransfer: true,
+        proofUpload: true,
       },
-      limits: azampayStatus.limits,
       merchantBank: {
         bankName: bankDetails.bankName,
         accountName: bankDetails.accountName,
-        accountNumberConfigured: !!bankDetails.accountNumber,
-        accountNumberPreview: bankDetails.accountNumber
-          ? `${bankDetails.accountNumber.slice(0, 3)}****${bankDetails.accountNumber.slice(-3)}`
-          : '',
+        accountNumber: bankDetails.accountNumber,
         branch: bankDetails.branch,
       },
     })

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { timingSafeEqual } from 'crypto'
+import { timingSafeEqual, createHmac } from 'crypto'
 
 /**
  * Admin API Authentication Middleware
@@ -78,7 +78,11 @@ export function verifyWebhookSignature(
 
   // If no secret configured, skip verification (development mode)
   if (!secret) {
-    console.warn('AZAMPAY_WEBHOOK_SECRET not set — webhook signature verification is disabled')
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[SECURITY] AZAMPAY_WEBHOOK_SECRET not set in production — webhook signatures CANNOT be verified. Rejecting request.')
+      return false
+    }
+    console.warn('AZAMPAY_WEBHOOK_SECRET not set — webhook signature verification is disabled (development mode)')
     return true
   }
 
@@ -89,7 +93,6 @@ export function verifyWebhookSignature(
   }
 
   // Compute HMAC-SHA256 of the raw body with the webhook secret
-  const { createHmac } = require('crypto')
   const computed = createHmac('sha256', secret)
     .update(rawBody)
     .digest('hex')

@@ -76,7 +76,10 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({ success: true, campaign })
+    return NextResponse.json({
+      success: true,
+      campaign: { ...campaign, goal: toNumber(campaign.goal), raised: toNumber(campaign.raised) },
+    })
   } catch (error) {
     console.error('Campaign POST error:', error)
     return NextResponse.json(

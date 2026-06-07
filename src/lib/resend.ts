@@ -2,6 +2,7 @@ import { Resend } from 'resend'
 import { db, toNumber } from '@/lib/db'
 import type { Prisma } from '@prisma/client'
 import { OtpPurpose } from '@prisma/client'
+import { randomInt } from 'crypto'
 
 // ─── Configuration ──────────────────────────────────────────────
 const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
@@ -399,7 +400,6 @@ export async function sendNewsletterBroadcastEmail(
  */
 export function generateOtp(): string {
   // Use crypto.randomInt for cryptographically secure OTP generation
-  const { randomInt } = require('crypto')
   return randomInt(100000, 1000000).toString()
 }
 

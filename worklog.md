@@ -572,3 +572,30 @@ Stage Summary:
 - prisma/seed.ts uses explicit dependency-ordered deletion — works on SQLite, PostgreSQL, and MySQL without FK rollback errors
 - All IDs are dynamically captured — compatible with both UUID (PostgreSQL cuid()) and integer (MySQL auto-increment)
 - No application logic or page layouts were changed
+---
+Task ID: 2
+Agent: Main Agent
+Task: Comprehensive code review — identify and fix all syntax errors, logical bugs, security vulnerabilities, and performance issues
+
+Work Log:
+- Read all 40+ source files (API routes, lib utilities, components, pages)
+- Identified 13 critical/important issues across the codebase
+- Fixed newsletter broadcast sending to comma-joined string instead of individual emails
+- Fixed file upload path traversal vulnerability in proof route (added filename sanitization + path separator check)
+- Fixed receipt route using Number() instead of toNumber() for Prisma Decimal conversion
+- Fixed email resend route making internal HTTP fetch to localhost — replaced with direct function calls
+- Fixed campaign POST not serializing Decimal fields (goal/raised would break JSON)
+- Fixed require('crypto') in auth.ts and resend.ts — replaced with proper ES module imports
+- Fixed Math.random() in generateTransactionId — replaced with crypto.randomBytes (extracted to shared lib/payment-utils.ts)
+- Fixed webhook signature bypass in production — now rejects requests when AZAMPAY_WEBHOOK_SECRET is not set in production
+- Optimized dashboard API — batched all 7 queries into single Promise.all
+- Fixed rate limiter memory leak — added periodic cleanup when map exceeds 10K entries
+- Added auth check to receipt download endpoint (was publicly accessible, exposed donor PII)
+- Reduced config endpoint exposure — removed callback URLs, missing vars, webhook secret status from public endpoint
+- Added file extension sanitization to both upload routes (admin/upload and donate/proof)
+- Build verified passing, seed verified passing
+
+Stage Summary:
+- 13 bugs/security/performance issues fixed
+- New shared utility: src/lib/payment-utils.ts (generateTransactionId, generateBankReference)
+- All existing API contracts preserved — no breaking changes to response shapes

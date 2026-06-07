@@ -8,19 +8,8 @@ import {
   type BankProvider,
 } from '@/lib/azampay'
 import { sendDonationConfirmationEmail } from '@/lib/resend'
+import { generateTransactionId, generateBankReference } from '@/lib/payment-utils'
 import { DonationMethod, DonationStatus, DonationType } from '@prisma/client'
-
-function generateTransactionId(): string {
-  const timestamp = Date.now().toString(36).toUpperCase()
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase()
-  return `CRDB${timestamp}${random}`
-}
-
-function generateBankReference(): string {
-  const timestamp = Date.now().toString().slice(-8)
-  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
-  return `TXN${timestamp}${random}`
-}
 
 /**
  * CRDB Bank Checkout Flow:
@@ -266,7 +255,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate transaction ID and bank reference
-    const transactionId = generateTransactionId()
+    const transactionId = generateTransactionId('CRDB')
     const bankReference = generateBankReference()
 
     // Create donation record with "pending" status

@@ -13,12 +13,22 @@ export async function GET(request: NextRequest) {
       volunteers,
       events,
       newsletters,
+      recentDonations,
+      recentVolunteers,
     ] = await Promise.all([
       db.donation.aggregate({ _sum: { amount: true }, where: { status: 'successful' } }),
       db.child.count(),
       db.volunteer.count({ where: { status: 'approved' } }),
       db.event.count({ where: { status: 'upcoming' } }),
       db.newsletter.count({ where: { status: 'active' } }),
+      db.donation.findMany({
+        take: 3,
+        orderBy: { createdAt: 'desc' },
+      }),
+      db.volunteer.findMany({
+        take: 2,
+        orderBy: { createdAt: 'desc' },
+      }),
     ])
 
     const stats = {
@@ -29,16 +39,6 @@ export async function GET(request: NextRequest) {
       newsletterSubscribers: newsletters,
       websiteVisitors: 0, // Placeholder — requires analytics integration
     }
-
-    const recentDonations = await db.donation.findMany({
-      take: 3,
-      orderBy: { createdAt: 'desc' },
-    })
-
-    const recentVolunteers = await db.volunteer.findMany({
-      take: 2,
-      orderBy: { createdAt: 'desc' },
-    })
 
     const recentActivity = [
       ...recentDonations.map((d) => ({

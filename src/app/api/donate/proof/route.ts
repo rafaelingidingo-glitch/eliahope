@@ -41,6 +41,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate filename doesn't contain path separators (path traversal prevention)
+    if (receipt.name.includes('/') || receipt.name.includes('\\') || receipt.name.includes('..')) {
+      return NextResponse.json(
+        { error: 'Invalid filename' },
+        { status: 400 }
+      )
+    }
+
     // Validate file type (receipts should be images or PDFs)
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf']
     if (!allowedTypes.includes(receipt.type)) {
@@ -65,7 +73,9 @@ export async function POST(request: NextRequest) {
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'receipts')
     await mkdir(uploadsDir, { recursive: true })
 
-    const fileExt = receipt.name.split('.').pop() || 'png'
+    // Sanitize file extension — only allow alphanumeric extensions
+    const rawExt = receipt.name.split('.').pop() || 'png'
+    const fileExt = rawExt.replace(/[^a-zA-Z0-9]/g, '') || 'png'
     const fileName = `receipt_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`
     const filePath = path.join(uploadsDir, fileName)
 

@@ -74,25 +74,36 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Send to each subscriber via BCC to protect privacy
-      const recipientEmails = subscribers.map((s) => s.email)
-      const result = await sendNewsletterBroadcastEmail(
-        recipientEmails.join(','),
-        body.subject,
-        htmlContent
-      )
+      // Send to each subscriber individually to protect privacy
+      // (do NOT join emails into a single string — Resend expects individual sends)
+      let sentCount = 0
+      let lastError: string | null = null
+      for (const subscriber of subscribers) {
+        const result = await sendNewsletterBroadcastEmail(
+          subscriber.email,
+          body.subject,
+          htmlContent
+        )
+        if (result.success) {
+          sentCount++
+        } else {
+          lastError = result.error || 'Unknown error'
+          console.error(`[Newsletter] Failed to send to ${subscriber.email}:`, lastError)
+        }
+      }
 
-      if (!result.success) {
+      if (sentCount === 0) {
         return NextResponse.json(
-          { error: 'Failed to send newsletter: ' + (result.error || 'Unknown error') },
+          { error: 'Failed to send newsletter to any subscriber: ' + (lastError || 'Unknown error') },
           { status: 500 }
         )
       }
 
       return NextResponse.json({
         success: true,
-        message: `Newsletter sent to ${subscribers.length} subscriber(s)`,
-        sentCount: subscribers.length,
+        message: `Newsletter sent to ${sentCount} of ${subscribers.length} subscriber(s)`,
+        sentCount,
+        totalSubscribers: subscribers.length,
       })
     } else {
       // Send to a single recipient

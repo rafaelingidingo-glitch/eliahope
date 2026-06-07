@@ -9,13 +9,8 @@ import {
   type MnoProvider,
 } from '@/lib/azampay'
 import { sendDonationConfirmationEmail } from '@/lib/resend'
+import { generateTransactionId } from '@/lib/payment-utils'
 import { DonationMethod, DonationStatus, DonationType } from '@prisma/client'
-
-function generateTransactionId(): string {
-  const timestamp = Date.now().toString(36).toUpperCase()
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase()
-  return `EHC${timestamp}${random}`
-}
 
 function normalizePhone(phone: string): string | null {
   // Remove spaces and dashes
@@ -103,7 +98,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate transaction ID
-    const transactionId = generateTransactionId()
+    const transactionId = generateTransactionId('EHC')
 
     // Determine the MNO provider (default: mpesa)
     const mnoProvider = provider || 'mpesa'

@@ -8,6 +8,7 @@ import {
 // Simple in-memory rate limiting for email endpoints
 const emailRateLimit = new Map<string, number>()
 const RATE_LIMIT_MS = 60_000 // 1 minute between emails for the same donation
+const RATE_LIMIT_MAX_ENTRIES = 10_000 // Prevent unbounded memory growth
 
 function checkRateLimit(donationId: string): boolean {
   const now = Date.now()
@@ -15,6 +16,16 @@ function checkRateLimit(donationId: string): boolean {
   if (lastSent && now - lastSent < RATE_LIMIT_MS) {
     return false // Rate limited
   }
+
+  // Periodic cleanup: evict expired entries when map grows too large
+  if (emailRateLimit.size > RATE_LIMIT_MAX_ENTRIES) {
+    for (const [key, timestamp] of emailRateLimit) {
+      if (now - timestamp > RATE_LIMIT_MS) {
+        emailRateLimit.delete(key)
+      }
+    }
+  }
+
   emailRateLimit.set(donationId, now)
   return true
 }

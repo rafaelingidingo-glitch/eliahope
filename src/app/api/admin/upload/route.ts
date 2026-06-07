@@ -63,7 +63,9 @@ export async function POST(request: NextRequest) {
     await mkdir(uploadsDir, { recursive: true })
 
     const fileExt = file.name.split('.').pop() || 'png'
-    const fileName = `${subfolder}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+    // Sanitize extension — only allow alphanumeric characters
+    const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, '') || 'png'
+    const fileName = `${subfolder}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${sanitizedExt}`
     const filePath = path.join(uploadsDir, fileName)
 
     await writeFile(filePath, buffer)
