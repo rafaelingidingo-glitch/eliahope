@@ -2,19 +2,17 @@
 
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Calendar, ChevronDown, ChevronUp } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
 
-interface EventsProps {
-  onDonateClick?: (campaignId?: string, amount?: string) => void
-}
-
 const INITIAL_SHOW = 2
 
-export default function Events({ onDonateClick }: EventsProps) {
+export default function Events() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const { t } = useLanguage()
+  const router = useRouter()
   const [showAll, setShowAll] = useState(false)
 
   const events = [
@@ -108,7 +106,7 @@ export default function Events({ onDonateClick }: EventsProps) {
                     {event.description}
                   </p>
                   <button
-                    onClick={() => onDonateClick?.()}
+                    onClick={() => router.push('/donate')}
                     className="w-full py-4 border-2 border-[#031632] text-[#031632] font-bold rounded-[5px] hover:bg-[#031632] hover:text-white transition-all"
                   >
                     {t.events.donateNow}

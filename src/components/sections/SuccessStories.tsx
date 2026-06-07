@@ -2,16 +2,14 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight, Quote, Share2, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/lib/i18n'
 
-interface SuccessStoriesProps {
-  onDonateClick?: () => void
-}
-
-export default function SuccessStories({ onDonateClick }: SuccessStoriesProps) {
+export default function SuccessStories() {
   const { t } = useLanguage()
+  const router = useRouter()
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [current, setCurrent] = useState(0)
@@ -209,26 +207,24 @@ export default function SuccessStories({ onDonateClick }: SuccessStoriesProps) {
         </motion.div>
 
         {/* Help More Children CTA */}
-        {onDonateClick && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-10 text-center"
-          >
-            <div className="bg-white rounded-[5px] p-6 md:p-8 shadow-md border border-orange/10 inline-block max-w-lg">
-              <Heart className="h-8 w-8 text-orange mx-auto mb-3" />
-              <h3 className="text-xl font-bold text-navy mb-2">{t.stories.helpMoreChildren}</h3>
-              <p className="text-text-secondary text-sm mb-4">{t.stories.helpMoreChildrenDesc}</p>
-              <Button
-                onClick={onDonateClick}
-                className="bg-orange hover:bg-orange/90 text-white font-semibold rounded-[5px] px-8 h-12"
-              >
-                {t.stories.helpMoreChildren}
-              </Button>
-            </div>
-          </motion.div>
-        )}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-10 text-center"
+        >
+          <div className="bg-white rounded-[5px] p-6 md:p-8 shadow-md border border-orange/10 inline-block max-w-lg">
+            <Heart className="h-8 w-8 text-orange mx-auto mb-3" />
+            <h3 className="text-xl font-bold text-navy mb-2">{t.stories.helpMoreChildren}</h3>
+            <p className="text-text-secondary text-sm mb-4">{t.stories.helpMoreChildrenDesc}</p>
+            <Button
+              onClick={() => router.push('/donate')}
+              className="bg-orange hover:bg-orange/90 text-white font-semibold rounded-[5px] px-8 h-12"
+            >
+              {t.stories.helpMoreChildren}
+            </Button>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

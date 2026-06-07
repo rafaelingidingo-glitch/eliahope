@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Heart, TrendingUp, ArrowRight, Clock } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
@@ -17,18 +18,15 @@ interface Campaign {
   status: string
 }
 
-interface CampaignNotificationProps {
-  onDonateClick: (campaignId?: string, amount?: string) => void
-}
-
-const NOTIFICATION_DELAY = 3000 // 3 seconds after page load
+const NOTIFICATION_DELAY = 3000
 const SESSION_KEY = 'elia_hope_campaign_dismissed'
 const SNOOZE_KEY = 'elia_hope_campaign_snoozed_until'
-const AUTO_DISMISS_MS = 15000 // 15 seconds
-const SNOOZE_DURATION_MS = 5 * 60 * 1000 // 5 minutes
+const AUTO_DISMISS_MS = 15000
+const SNOOZE_DURATION_MS = 5 * 60 * 1000
 
-export default function CampaignNotification({ onDonateClick }: CampaignNotificationProps) {
+export default function CampaignNotification() {
   const { t } = useLanguage()
+  const router = useRouter()
   const [visible, setVisible] = useState(false)
   const [campaign, setCampaign] = useState<Campaign | null>(null)
   const [isHovered, setIsHovered] = useState(false)
@@ -100,12 +98,10 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
     }, SNOOZE_DURATION_MS)
   }, [])
 
-  // Auto-dismiss timer — pauses when hovered
   useEffect(() => {
     if (!visible) return
 
     pausedElapsedRef.current = 0
-    const startTime = Date.now()
 
     const scheduleDismiss = (remainingMs: number) => {
       dismissTimerRef.current = setTimeout(() => {
@@ -123,22 +119,16 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
     }
   }, [visible, handleDismiss])
 
-  // Handle hover pause/resume for the auto-dismiss timer
   useEffect(() => {
     if (!visible) return
 
     if (isHovered) {
-      // Pause: clear the timer and record how much time has elapsed
       if (dismissTimerRef.current) {
         clearTimeout(dismissTimerRef.current)
         dismissTimerRef.current = null
       }
-      // We track paused elapsed via a ref set on the next resume
       pausedElapsedRef.current = pausedElapsedRef.current || 0
     } else {
-      // Resume: calculate remaining time and reschedule
-      // Since we can't easily know exact elapsed, we use a simple approach:
-      // Track total paused time and adjust
       if (!dismissTimerRef.current) {
         const remainingMs = Math.max(0, AUTO_DISMISS_MS - pausedElapsedRef.current)
         if (remainingMs > 0) {
@@ -146,7 +136,6 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
             handleDismiss()
           }, remainingMs)
         } else {
-          // Use setTimeout to avoid calling setState synchronously in the effect
           setTimeout(handleDismiss, 0)
         }
       }
@@ -156,13 +145,12 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
   const handleDonate = () => {
     setVisible(false)
     if (campaign) {
-      onDonateClick(campaign.id)
+      router.push(`/donate?campaignId=${campaign.id}`)
     } else {
-      onDonateClick()
+      router.push('/donate')
     }
   }
 
-  // Don't render if no campaign or already dismissed
   if (!campaign) return null
 
   return (
@@ -273,7 +261,7 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
               </div>
             </div>
 
-            {/* Auto-dismiss progress bar — CSS animation, pauses on hover */}
+            {/* Auto-dismiss progress bar */}
             <div className="h-1 bg-gray-100 relative overflow-hidden">
               <div
                 className="h-full bg-[#ff8928]/40 origin-left"

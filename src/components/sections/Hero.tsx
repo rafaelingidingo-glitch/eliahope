@@ -1,13 +1,10 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Heart, ArrowRight, ShieldCheck } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
-
-interface HeroProps {
-  onDonateClick?: (campaignId?: string, amount?: string) => void
-}
 
 /** Quick-preset donation amounts in TZS */
 const QUICK_AMOUNTS = [
@@ -33,13 +30,23 @@ function useParticles(count: number) {
   }, [count])
 }
 
-export default function Hero({ onDonateClick }: HeroProps) {
+export default function Hero() {
+  const router = useRouter()
   const [amount, setAmount] = useState('')
   const { t } = useLanguage()
   const particles = useParticles(18)
 
   const handleQuickAmount = (value: number) => {
     setAmount(String(value))
+  }
+
+  const handleDonate = (donateAmount?: string) => {
+    const params = new URLSearchParams()
+    if (donateAmount || amount) {
+      params.set('amount', donateAmount || amount)
+    }
+    const query = params.toString()
+    router.push(query ? `/donate?${query}` : '/donate')
   }
 
   return (
@@ -121,7 +128,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <button
-                onClick={() => onDonateClick?.(undefined, amount)}
+                onClick={() => handleDonate(amount)}
                 className="bg-[#ff8928] text-white px-8 py-4 rounded-[5px] font-semibold flex items-center gap-2 hover:bg-[#964900] shadow-xl active:scale-95 transition-all"
               >
                 <Heart className="h-5 w-5" />
@@ -187,7 +194,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
 
               {/* Give Now Button */}
               <button
-                onClick={() => onDonateClick?.(undefined, amount)}
+                onClick={() => handleDonate(amount)}
                 className="w-full py-4 bg-[#031632] text-white rounded-[5px] font-semibold shadow-lg hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 <Heart className="h-5 w-5" />

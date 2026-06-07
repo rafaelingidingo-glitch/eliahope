@@ -2,18 +2,16 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { CheckCircle, Heart } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
 import AnimatedCounter from '@/components/sections/AnimatedCounter'
 
-interface ImpactStatsProps {
-  onDonateClick?: () => void
-}
-
-export default function ImpactStats({ onDonateClick }: ImpactStatsProps) {
+export default function ImpactStats() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const { t } = useLanguage()
+  const router = useRouter()
 
   const checklistItems = [
     {
@@ -155,7 +153,7 @@ export default function ImpactStats({ onDonateClick }: ImpactStatsProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 1.0 }}
-                onClick={onDonateClick}
+                onClick={() => router.push('/donate')}
                 className="mt-8 w-full bg-[#ff8928] hover:bg-[#e67a1e] text-white font-bold py-4 px-8 rounded-[5px] transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
               >
                 <Heart className="h-5 w-5" />

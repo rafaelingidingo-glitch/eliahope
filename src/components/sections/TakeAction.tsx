@@ -2,15 +2,13 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { Heart, UserCheck, HandHeart, Handshake } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
 
-interface TakeActionProps {
-  onDonateClick?: (campaignId?: string, amount?: string) => void
-}
-
-export default function TakeAction({ onDonateClick }: TakeActionProps) {
+export default function TakeAction() {
   const { t } = useLanguage()
+  const router = useRouter()
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
@@ -130,7 +128,7 @@ export default function TakeAction({ onDonateClick }: TakeActionProps) {
                 <button
                   onClick={() => {
                     if (action.href === '#donate') {
-                      onDonateClick?.()
+                      router.push('/donate')
                     } else {
                       handleScrollTo(action.href)
                     }

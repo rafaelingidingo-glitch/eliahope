@@ -56,9 +56,10 @@ export default function Gallery() {
       : galleryItems.filter((item) => item.categoryKey === activeCategory)
 
   // Reset visible count when category changes
-  useEffect(() => {
+  const handleCategoryChange = (category: CategoryKey) => {
+    setActiveCategory(category)
     setVisibleCount(INITIAL_COUNT)
-  }, [activeCategory])
+  }
 
   const visibleItems = filtered.slice(0, visibleCount)
   const hasMore = visibleCount < filtered.length
@@ -128,7 +129,7 @@ export default function Gallery() {
                 key={key}
                 variant={activeCategory === key ? 'default' : 'outline'}
                 size={isAll ? 'default' : 'sm'}
-                onClick={() => setActiveCategory(key)}
+                onClick={() => handleCategoryChange(key)}
                 className={`rounded-[5px] font-medium transition-all ${
                   isAll ? 'px-6 h-10 text-sm' : 'px-4 text-sm'
                 } ${

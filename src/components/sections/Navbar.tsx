@@ -3,16 +3,12 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Menu } from 'lucide-react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { useLanguage } from '@/lib/i18n'
 
-interface NavbarProps {
-  onAdminClick?: () => void
-  onDonateClick?: (campaignId?: string, amount?: string) => void
-}
-
-export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
+export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('#home')
   const [scrolled, setScrolled] = useState(false)
@@ -25,7 +21,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
     { label: t.nav.ourImpact, href: '#impact' },
     { label: t.nav.volunteer, href: '#take-action' },
     { label: t.nav.contact, href: '#contact' },
-    { label: t.nav.donate, href: '#donate-modal' },
+    { label: t.nav.donate, href: '/donate' },
   ]
 
   useEffect(() => {
@@ -91,31 +87,37 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
           {/* Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => {
-                  e.preventDefault()
-                  if (link.href === '#donate-modal') {
-                    onDonateClick?.()
-                  } else {
+              link.href.startsWith('#') ? (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    e.preventDefault()
                     handleNavClick(link.href)
-                  }
-                }}
-                className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
-                  activeSection === link.href
-                    ? 'text-[#ff8928] font-semibold'
-                    : 'text-[#44474d] hover:text-[#ff8928] hover:scale-105'
-                }`}
-              >
-                {link.label}
-              </a>
+                  }}
+                  className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
+                    activeSection === link.href
+                      ? 'text-[#ff8928] font-semibold'
+                      : 'text-[#44474d] hover:text-[#ff8928] hover:scale-105'
+                  }`}
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="px-4 py-2 text-sm font-medium text-[#44474d] hover:text-[#ff8928] hover:scale-105 transition-all duration-300"
+                >
+                  {link.label}
+                </Link>
+              )
             ))}
           </div>
 
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* Language Switcher - Single toggle button */}
+            {/* Language Switcher */}
             <button
               onClick={() => switchLocale(locale === 'en' ? 'sw' : 'en')}
               className="flex items-center justify-center w-10 h-10 rounded-[5px] border-2 border-[#031632]/20 text-[#031632] font-bold text-xs hover:bg-[#031632] hover:text-white hover:border-[#031632] transition-all"
@@ -123,14 +125,14 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
             >
               {locale === 'en' ? 'SW' : 'EN'}
             </button>
-            <Button
-              variant="outline"
-              onClick={onAdminClick}
-              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-[5px] px-5 transition-all"
-            >
-              {t.nav.login}
-            </Button>
-
+            <Link href="/admin/login">
+              <Button
+                variant="outline"
+                className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-[5px] px-5 transition-all"
+              >
+                {t.nav.login}
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu */}
@@ -143,13 +145,14 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
             >
               {locale === 'en' ? 'SW' : 'EN'}
             </button>
-            <Button
-              variant="outline"
-              onClick={onAdminClick}
-              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-[5px] px-4 text-xs transition-all"
-            >
-              {t.nav.login}
-            </Button>
+            <Link href="/admin/login">
+              <Button
+                variant="outline"
+                className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-[5px] px-4 text-xs transition-all"
+              >
+                {t.nav.login}
+              </Button>
+            </Link>
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-[#031632] hover:bg-[#ffdcc6]/20">
@@ -169,26 +172,32 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                   </div>
                   <div className="flex-1 py-2 overflow-y-auto">
                     {navLinks.map((link) => (
-                      <a
-                        key={link.href}
-                        href={link.href}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          if (link.href === '#donate-modal') {
-                            onDonateClick?.()
-                            setMobileOpen(false)
-                          } else {
+                      link.href.startsWith('#') ? (
+                        <a
+                          key={link.href}
+                          href={link.href}
+                          onClick={(e) => {
+                            e.preventDefault()
                             handleNavClick(link.href)
-                          }
-                        }}
-                        className={`block px-6 py-3 font-medium transition-all duration-300 ${
-                          activeSection === link.href
-                            ? 'text-[#ff8928] font-semibold'
-                            : 'text-[#44474d] hover:text-[#ff8928] hover:translate-x-1'
-                        }`}
-                      >
-                        {link.label}
-                      </a>
+                          }}
+                          className={`block px-6 py-3 font-medium transition-all duration-300 ${
+                            activeSection === link.href
+                              ? 'text-[#ff8928] font-semibold'
+                              : 'text-[#44474d] hover:text-[#ff8928] hover:translate-x-1'
+                          }`}
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={() => setMobileOpen(false)}
+                          className="block px-6 py-3 font-medium text-[#44474d] hover:text-[#ff8928] hover:translate-x-1 transition-all duration-300"
+                        >
+                          {link.label}
+                        </Link>
+                      )
                     ))}
                   </div>
                 </div>

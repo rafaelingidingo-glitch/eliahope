@@ -1,16 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Facebook, Twitter, Instagram, Youtube, ArrowUp, Mail, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useLanguage } from '@/lib/i18n'
 
-interface FooterProps {
-  onDonateClick?: (campaignId?: string, amount?: string) => void
-}
-
-export default function Footer({ onDonateClick }: FooterProps) {
+export default function Footer() {
   const { t } = useLanguage()
   const [email, setEmail] = useState('')
   const [subscribeStatus, setSubscribeStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -18,7 +15,7 @@ export default function Footer({ onDonateClick }: FooterProps) {
   const quickLinks = [
     { label: t.footer.about, href: '#about' },
     { label: t.footer.programs, href: '#programs' },
-    { label: t.footer.donate, href: '#donate' },
+    { label: t.footer.donate, href: '/donate' },
     { label: t.footer.volunteer, href: '#take-action' },
     { label: t.footer.events, href: '#events' },
     { label: t.footer.contact, href: '#contact' },
@@ -40,10 +37,6 @@ export default function Footer({ onDonateClick }: FooterProps) {
   ]
 
   const handleNavClick = (href: string) => {
-    if (href === '#donate') {
-      onDonateClick?.()
-      return
-    }
     const el = document.querySelector(href)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
@@ -113,16 +106,25 @@ export default function Footer({ onDonateClick }: FooterProps) {
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      handleNavClick(link.href)
-                    }}
-                    className="text-white/60 hover:text-orange transition-colors text-sm"
-                  >
-                    {link.label}
-                  </a>
+                  {link.href.startsWith('/') ? (
+                    <Link
+                      href={link.href}
+                      className="text-white/60 hover:text-orange transition-colors text-sm"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={link.href}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleNavClick(link.href)
+                      }}
+                      className="text-white/60 hover:text-orange transition-colors text-sm"
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
