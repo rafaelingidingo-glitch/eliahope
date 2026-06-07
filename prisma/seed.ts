@@ -133,9 +133,7 @@ async function main() {
     { key: 'contact_address', value: 'Mwanza, Tanzania' },
     { key: 'footer_text', value: "© 2024 Elia's Hope Community. All rights reserved." },
   ]
-  for (const s of siteSettingsData) {
-    await prisma.siteSetting.create({ data: s })
-  }
+  await prisma.siteSetting.createMany({ data: siteSettingsData })
   console.log('⚙️  Site settings created')
 
   // --- Stats ---
@@ -145,9 +143,7 @@ async function main() {
     { label: 'Communities Reached', value: 15, icon: 'home', order: 3 },
     { label: 'Meals Provided', value: 25000, icon: 'utensils', order: 4 },
   ]
-  for (const s of statsData) {
-    await prisma.stat.create({ data: s })
-  }
+  await prisma.stat.createMany({ data: statsData })
   console.log('📊 Stats created')
 
   // --- Programs (parent of Volunteer) ---
@@ -203,9 +199,7 @@ async function main() {
     { title: 'Christmas Celebration', description: 'Annual Christmas celebration with gifts, food, and activities for children.', date: new Date('2025-12-25'), location: "Elia's Hope Center", image: '/event-sample.png', status: 'completed' },
     { title: 'Back to School Drive', description: 'Distribution of school supplies and uniforms for the new school year.', date: new Date('2026-01-15'), location: 'Mwanza Primary School', image: '/event-sample.png', status: 'completed' },
   ]
-  for (const e of eventsData) {
-    await prisma.event.create({ data: e })
-  }
+  await prisma.event.createMany({ data: eventsData })
   console.log('📅 Events created')
 
   // --- Gallery Images ---
@@ -220,9 +214,7 @@ async function main() {
     { url: '/hero-bg.png', title: 'Our Community', category: 'community', description: 'The community we serve' },
     { url: '/about-image.png', title: 'Our Team', category: 'community', description: 'Dedicated team members' },
   ]
-  for (const g of galleryData) {
-    await prisma.galleryImage.create({ data: g })
-  }
+  await prisma.galleryImage.createMany({ data: galleryData })
   console.log('🖼️  Gallery images created')
 
   // --- Donations (child of Campaign — uses dynamic campaignId) ---
@@ -281,9 +273,7 @@ async function main() {
     { name: 'Yuki Tanaka', email: 'yuki@example.com', status: 'active' as const },
     { name: 'Priya Sharma', email: 'priya@example.com', status: 'active' as const },
   ]
-  for (const sub of subscribersData) {
-    await prisma.newsletter.create({ data: sub })
-  }
+  await prisma.newsletter.createMany({ data: subscribersData })
   console.log('📧 Newsletter subscribers created')
 
   // --- Blog Posts ---
@@ -305,9 +295,7 @@ async function main() {
     { name: 'Dr. James Mwangi', role: 'Partner Organization', content: "We are proud to partner with Elia's Hope. Their commitment to transparency and impact is truly commendable.", image: '/about-image.png', rating: 5, featured: false },
     { name: 'Maria Garcia', role: 'Sponsor', content: "Sponsoring a child through Elia's Hope has been a beautiful experience. Seeing the progress and joy in these children's lives is incredibly fulfilling.", image: '/about-image.png', rating: 5, featured: true },
   ]
-  for (const t of testimonialsData) {
-    await prisma.testimonial.create({ data: t })
-  }
+  await prisma.testimonial.createMany({ data: testimonialsData })
   console.log('⭐ Testimonials created')
 
   // --- Partners ---
@@ -318,9 +306,7 @@ async function main() {
     { name: 'Hope International', logo: '/logo.png', website: 'https://hopeint.org', category: 'international', order: 4 },
     { name: 'Local Business Association', logo: '/logo.png', category: 'local', order: 5 },
   ]
-  for (const p of partnersData) {
-    await prisma.partner.create({ data: p })
-  }
+  await prisma.partner.createMany({ data: partnersData })
   console.log('🤝 Partners created')
 
   // --- Success Stories ---
@@ -339,9 +325,7 @@ async function main() {
     { name: 'Bob Stevens', email: 'bob@example.com', message: 'How can I donate from the United States?', read: false },
     { name: 'Catherine Mushi', email: 'catherine@example.com', phone: '+255 444 555 666', message: 'I am interested in partnering with your organization for a community project.', read: false },
   ]
-  for (const m of messagesData) {
-    await prisma.contactMessage.create({ data: m })
-  }
+  await prisma.contactMessage.createMany({ data: messagesData })
   console.log('💬 Contact messages created')
 
   // ─── Summary ──────────────────────────────────────────────────────────

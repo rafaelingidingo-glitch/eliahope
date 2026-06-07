@@ -49,8 +49,10 @@ export async function adminFetch(url: string, options: RequestInit = {}): Promis
     headers: mergedHeaders,
   })
 
-  // If 401, token might be expired/invalid — clear it
-  if (response.status === 401 || response.status === 403) {
+  // Only clear token on 401 (unauthorized), NOT on 403 (forbidden).
+  // A 403 might mean the user lacks permission for a specific action,
+  // not that their entire session is invalid.
+  if (response.status === 401) {
     localStorage.removeItem(TOKEN_KEY)
   }
 

@@ -42,17 +42,22 @@ export function requireAdmin(request: NextRequest): NextResponse | null {
   const token = authHeader.substring(7) // Remove "Bearer " prefix
 
   // Timing-safe comparison to prevent timing attacks
+  // Always compare against a buffer of the same length to avoid length-based leaks.
+  // If lengths differ, we still do the comparison against a dummy buffer of equal
+  // length, then check the result — this avoids revealing token length via timing.
   const tokenBuf = Buffer.from(token)
   const adminBuf = Buffer.from(ADMIN_TOKEN)
-  
+
+  let tokensMatch: boolean
   if (tokenBuf.length !== adminBuf.length) {
-    return NextResponse.json(
-      { error: 'Forbidden. Invalid admin token.' },
-      { status: 403 }
-    )
+    // Compare against a self-buffer to consume the same CPU time, then reject
+    timingSafeEqual(tokenBuf, tokenBuf)
+    tokensMatch = false
+  } else {
+    tokensMatch = timingSafeEqual(tokenBuf, adminBuf)
   }
 
-  if (!timingSafeEqual(tokenBuf, adminBuf)) {
+  if (!tokensMatch) {
     return NextResponse.json(
       { error: 'Forbidden. Invalid admin token.' },
       { status: 403 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
+import { randomBytes } from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
     // Sanitize file extension — only allow alphanumeric extensions
     const rawExt = receipt.name.split('.').pop() || 'png'
     const fileExt = rawExt.replace(/[^a-zA-Z0-9]/g, '') || 'png'
-    const fileName = `receipt_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+    const fileName = `receipt_${Date.now()}_${randomBytes(3).toString('hex')}.${fileExt}`
     const filePath = path.join(uploadsDir, fileName)
 
     await writeFile(filePath, buffer)

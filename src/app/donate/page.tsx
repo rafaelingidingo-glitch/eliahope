@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -94,18 +94,7 @@ function DonatePageContent() {
   const [resendingEmail, setResendingEmail] = useState(false)
   const [resendEmailMessage, setResendEmailMessage] = useState('')
 
-  const fetchCampaigns = useCallback(async () => {
-    try {
-      const res = await fetch('/api/donate/campaigns')
-      if (res.ok) {
-        const data = await res.json()
-        setCampaigns(data.campaigns || [])
-      }
-    } catch {
-      // Silent fail
-    }
-  }, [])
-
+  // Fetch campaigns on mount (single source of truth)
   useEffect(() => {
     let cancelled = false
     async function loadCampaigns() {
@@ -116,7 +105,7 @@ function DonatePageContent() {
           setCampaigns(data.campaigns || [])
         }
       } catch {
-        // Silent fail
+        // Silent fail — campaigns are optional
       }
     }
     loadCampaigns()
@@ -125,11 +114,18 @@ function DonatePageContent() {
 
   // Poll for payment status (both M-Pesa and CRDB)
   useEffect(() => {
-    if (!polling || !transactionId) return
+    if (!polling) return
+
+    // Use the correct transaction ID based on the active payment method
+    const activeTransactionId = pollingMethod === 'mpesa'
+      ? transactionId
+      : (activeTab === 'crdb' ? crdbTransactionId : transactionId)
+
+    if (!activeTransactionId) return
 
     const apiEndpoint = pollingMethod === 'mpesa'
-      ? `/api/donate/mpesa?transactionId=${transactionId}`
-      : `/api/donate/crdb?transactionId=${transactionId}`
+      ? `/api/donate/mpesa?transactionId=${activeTransactionId}`
+      : `/api/donate/crdb?transactionId=${activeTransactionId}`
 
     const interval = setInterval(async () => {
       try {
@@ -143,7 +139,6 @@ function DonatePageContent() {
               setCrdbDonationState('success')
             }
             setPolling(false)
-            fetchCampaigns()
           } else if (data.status === 'failed') {
             if (pollingMethod === 'mpesa') {
               setDonationState('error')
@@ -158,10 +153,10 @@ function DonatePageContent() {
       } catch {
         // Continue polling
       }
-    }, 2000)
+    }, 3000) // Poll every 3 seconds to reduce server load
 
     return () => clearInterval(interval)
-  }, [polling, transactionId, pollingMethod, fetchCampaigns, t.donation.mpesaFailed, t.donation.crdbFailed])
+  }, [polling, transactionId, crdbTransactionId, pollingMethod, activeTab, t.donation.mpesaFailed, t.donation.crdbFailed])
 
   // Stop polling after 60 seconds
   useEffect(() => {

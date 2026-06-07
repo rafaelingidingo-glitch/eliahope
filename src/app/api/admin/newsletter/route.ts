@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       const firstError = validation.error.issues[0]?.message || 'Invalid input'
       return errorResponse(firstError, 400)
     }
-    const { subject, to } = validation.data
+    const { subject, to, body: validatedBody } = validation.data
 
     // Sanitize HTML: escape special characters to prevent XSS
     const escapeHtml = (str: string) =>
@@ -54,14 +54,14 @@ export async function POST(request: NextRequest) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;')
 
-    // Build the HTML content from plain text body with escaped content
-    const htmlContent = body.body
+    // Build the HTML content from validated plain text body with escaped content
+    const htmlContent = validatedBody
       .split('\n')
       .map((line: string) => `<p style="margin:0 0 12px 0;">${escapeHtml(line) || '<br/>'}</p>`)
       .join('')
 
-    if (body.to === 'all') {
-      // Broadcast to all active subscribers
+    if (to === 'all') {
+      // Broadcast to all active subscribers (validated by Zod)
       const subscribers = await db.newsletter.findMany({
         where: { status: 'active' },
         select: { email: true },
@@ -75,20 +75,29 @@ export async function POST(request: NextRequest) {
       }
 
       // Send to each subscriber individually to protect privacy
-      // (do NOT join emails into a single string — Resend expects individual sends)
+      // Use Promise.allSettled with concurrency control for reliability
+      const BATCH_SIZE = 5
       let sentCount = 0
       let lastError: string | null = null
-      for (const subscriber of subscribers) {
-        const result = await sendNewsletterBroadcastEmail(
-          subscriber.email,
-          body.subject,
-          htmlContent
+
+      for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
+        const batch = subscribers.slice(i, i + BATCH_SIZE)
+        const results = await Promise.allSettled(
+          batch.map((subscriber) =>
+            sendNewsletterBroadcastEmail(subscriber.email, subject, htmlContent)
+          )
         )
-        if (result.success) {
-          sentCount++
-        } else {
-          lastError = result.error || 'Unknown error'
-          console.error(`[Newsletter] Failed to send to ${subscriber.email}:`, lastError)
+
+        for (const result of results) {
+          if (result.status === 'fulfilled' && result.value.success) {
+            sentCount++
+          } else {
+            lastError =
+              result.status === 'fulfilled'
+                ? result.value.error || 'Unknown error'
+                : result.reason?.message || 'Unknown error'
+            console.error(`[Newsletter] Failed to send:`, lastError)
+          }
         }
       }
 
@@ -106,18 +115,10 @@ export async function POST(request: NextRequest) {
         totalSubscribers: subscribers.length,
       })
     } else {
-      // Send to a single recipient
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(body.to)) {
-        return NextResponse.json(
-          { error: 'Invalid email address' },
-          { status: 400 }
-        )
-      }
-
+      // Send to a single recipient (validated by Zod)
       const result = await sendNewsletterBroadcastEmail(
-        body.to,
-        body.subject,
+        to,
+        subject,
         htmlContent
       )
 
