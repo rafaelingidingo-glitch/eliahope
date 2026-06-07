@@ -40,6 +40,8 @@ interface Campaign {
 
 type DonationState = 'idle' | 'loading' | 'success' | 'error'
 type PaymentTab = 'mpesa' | 'crdb'
+type MnoProviderValue = 'mpesa' | 'airtel' | 'tigo' | 'halopesa' | 'azampesa'
+type CrdbStep = 'form' | 'otp'
 
 interface DonationModalProps {
   isOpen: boolean
@@ -61,6 +63,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
   const [mpesaPhone, setMpesaPhone] = useState('')
   const [mpesaEmail, setMpesaEmail] = useState('')
   const [mpesaAmount, setMpesaAmount] = useState('')
+  const [mnoProvider, setMnoProvider] = useState<MnoProviderValue>('mpesa')
   const [donationState, setDonationState] = useState<DonationState>('idle')
   const [transactionId, setTransactionId] = useState('')
   const [donationId, setDonationId] = useState('')
@@ -78,6 +81,9 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
   const [crdbDonationId, setCrdbDonationId] = useState('')
   const [crdbErrorMessage, setCrdbErrorMessage] = useState('')
   const [crdbBankReference, setCrdbBankReference] = useState('')
+  const [crdbStep, setCrdbStep] = useState<CrdbStep>('form')
+  const [crdbOtp, setCrdbOtp] = useState('')
+  const [crdbOtpConfirming, setCrdbOtpConfirming] = useState(false)
 
   // Campaigns
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
@@ -185,6 +191,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     setMpesaPhone('')
     setMpesaEmail('')
     setMpesaAmount('')
+    setMnoProvider('mpesa')
     // CRDB
     setCrdbDonationState('idle')
     setCrdbTransactionId('')
@@ -197,6 +204,9 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     setCrdbAccountNumber('')
     setCrdbAmount('')
     setCrdbBankReference('')
+    setCrdbStep('form')
+    setCrdbOtp('')
+    setCrdbOtpConfirming(false)
     // Common
     setPolling(false)
     setSelectedCampaign('')
@@ -224,6 +234,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
           name: mpesaName || undefined,
           email: mpesaEmail || undefined,
           campaignId: selectedCampaign || undefined,
+          provider: mnoProvider,
         }),
       })
 
@@ -278,9 +289,56 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
       setCrdbDonationId(data.donationId)
       setCrdbBankReference(data.bankReference)
       setTransactionId(data.transactionId)
+
+      // If OTP is required, show OTP step instead of polling
+      if (data.otpRequired) {
+        setCrdbDonationState('idle')
+        setCrdbStep('otp')
+      } else {
+        // No OTP required — start polling for status
+        setPollingMethod('crdb')
+        setPolling(true)
+      }
+    } catch {
+      setCrdbDonationState('error')
+      setCrdbErrorMessage(t.donation.networkError)
+    }
+  }
+
+  // CRDB OTP confirmation
+  const handleCrdbOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!crdbOtp || crdbOtp.length < 4) return
+
+    setCrdbOtpConfirming(true)
+    setCrdbErrorMessage('')
+
+    try {
+      const res = await fetch('/api/donate/crdb', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          donationId: crdbDonationId,
+          otp: crdbOtp,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setCrdbOtpConfirming(false)
+        setCrdbDonationState('error')
+        setCrdbErrorMessage(data.error || 'OTP verification failed')
+        return
+      }
+
+      // OTP confirmed — start polling for final status
+      setCrdbOtpConfirming(false)
+      setCrdbDonationState('loading')
       setPollingMethod('crdb')
       setPolling(true)
     } catch {
+      setCrdbOtpConfirming(false)
       setCrdbDonationState('error')
       setCrdbErrorMessage(t.donation.networkError)
     }
@@ -471,7 +529,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                 {/* Payment Tabs */}
                 <div className="flex mb-5 border-2 border-[#c5c6ce] rounded-xl overflow-hidden">
                   <button
-                    onClick={() => setActiveTab('mpesa')}
+                    onClick={() => { setActiveTab('mpesa'); setCrdbStep('form') }}
                     className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-colors ${
                       activeTab === 'mpesa'
                         ? 'bg-green-600 text-white'
@@ -479,7 +537,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     }`}
                   >
                     <Phone className="h-4 w-4" />
-                    {t.donation.mpesa}
+                    {t.donation.mobileMoney}
                   </button>
                   <button
                     onClick={() => setActiveTab('crdb')}
@@ -494,9 +552,38 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                   </button>
                 </div>
 
-                {/* ===== M-Pesa Tab ===== */}
+                {/* ===== M-Pesa / Mobile Money Tab ===== */}
                 {activeTab === 'mpesa' && (
                   <form onSubmit={handleMpesaSubmit} className="space-y-4">
+                    {/* Mobile Money Provider Selector */}
+                    <div>
+                      <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
+                        {t.donation.selectProvider} <span className="text-red-500">*</span>
+                      </label>
+                      <div className="grid grid-cols-5 gap-1.5">
+                        {([
+                          { value: 'mpesa' as MnoProviderValue, label: 'M-Pesa', color: 'bg-green-600 border-green-600 text-white' },
+                          { value: 'airtel' as MnoProviderValue, label: 'Airtel', color: 'bg-red-600 border-red-600 text-white' },
+                          { value: 'tigo' as MnoProviderValue, label: 'Tigo', color: 'bg-blue-600 border-blue-600 text-white' },
+                          { value: 'halopesa' as MnoProviderValue, label: 'Halo', color: 'bg-orange-500 border-orange-500 text-white' },
+                          { value: 'azampesa' as MnoProviderValue, label: 'Azam', color: 'bg-purple-600 border-purple-600 text-white' },
+                        ]).map((p) => (
+                          <button
+                            key={p.value}
+                            type="button"
+                            onClick={() => setMnoProvider(p.value)}
+                            disabled={donationState === 'loading'}
+                            className={`py-2 px-1 text-xs font-bold rounded-lg border-2 transition-all ${
+                              mnoProvider === p.value
+                                ? p.color
+                                : 'border-[#c5c6ce] text-[#44474d] bg-white hover:border-[#ff8928]'
+                            }`}
+                          >
+                            {p.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                     {/* Full Name - Optional */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
@@ -618,12 +705,12 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                       {donationState === 'loading' ? (
                         <>
                           <Loader2 className="h-5 w-5 animate-spin" />
-                          {t.donation.sendingPaymentRequest}
+                          {t.donation.sendingStkPush}
                         </>
                       ) : (
                         <>
                           <CreditCard className="h-5 w-5" />
-                          {t.donation.donateViaMpesa}
+                          {t.donation.donateViaMobile}
                         </>
                       )}
                     </button>
@@ -651,6 +738,98 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
 
                 {/* ===== CRDB Bank Tab ===== */}
                 {activeTab === 'crdb' && (
+                  crdbStep === 'otp' ? (
+                    /* ---- OTP Confirmation Step ---- */
+                    <form onSubmit={handleCrdbOtpSubmit} className="space-y-4">
+                      <div className="text-center py-2">
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: 'spring', stiffness: 200 }}
+                          className="w-14 h-14 bg-[#031632]/10 rounded-full flex items-center justify-center mx-auto mb-3"
+                        >
+                          <Shield className="h-7 w-7 text-[#031632]" />
+                        </motion.div>
+                        <h3 className="text-lg font-bold text-[#031632] mb-1">
+                          {t.donation.otpTitle}
+                        </h3>
+                        <p className="text-[#44474d] text-sm">
+                          {t.donation.otpDescription}
+                        </p>
+                      </div>
+
+                      {/* Transaction summary */}
+                      <div className="bg-[#f5f3ef] rounded-xl p-3 space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-[#44474d]">{t.donation.amount}</span>
+                          <span className="text-[#031632] font-semibold">TZS {parseFloat(crdbAmount).toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-[#44474d]">{t.donation.bankRef}</span>
+                          <span className="text-[#031632] font-semibold font-mono text-xs">{crdbBankReference}</span>
+                        </div>
+                      </div>
+
+                      {/* OTP Input */}
+                      <div>
+                        <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
+                          {t.donation.otpCode} <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={crdbOtp}
+                          onChange={(e) => setCrdbOtp(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+                          className="w-full px-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-center font-mono text-2xl tracking-[0.5em] focus:outline-none focus:border-[#ff8928] transition-colors"
+                          placeholder="------"
+                          maxLength={6}
+                          required
+                          disabled={crdbOtpConfirming}
+                          autoFocus
+                        />
+                      </div>
+
+                      {/* Error Message */}
+                      {crdbErrorMessage && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl"
+                        >
+                          <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                          <p className="text-red-700 text-sm font-medium">{crdbErrorMessage}</p>
+                        </motion.div>
+                      )}
+
+                      {/* Confirm Button */}
+                      <button
+                        type="submit"
+                        disabled={crdbOtpConfirming || crdbOtp.length < 4}
+                        className="w-full py-3.5 bg-[#031632] text-white rounded-none shadow-xl font-semibold text-base hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                      >
+                        {crdbOtpConfirming ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            {t.donation.confirmingPayment}
+                          </>
+                        ) : (
+                          <>
+                            <Shield className="h-5 w-5" />
+                            {t.donation.confirmPayment}
+                          </>
+                        )}
+                      </button>
+
+                      {/* Back to form */}
+                      <button
+                        type="button"
+                        onClick={() => { setCrdbStep('form'); setCrdbOtp(''); setCrdbErrorMessage('') }}
+                        className="w-full py-2.5 text-[#44474d] text-sm font-semibold hover:text-[#031632] transition-colors"
+                      >
+                        &larr; {t.donation.tryAgain}
+                      </button>
+                    </form>
+                  ) : (
+                  /* ---- CRDB Bank Form (Step 1) ---- */
                   <form onSubmit={handleCrdbSubmit} className="space-y-4">
                     {/* Secure badge */}
                     <div className="flex items-center gap-2 p-3 bg-[#031632]/5 rounded-xl mb-1">
@@ -862,6 +1041,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                       </p>
                     </div>
                   </form>
+                  )
                 )}
 
                 {/* Campaign progress at bottom */}

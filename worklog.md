@@ -236,3 +236,65 @@ Stage Summary:
 - Payment proof upload secured with file type + size validation
 - Campaign creation endpoint secured (was public, now admin-only)
 - .env contains all required secrets: ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_API_TOKEN, AZAMPAY_WEBHOOK_SECRET, AZAMPAY_APP_NAME, AZAMPAY_CLIENT_ID, AZAMPAY_CLIENT_SECRET, AZAMPAY_API_KEY, AZAMPAY_ENV
+
+---
+Task ID: payment-system-enhancement
+Agent: Main Agent
+Task: Enhance payment system for production-ready AzamPay integration with env-secured APIs
+
+Work Log:
+- Reviewed all 7 payment-related files: mpesa/route.ts, crdb/route.ts, azampay.ts, callback/route.ts, proof/route.ts, receipt/route.ts, campaigns/route.ts
+- Created comprehensive .env.example with all AzamPay credential documentation and setup steps
+- Enhanced /src/lib/azampay.ts with:
+  - Typed MnoProvider and BankProvider types (exported)
+  - getAzamPayStatus() for admin dashboard config display
+  - getPaymentLimits() for min/max donation validation
+  - getCallbackUrl() for webhook URL generation
+  - verifyPayment() for cross-checking with AzamPay transaction status API
+  - getMerchantBankDetails() for displaying NGO's bank details
+  - getSupportedMnoProviders() and getSupportedBankProviders() helper functions
+  - getMnoDisplayName() for provider label display
+  - invalidateToken() for auth error recovery
+  - Enhanced logging with [AzamPay] prefix throughout
+- Enhanced /api/donate/mpesa/route.ts with:
+  - Payment amount limits (DONATION_MIN_AMOUNT, DONATION_MAX_AMOUNT)
+  - MNO provider selection (mpesa, airtel, tigo, halopesa, azampesa)
+  - Improved error handling with donation status update on failure
+  - Detailed logging with [M-Pesa] prefix
+  - Provider field in response
+- Enhanced /api/donate/crdb/route.ts with:
+  - Full OTP flow: Step 1 (initiate with otp="") → Step 2 (confirm with otp=XXXX)
+  - Payment amount limits
+  - Bank provider selection (crdb, nmb)
+  - Idempotency check (skip if already processed)
+  - Improved error handling
+  - Detailed logging with [CRDB] prefix
+- Enhanced /api/donate/azampay/callback/route.ts with:
+  - Amount mismatch detection (prevents amount manipulation)
+  - Cross-verification with AzamPay API for high-value payments (>= 500,000 TZS)
+  - Support for externalId as fallback reference
+  - Enhanced logging with [AzamPay Webhook] prefix
+  - Better MNO operator detection for receipt/reference assignment
+- Created /api/donate/config/route.ts — payment config status endpoint (for admin dashboard)
+- Updated DonationModal.tsx with:
+  - Mobile Money provider selector (M-Pesa, Airtel, Tigo, Halopesa, AzamPesa)
+  - CRDB OTP step flow (form → OTP input → polling)
+  - Tab label changed from "M-Pesa" to "Mobile Money"
+  - Provider selection sent in M-Pesa API request
+  - CRDB two-step flow: initial checkout → OTP confirmation → polling
+- Added new i18n keys to both en.ts and sw.ts:
+  - selectProvider, mpesaProvider, airtelProvider, tigoProvider, halopesaProvider, azampesaProvider
+  - donateViaMobile, sendingStkPush, checkPhone
+  - otpTitle, otpDescription, otpCode, otpPlaceholder
+  - confirmPayment, confirmingPayment, resendOtp, otpSent, mobileMoney
+- Updated .env with new variables: DONATION_MIN_AMOUNT, DONATION_MAX_AMOUNT, MERCHANT_BANK_NAME, MERCHANT_BANK_ACCOUNT_NAME, MERCHANT_BANK_ACCOUNT_NUMBER, MERCHANT_BANK_BRANCH, NEXT_PUBLIC_SITE_URL
+- Build verified: passes with zero errors
+
+Stage Summary:
+- Payment system is production-ready: all API credentials secured via environment variables
+- AzamPay integration supports: M-Pesa, Airtel Money, Tigo Pesa, Halopesa, AzamPesa (MNO) + CRDB, NMB (Bank)
+- CRDB Bank checkout supports OTP flow for secure authorization
+- Webhook cross-verifies high-value payments with AzamPay API
+- Amount manipulation detection prevents tampering
+- Payment config status endpoint for admin dashboard monitoring
+- To go live: fill in AZAMPAY_APP_NAME, AZAMPAY_CLIENT_ID, AZAMPAY_CLIENT_SECRET, AZAMPAY_API_KEY in .env, set AZAMPAY_ENV=live

@@ -4,6 +4,8 @@ import {
   initiateBankCheckout,
   shouldSimulate,
   mapBankProvider,
+  getPaymentLimits,
+  type BankProvider,
 } from '@/lib/azampay'
 
 function generateTransactionId(): string {
@@ -18,6 +20,20 @@ function generateBankReference(): string {
   return `TXN${timestamp}${random}`
 }
 
+/**
+ * CRDB Bank Checkout Flow:
+ *
+ * Step 1: Donor submits account details (POST with otp="")
+ *   → AzamPay initiates checkout and sends OTP to donor's phone
+ *   → Response includes { otpRequired: true }
+ *
+ * Step 2: Doner submits OTP (POST with otp="123456")
+ *   → AzamPay confirms the payment
+ *   → Final status comes via webhook callback
+ *
+ * Step 3: Webhook callback updates donation status
+ */
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as {
@@ -28,12 +44,156 @@ export async function POST(request: NextRequest) {
       email?: string
       phone?: string
       campaignId?: string
+      otp?: string       // OTP for step 2 confirmation
+      donationId?: string // Existing donation ID for OTP confirmation step
+      provider?: string   // Optional: 'crdb' (default) or 'nmb'
     }
 
-    const { accountHolderName, crdbAccountNumber, amount, name, email, phone, campaignId } = body
+    const {
+      accountHolderName,
+      crdbAccountNumber,
+      amount,
+      name,
+      email,
+      phone,
+      campaignId,
+      otp,
+      donationId,
+      provider,
+    } = body
 
     // Donor name is optional - default to "Anonymous"
     const donorName = (name && name.trim().length >= 2) ? name.trim() : 'Anonymous'
+
+    // Determine bank provider (default: crdb)
+    const bankProvider = provider || 'crdb'
+    const mappedProvider = mapBankProvider(bankProvider) as BankProvider
+
+    // ---- OTP Confirmation Step (Step 2) ----
+    // If donationId and otp are provided, this is the OTP confirmation step
+    if (donationId && otp) {
+      const existingDonation = await db.donation.findUnique({
+        where: { id: donationId },
+      })
+
+      if (!existingDonation) {
+        return NextResponse.json(
+          { error: 'Donation not found. Please start a new transaction.' },
+          { status: 404 }
+        )
+      }
+
+      if (existingDonation.status !== 'pending' && existingDonation.status !== 'processing') {
+        return NextResponse.json(
+          { error: `Transaction already ${existingDonation.status}. Cannot re-confirm.` },
+          { status: 400 }
+        )
+      }
+
+      console.log(`[CRDB] OTP confirmation: donationId=${donationId}, otp=[PROVIDED]`)
+
+      // Real AzamPay OTP confirmation
+      if (!shouldSimulate()) {
+        try {
+          const result = await initiateBankCheckout({
+            amount: existingDonation.amount.toString(),
+            currencyCode: 'TZS',
+            merchantAccountNumber: existingDonation.crdbAccountNumber || crdbAccountNumber,
+            merchantMobileNumber: existingDonation.donorPhone || phone?.trim() || '',
+            merchantName: existingDonation.crdbAccountHolder || accountHolderName?.trim(),
+            otp: otp,
+            provider: mappedProvider,
+            referenceId: existingDonation.transactionId || '',
+            additionalProperties: {
+              donationId: existingDonation.id,
+              donorName: existingDonation.donorName,
+              campaignId: existingDonation.campaignId || '',
+              bankReference: existingDonation.crdbReference || '',
+            },
+          })
+
+          if (result.success) {
+            const azampayTransactionId = typeof result.data === 'object' ? result.data?.transactionId : undefined
+
+            console.log(`[CRDB] OTP confirmed: azampayTxId=${azampayTransactionId}`)
+
+            // Update status to processing (waiting for final webhook)
+            await db.donation.update({
+              where: { id: donationId },
+              data: { status: 'processing' },
+            })
+
+            return NextResponse.json({
+              success: true,
+              transactionId: existingDonation.transactionId,
+              donationId: existingDonation.id,
+              bankReference: existingDonation.crdbReference,
+              azampayTransactionId,
+              message: 'Payment authorized. Processing your transaction...',
+            })
+          } else {
+            await db.donation.update({
+              where: { id: donationId },
+              data: { status: 'failed' },
+            })
+
+            console.error(`[CRDB] OTP confirmation failed: ${result.message}`)
+
+            return NextResponse.json(
+              { error: result.message || 'OTP verification failed. Please try again.' },
+              { status: 400 }
+            )
+          }
+        } catch (azampayError: unknown) {
+          console.error('[CRDB] AzamPay OTP confirmation error:', azampayError)
+          const errorMessage = azampayError instanceof Error ? azampayError.message : 'Unknown error'
+
+          return NextResponse.json(
+            { error: `Payment service error: ${errorMessage}. Please try again.` },
+            { status: 502 }
+          )
+        }
+      }
+
+      // Simulated OTP confirmation
+      setTimeout(async () => {
+        try {
+          const isSuccess = Math.random() > 0.1 // 90% success rate
+          if (isSuccess) {
+            await db.donation.update({
+              where: { id: donationId },
+              data: { status: 'successful' },
+            })
+            if (existingDonation.campaignId) {
+              await db.campaign.update({
+                where: { id: existingDonation.campaignId },
+                data: { raised: { increment: existingDonation.amount } },
+              })
+            }
+            console.log(`[CRDB] SIMULATED OTP: Donation ${donationId} marked successful`)
+          } else {
+            await db.donation.update({
+              where: { id: donationId },
+              data: { status: 'failed' },
+            })
+            console.log(`[CRDB] SIMULATED OTP: Donation ${donationId} marked failed`)
+          }
+        } catch (err) {
+          console.error('[CRDB] OTP simulation error:', err)
+        }
+      }, 2000)
+
+      return NextResponse.json({
+        success: true,
+        transactionId: existingDonation.transactionId,
+        donationId: existingDonation.id,
+        bankReference: existingDonation.crdbReference,
+        message: 'Payment authorized. Processing your transaction...',
+        _simulated: true,
+      })
+    }
+
+    // ---- Initial Checkout Step (Step 1) ----
 
     // Validate account holder name
     if (!accountHolderName || accountHolderName.trim().length < 2) {
@@ -47,7 +207,7 @@ export async function POST(request: NextRequest) {
     const cleanedAccount = crdbAccountNumber.replace(/[\s-]/g, '')
     if (!/^\d{10,16}$/.test(cleanedAccount)) {
       return NextResponse.json(
-        { error: 'Invalid CRDB account number. Please enter a valid 10-16 digit account number.' },
+        { error: `Invalid ${mappedProvider} account number. Please enter a valid 10-16 digit account number.` },
         { status: 400 }
       )
     }
@@ -56,6 +216,21 @@ export async function POST(request: NextRequest) {
     if (!amount || amount <= 0) {
       return NextResponse.json(
         { error: 'Donation amount must be greater than zero' },
+        { status: 400 }
+      )
+    }
+
+    // Check payment limits
+    const limits = getPaymentLimits()
+    if (amount < limits.min) {
+      return NextResponse.json(
+        { error: `Minimum donation amount is TZS ${limits.min.toLocaleString()}` },
+        { status: 400 }
+      )
+    }
+    if (amount > limits.max) {
+      return NextResponse.json(
+        { error: `Maximum donation amount is TZS ${limits.max.toLocaleString()}. Please contact us for larger donations.` },
         { status: 400 }
       )
     }
@@ -73,7 +248,7 @@ export async function POST(request: NextRequest) {
     const transactionId = generateTransactionId()
     const bankReference = generateBankReference()
 
-    // Create donation record with "processing" status
+    // Create donation record with "pending" status
     const donation = await db.donation.create({
       data: {
         donorName: donorName,
@@ -81,11 +256,11 @@ export async function POST(request: NextRequest) {
         donorPhone: phone?.trim() || null,
         amount,
         currency: 'TZS',
-        method: 'crdb',
+        method: bankProvider.toLowerCase(),
         type: 'one-time',
         campaignId: campaignId || null,
         campaign: campaignName,
-        status: 'processing',
+        status: 'pending',
         transactionId,
         crdbAccountHolder: accountHolderName.trim(),
         crdbAccountNumber: cleanedAccount,
@@ -93,10 +268,11 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    console.log(`[CRDB] Donation created: id=${donation.id}, txId=${transactionId}, amount=${amount}, account=${cleanedAccount}, provider=${mappedProvider}`)
+
     // ---- Real AzamPay Bank Checkout ----
     if (!shouldSimulate()) {
       try {
-        const provider = mapBankProvider('crdb')
         const merchantPhone = phone?.trim() || ''
 
         const result = await initiateBankCheckout({
@@ -105,8 +281,8 @@ export async function POST(request: NextRequest) {
           merchantAccountNumber: cleanedAccount,
           merchantMobileNumber: merchantPhone,
           merchantName: accountHolderName.trim(),
-          otp: '', // OTP can be empty for some flows; AzamPay will handle it
-          provider,
+          otp: '', // Empty OTP for initial checkout initiation
+          provider: mappedProvider,
           referenceId: transactionId,
           additionalProperties: {
             donationId: donation.id,
@@ -117,15 +293,41 @@ export async function POST(request: NextRequest) {
         })
 
         if (result.success) {
-          // Bank checkout initiated — AzamPay will process and send callback
-          return NextResponse.json({
-            success: true,
-            transactionId,
-            donationId: donation.id,
-            bankReference,
-            azampayTransactionId: typeof result.data === 'object' ? result.data?.transactionId : undefined,
-            message: 'Connecting to CRDB Bank. Please authorize the transaction.',
-          })
+          const azampayTransactionId = typeof result.data === 'object' ? result.data?.transactionId : undefined
+
+          // Check if OTP is required for the next step
+          const otpRequired = typeof result.data === 'object' ? result.data?.otpRequired !== false : true
+
+          console.log(`[CRDB] AzamPay checkout initiated: azampayTxId=${azampayTransactionId}, otpRequired=${otpRequired}`)
+
+          if (otpRequired) {
+            // OTP flow: tell the frontend to show OTP input
+            return NextResponse.json({
+              success: true,
+              transactionId,
+              donationId: donation.id,
+              bankReference,
+              azampayTransactionId,
+              otpRequired: true,
+              message: `An OTP has been sent to your registered phone number with ${mappedProvider}. Please enter it to confirm the payment.`,
+            })
+          } else {
+            // No OTP required — payment is processing
+            await db.donation.update({
+              where: { id: donation.id },
+              data: { status: 'processing' },
+            })
+
+            return NextResponse.json({
+              success: true,
+              transactionId,
+              donationId: donation.id,
+              bankReference,
+              azampayTransactionId,
+              otpRequired: false,
+              message: `Connecting to ${mappedProvider}. Please authorize the transaction.`,
+            })
+          }
         } else {
           // AzamPay rejected the checkout request
           await db.donation.update({
@@ -133,14 +335,23 @@ export async function POST(request: NextRequest) {
             data: { status: 'failed' },
           })
 
+          console.error(`[CRDB] AzamPay checkout rejected: ${result.message}`)
+
           return NextResponse.json(
             { error: result.message || 'Bank payment initiation failed. Please try again.' },
             { status: 400 }
           )
         }
       } catch (azampayError: unknown) {
-        console.error('AzamPay Bank checkout error:', azampayError)
+        console.error('[CRDB] AzamPay Bank checkout error:', azampayError)
         const errorMessage = azampayError instanceof Error ? azampayError.message : 'Unknown error'
+
+        // Mark donation as failed
+        await db.donation.update({
+          where: { id: donation.id },
+          data: { status: 'failed' },
+        })
+
         return NextResponse.json(
           { error: `Payment service error: ${errorMessage}. Please try again later.` },
           { status: 502 }
@@ -149,6 +360,8 @@ export async function POST(request: NextRequest) {
     }
 
     // ---- Fallback: Simulated CRDB Bank payment processing (for development) ----
+    console.log(`[CRDB] SIMULATED mode: Auto-completing donation ${donation.id} in 4 seconds`)
+
     setTimeout(async () => {
       try {
         // Simulate: 90% success rate
@@ -171,6 +384,8 @@ export async function POST(request: NextRequest) {
               },
             })
           }
+
+          console.log(`[CRDB] SIMULATED: Donation ${donation.id} marked successful`)
         } else {
           await db.donation.update({
             where: { id: donation.id },
@@ -178,9 +393,10 @@ export async function POST(request: NextRequest) {
               status: 'failed',
             },
           })
+          console.log(`[CRDB] SIMULATED: Donation ${donation.id} marked failed`)
         }
       } catch (err) {
-        console.error('CRDB simulation callback error:', err)
+        console.error('[CRDB] Simulation callback error:', err)
       }
     }, 4000)
 
@@ -189,11 +405,12 @@ export async function POST(request: NextRequest) {
       transactionId,
       donationId: donation.id,
       bankReference,
-      message: 'Connecting to CRDB Bank. Please authorize the transaction.',
+      otpRequired: true, // In simulation, also show OTP step for testing
+      message: `Connecting to ${mappedProvider}. Please authorize the transaction.`,
       _simulated: true, // Indicates this is a simulated payment (dev mode)
     })
   } catch (error) {
-    console.error('CRDB donation error:', error)
+    console.error('[CRDB] Donation error:', error)
     return NextResponse.json(
       { error: 'Failed to process donation. Please try again.' },
       { status: 500 }
@@ -231,10 +448,11 @@ export async function GET(request: NextRequest) {
       transactionId: donation.transactionId,
       crdbReference: donation.crdbReference,
       crdbAccountHolder: donation.crdbAccountHolder,
+      method: donation.method,
       createdAt: donation.createdAt,
     })
   } catch (error) {
-    console.error('Check CRDB donation status error:', error)
+    console.error('[CRDB] Check donation status error:', error)
     return NextResponse.json(
       { error: 'Failed to check donation status' },
       { status: 500 }

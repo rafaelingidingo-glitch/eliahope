@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { verifyWebhookSignature } from '@/lib/auth'
+import { verifyPayment } from '@/lib/azampay'
 import type { AzamPayWebhookData } from '@/lib/azampay'
 
 /**
  * AzamPay Webhook/Callback Endpoint
- * 
+ *
  * AzamPay sends payment status updates to this endpoint after:
  * - MNO Checkout (M-Pesa, Airtel, Tigo, etc.) - when donor completes PIN entry
  * - Bank Checkout (CRDB, NMB) - when bank payment is authorized/declined
- * 
+ *
  * Webhook data format from AzamPay:
  * {
  *   "msisdn": "0754123456",
@@ -21,12 +22,12 @@ import type { AzamPayWebhookData } from '@/lib/azampay'
  *   "transactionstatus": "success",
  *   "submerchantAcc": "01723113"
  * }
- * 
+ *
  * IMPORTANT: Configure this URL in your AzamPay merchant dashboard:
  * - Sandbox: https://sandbox.azampay.co.tz → Settings → Callback URL
  * - Live: https://checkout.azampay.co.tz → Settings → Callback URL
  * - URL should be: https://yourdomain.com/api/donate/azampay/callback
- * 
+ *
  * SECURITY: Set AZAMPAY_WEBHOOK_SECRET env var to enable HMAC-SHA256
  * signature verification. When configured, requests without a valid
  * X-Azampay-Signature header will be rejected.
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
 
     // Verify webhook signature
     if (!verifyWebhookSignature(request, rawBody)) {
+      console.error('[AzamPay Webhook] Invalid signature — rejecting request')
       return NextResponse.json(
         { error: 'Invalid webhook signature' },
         { status: 401 }
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
     // Parse the body
     const body = JSON.parse(rawBody) as AzamPayWebhookData
 
-    console.log('AzamPay webhook received:', JSON.stringify(body))
+    console.log('[AzamPay Webhook] Received:', JSON.stringify(body))
 
     const {
       reference,
@@ -57,23 +59,33 @@ export async function POST(request: NextRequest) {
       operator,
       utilityref,
       msisdn,
+      externalId,
     } = body
 
-    if (!reference || !transactionstatus) {
-      console.error('AzamPay webhook: Missing required fields (reference or transactionstatus)')
+    if (!reference && !externalId) {
+      console.error('[AzamPay Webhook] Missing reference/externalId')
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields (reference or externalId)' },
+        { status: 400 }
+      )
+    }
+
+    if (!transactionstatus) {
+      console.error('[AzamPay Webhook] Missing transactionstatus')
+      return NextResponse.json(
+        { error: 'Missing transactionstatus field' },
         { status: 400 }
       )
     }
 
     // Find the donation by our transaction ID (stored in reference/externalId)
+    const lookupId = reference || externalId
     const donation = await db.donation.findFirst({
-      where: { transactionId: reference },
+      where: { transactionId: lookupId },
     })
 
     if (!donation) {
-      console.error(`AzamPay webhook: Donation not found for reference: ${reference}`)
+      console.error(`[AzamPay Webhook] Donation not found for reference: ${lookupId}`)
       return NextResponse.json(
         { error: 'Donation not found' },
         { status: 404 }
@@ -82,20 +94,53 @@ export async function POST(request: NextRequest) {
 
     // Skip if already processed (idempotency)
     if (donation.status === 'successful' || donation.status === 'failed') {
-      console.log(`AzamPay webhook: Donation ${donation.id} already processed with status: ${donation.status}`)
+      console.log(`[AzamPay Webhook] Donation ${donation.id} already processed with status: ${donation.status}`)
       return NextResponse.json({ success: true, message: 'Already processed' })
     }
 
     const isSuccess = transactionstatus.toLowerCase() === 'success'
 
+    // ---- Optional: Cross-verify with AzamPay API ----
+    // For high-value transactions or additional security, verify the
+    // payment directly with AzamPay's transaction status API
+    if (isSuccess && donation.amount >= 500000) { // Verify payments >= 500,000 TZS
+      console.log(`[AzamPay Webhook] Cross-verifying high-value payment: TZS ${donation.amount}`)
+
+      const verification = await verifyPayment(donation.transactionId || '')
+      if (verification.verified && verification.status !== 'successful') {
+        console.error(`[AzamPay Webhook] Verification mismatch! Webhook says success, API says: ${verification.status}`)
+        // Mark as pending review instead of successful
+        await db.donation.update({
+          where: { id: donation.id },
+          data: { status: 'pending', message: 'Payment requires manual verification - webhook/API mismatch' },
+        })
+        return NextResponse.json({ success: true, message: 'Payment flagged for review' })
+      }
+    }
+
     if (isSuccess) {
+      // Verify amount matches (prevent amount manipulation)
+      if (amount && parseFloat(amount) !== donation.amount) {
+        console.error(`[AzamPay Webhook] Amount mismatch! Expected: ${donation.amount}, Received: ${amount}`)
+        await db.donation.update({
+          where: { id: donation.id },
+          data: {
+            status: 'pending',
+            message: `Amount mismatch: expected ${donation.amount}, received ${amount}. Requires manual verification.`,
+          },
+        })
+        return NextResponse.json({ success: true, message: 'Payment flagged for amount verification' })
+      }
+
       // Update donation to successful
       await db.donation.update({
         where: { id: donation.id },
         data: {
           status: 'successful',
-          mpesaReceipt: utilityref || donation.mpesaReceipt,
-          crdbReference: operator === 'CRDB' || operator === 'NMB'
+          mpesaReceipt: (operator === 'Mpesa' || operator === 'Airtel' || operator === 'Tigo' || operator === 'Halopesa' || operator === 'Azampesa')
+            ? (utilityref || donation.mpesaReceipt)
+            : donation.mpesaReceipt,
+          crdbReference: (operator === 'CRDB' || operator === 'NMB')
             ? (utilityref || donation.crdbReference)
             : donation.crdbReference,
         },
@@ -111,22 +156,23 @@ export async function POST(request: NextRequest) {
         })
       }
 
-      console.log(`AzamPay webhook: Donation ${donation.id} marked as successful. Amount: TZS ${donation.amount}`)
+      console.log(`[AzamPay Webhook] Donation ${donation.id} marked SUCCESSFUL. Amount: TZS ${donation.amount}, Operator: ${operator}, Ref: ${utilityref}`)
     } else {
       // Update donation to failed
       await db.donation.update({
         where: { id: donation.id },
         data: {
           status: 'failed',
+          message: body.message || `Payment ${transactionstatus}`,
         },
       })
 
-      console.log(`AzamPay webhook: Donation ${donation.id} marked as failed. Reason: ${body.message || 'Unknown'}`)
+      console.log(`[AzamPay Webhook] Donation ${donation.id} marked FAILED. Reason: ${body.message || transactionstatus}`)
     }
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('AzamPay webhook processing error:', error)
+    console.error('[AzamPay Webhook] Processing error:', error)
     return NextResponse.json(
       { error: 'Webhook processing failed' },
       { status: 500 }
@@ -169,7 +215,7 @@ export async function GET(request: NextRequest) {
       createdAt: donation.createdAt,
     })
   } catch (error) {
-    console.error('Check transaction status error:', error)
+    console.error('[AzamPay Webhook] Check transaction status error:', error)
     return NextResponse.json(
       { error: 'Failed to check transaction status' },
       { status: 500 }

@@ -5,6 +5,8 @@ import {
   shouldSimulate,
   mapMnoProvider,
   formatPhoneForAzampay,
+  getPaymentLimits,
+  type MnoProvider,
 } from '@/lib/azampay'
 
 function generateTransactionId(): string {
@@ -42,9 +44,10 @@ export async function POST(request: NextRequest) {
       name?: string
       email?: string
       campaignId?: string
+      provider?: string // Optional: 'mpesa' (default), 'airtel', 'tigo', 'halopesa', 'azampesa'
     }
 
-    const { phone, amount, name, email, campaignId } = body
+    const { phone, amount, name, email, campaignId, provider } = body
 
     // Name is optional — default to "Anonymous"
     const donorName = (name && name.trim().length >= 2) ? name.trim() : 'Anonymous'
@@ -73,6 +76,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check payment limits
+    const limits = getPaymentLimits()
+    if (amount < limits.min) {
+      return NextResponse.json(
+        { error: `Minimum donation amount is TZS ${limits.min.toLocaleString()}` },
+        { status: 400 }
+      )
+    }
+    if (amount > limits.max) {
+      return NextResponse.json(
+        { error: `Maximum donation amount is TZS ${limits.max.toLocaleString()}. Please contact us for larger donations.` },
+        { status: 400 }
+      )
+    }
+
     // Get campaign name if provided
     let campaignName: string | null = null
     if (campaignId) {
@@ -85,6 +103,9 @@ export async function POST(request: NextRequest) {
     // Generate transaction ID
     const transactionId = generateTransactionId()
 
+    // Determine the MNO provider (default: mpesa)
+    const mnoProvider = provider || 'mpesa'
+
     // Create donation record
     const donation = await db.donation.create({
       data: {
@@ -93,7 +114,7 @@ export async function POST(request: NextRequest) {
         donorPhone: normalizedPhone,
         amount,
         currency: 'TZS',
-        method: 'mpesa',
+        method: mnoProvider.toLowerCase(),
         type: 'one-time',
         campaignId: campaignId || null,
         campaign: campaignName,
@@ -102,18 +123,20 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    console.log(`[M-Pesa] Donation created: id=${donation.id}, txId=${transactionId}, amount=${amount}, phone=${normalizedPhone}, provider=${mnoProvider}`)
+
     // ---- Real AzamPay MNO Checkout ----
     if (!shouldSimulate()) {
       try {
         const azampayPhone = formatPhoneForAzampay(normalizedPhone)
-        const provider = mapMnoProvider('mpesa')
+        const mappedProvider = mapMnoProvider(mnoProvider) as MnoProvider
 
         const result = await initiateMnoCheckout({
           accountNumber: azampayPhone,
           amount: amount.toString(),
           currency: 'TZS',
           externalId: transactionId,
-          provider,
+          provider: mappedProvider,
           additionalProperties: {
             donationId: donation.id,
             donorName,
@@ -124,12 +147,17 @@ export async function POST(request: NextRequest) {
         if (result.success) {
           // Payment initiated — AzamPay will push STK to the phone
           // We'll receive the final status via webhook callback
+          const azampayTransactionId = typeof result.data === 'object' ? result.data?.transactionId : undefined
+
+          console.log(`[M-Pesa] AzamPay checkout initiated: azampayTxId=${azampayTransactionId}`)
+
           return NextResponse.json({
             success: true,
             transactionId,
             donationId: donation.id,
-            azampayTransactionId: typeof result.data === 'object' ? result.data?.transactionId : undefined,
-            message: 'STK Push sent to your phone. Please enter your M-Pesa PIN to complete.',
+            azampayTransactionId,
+            provider: mappedProvider,
+            message: `STK Push sent to your phone via ${mappedProvider}. Please enter your PIN to complete.`,
           })
         } else {
           // AzamPay rejected the checkout request
@@ -138,15 +166,23 @@ export async function POST(request: NextRequest) {
             data: { status: 'failed' },
           })
 
+          console.error(`[M-Pesa] AzamPay checkout rejected: ${result.message}`)
+
           return NextResponse.json(
             { error: result.message || 'Payment initiation failed. Please try again.' },
             { status: 400 }
           )
         }
       } catch (azampayError: unknown) {
-        console.error('AzamPay MNO checkout error:', azampayError)
-        // Fall through to simulation if AzamPay fails
+        console.error('[M-Pesa] AzamPay MNO checkout error:', azampayError)
         const errorMessage = azampayError instanceof Error ? azampayError.message : 'Unknown error'
+
+        // Mark donation as failed
+        await db.donation.update({
+          where: { id: donation.id },
+          data: { status: 'failed' },
+        })
+
         return NextResponse.json(
           { error: `Payment service error: ${errorMessage}. Please try again later.` },
           { status: 502 }
@@ -155,6 +191,8 @@ export async function POST(request: NextRequest) {
     }
 
     // ---- Fallback: Simulated M-Pesa STK Push (for development) ----
+    console.log(`[M-Pesa] SIMULATED mode: Auto-completing donation ${donation.id} in 3 seconds`)
+
     setTimeout(async () => {
       try {
         const mockReceipt = `QHK${Date.now().toString().slice(-8)}`
@@ -175,8 +213,10 @@ export async function POST(request: NextRequest) {
             },
           })
         }
+
+        console.log(`[M-Pesa] SIMULATED: Donation ${donation.id} marked as successful`)
       } catch (err) {
-        console.error('M-Pesa simulation callback error:', err)
+        console.error('[M-Pesa] Simulation callback error:', err)
       }
     }, 3000)
 
@@ -184,11 +224,12 @@ export async function POST(request: NextRequest) {
       success: true,
       transactionId,
       donationId: donation.id,
-      message: 'STK Push sent to your phone. Please enter your M-Pesa PIN to complete.',
+      provider: mapMnoProvider(mnoProvider),
+      message: 'STK Push sent to your phone. Please enter your PIN to complete.',
       _simulated: true, // Indicates this is a simulated payment (dev mode)
     })
   } catch (error) {
-    console.error('M-Pesa donation error:', error)
+    console.error('[M-Pesa] Donation error:', error)
     return NextResponse.json(
       { error: 'Failed to process donation. Please try again.' },
       { status: 500 }
@@ -225,10 +266,11 @@ export async function GET(request: NextRequest) {
       donorName: donation.donorName,
       transactionId: donation.transactionId,
       mpesaReceipt: donation.mpesaReceipt,
+      method: donation.method,
       createdAt: donation.createdAt,
     })
   } catch (error) {
-    console.error('Check donation status error:', error)
+    console.error('[M-Pesa] Check donation status error:', error)
     return NextResponse.json(
       { error: 'Failed to check donation status' },
       { status: 500 }
