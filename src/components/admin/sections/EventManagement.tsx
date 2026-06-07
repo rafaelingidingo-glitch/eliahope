@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 interface EventItem {
   id: string
@@ -195,10 +196,13 @@ export default function EventManagement() {
                 <Label>Location</Label>
                 <Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Event location" />
               </div>
-              <div>
-                <Label>Image URL</Label>
-                <Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." />
-              </div>
+              <ImageUpload
+                value={form.image}
+                onChange={(url) => setForm({ ...form, image: url })}
+                subfolder="events"
+                label="Event Image"
+                placeholder="https://example.com/event-image.jpg"
+              />
               <Button onClick={handleSubmit} disabled={saving} className="w-full bg-orange hover:bg-orange-dark text-white">
                 {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                 {editingId ? 'Update Event' : 'Create Event'}

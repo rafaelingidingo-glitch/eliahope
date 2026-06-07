@@ -31,8 +31,9 @@ import {
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Label } from '@/components/ui/label'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useToast } from '@/hooks/use-toast'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 interface ChildItem {
   id: string
@@ -238,7 +239,13 @@ export default function SponsorChildModule() {
                     </div>
                   </div>
                   <div><Label>Program</Label><Input value={childForm.program} onChange={(e) => setChildForm({ ...childForm, program: e.target.value })} /></div>
-                  <div><Label>Photo URL</Label><Input value={childForm.photo} onChange={(e) => setChildForm({ ...childForm, photo: e.target.value })} /></div>
+                  <ImageUpload
+                    value={childForm.photo}
+                    onChange={(url) => setChildForm({ ...childForm, photo: url })}
+                    subfolder="children"
+                    label="Child Photo"
+                    placeholder="https://example.com/child-photo.jpg"
+                  />
                   <div><Label>Story</Label><Textarea value={childForm.story} onChange={(e) => setChildForm({ ...childForm, story: e.target.value })} rows={3} /></div>
                   <Button onClick={handleChildSubmit} disabled={saving} className="w-full bg-orange hover:bg-orange-dark text-white">
                     {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
@@ -255,6 +262,7 @@ export default function SponsorChildModule() {
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <Avatar className="h-14 w-14">
+                      {child.photo && <AvatarImage src={child.photo} alt={child.name} />}
                       <AvatarFallback className="bg-orange/10 text-orange text-lg">
                         {child.name.charAt(0)}
                       </AvatarFallback>

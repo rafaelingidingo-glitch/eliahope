@@ -177,3 +177,29 @@ Stage Summary:
 - Gallery filtering no longer breaks on language switch
 - Swahili translations corrected
 - Webhook security scaffold in place
+
+---
+Task ID: image-upload
+Agent: Main Agent
+Task: Add image upload support (file from device + URL) to admin dashboard
+
+Work Log:
+- Created /api/admin/upload route.ts — handles file upload with validation (type, size), saves to public/uploads/{subfolder}/
+- Created /src/components/admin/ImageUpload.tsx — reusable component with dual mode:
+  - "Upload File" tab: drag-and-drop zone + click to browse, client-side validation, local preview, progress state
+  - "Image URL" tab: paste URL input field
+  - Shared image preview with remove button
+  - Props: value, onChange, subfolder, label, placeholder
+- Updated GalleryManagement.tsx: replaced URL-only input with ImageUpload component (subfolder="gallery")
+- Updated EventManagement.tsx: replaced URL-only input with ImageUpload component (subfolder="events")
+- Updated BlogManagement.tsx: replaced URL-only input with ImageUpload component (subfolder="blog"), added Author field separately
+- Updated SponsorChildModule.tsx: replaced Photo URL input with ImageUpload component (subfolder="children"), added AvatarImage for child photo display
+- Created /public/uploads/images/ directory for image storage
+- Build verified: passes with zero errors
+
+Stage Summary:
+- Admin can now add images via file upload from device OR paste a URL in all admin sections
+- Supported formats: JPEG, PNG, GIF, WebP, SVG (max 10MB)
+- Drag-and-drop upload with instant preview
+- Images saved to /public/uploads/{gallery|events|blog|children|images}/
+- Child profile cards now show actual photos when available

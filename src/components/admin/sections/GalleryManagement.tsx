@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 interface GalleryItem {
   id: string
@@ -123,10 +124,13 @@ export default function GalleryManagement() {
               <DialogTitle className="text-[#0F2D5C]">Add Gallery Image</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-4">
-              <div>
-                <Label>Image URL</Label>
-                <Input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://example.com/image.jpg" />
-              </div>
+              <ImageUpload
+                value={form.url}
+                onChange={(url) => setForm({ ...form, url })}
+                subfolder="gallery"
+                label="Image"
+                placeholder="https://example.com/image.jpg"
+              />
               <div>
                 <Label>Title</Label>
                 <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Image title" />

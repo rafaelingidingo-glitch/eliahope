@@ -25,6 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useToast } from '@/hooks/use-toast'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 interface BlogPostItem {
   id: string
@@ -209,23 +210,20 @@ export default function BlogManagement() {
                   rows={10}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Image URL</Label>
-                  <Input
-                    value={form.image}
-                    onChange={(e) => setForm({ ...form, image: e.target.value })}
-                    placeholder="https://..."
-                  />
-                </div>
-                <div>
-                  <Label>Author</Label>
-                  <Input
-                    value={form.author}
-                    onChange={(e) => setForm({ ...form, author: e.target.value })}
-                    placeholder="Author name"
-                  />
-                </div>
+              <ImageUpload
+                value={form.image}
+                onChange={(url) => setForm({ ...form, image: url })}
+                subfolder="blog"
+                label="Featured Image"
+                placeholder="https://example.com/blog-image.jpg"
+              />
+              <div>
+                <Label>Author</Label>
+                <Input
+                  value={form.author}
+                  onChange={(e) => setForm({ ...form, author: e.target.value })}
+                  placeholder="Author name"
+                />
               </div>
               <div className="flex items-center gap-3">
                 <Switch
