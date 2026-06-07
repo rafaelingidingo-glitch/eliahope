@@ -70,14 +70,15 @@ function createPrismaClient(): PrismaClient {
   // ─── PostgreSQL Adapter ────────────────────────────────────────────
   // Uncomment after installing: bun add @prisma/adapter-pg pg
   //
-   if (engine === 'postgresql') {
-   const { PrismaPg } = require('@prisma/adapter-pg')
-   const { Pool } = require('pg')
-   const pool = new Pool({ connectionString: DATABASE_URL })
-    const adapter = new PrismaPg(pool)
-   return new PrismaClient({ adapter, log })
-   }
-
+  if (engine === 'postgresql') {
+  // The magic comments stop Turbopack from tracing and breaking on these imports at build time
+  const { PrismaPg } = require(/* turbopackIgnore: true */ '@prisma/adapter-pg')
+  const { Pool } = require(/* turbopackIgnore: true */ 'pg')
+  
+  const pool = new Pool({ connectionString: DATABASE_URL })
+  const adapter = new PrismaPg(pool)
+  return new PrismaClient({ adapter, log })
+}
   // ─── MySQL Adapter ─────────────────────────────────────────────────
   // Uncomment after installing: bun add @prisma/adapter-mariadb mariadb
   //
