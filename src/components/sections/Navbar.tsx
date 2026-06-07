@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, Globe, Heart } from 'lucide-react'
+import { Menu, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { useLanguage } from '@/lib/i18n'
@@ -115,27 +115,14 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* Language Switcher - EN | SW with current highlighted */}
-            <div className="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg hover:bg-[#f5f3ef] transition-all">
-              <Globe className="h-4 w-4 text-[#44474d] mr-1" />
-              <button
-                onClick={() => switchLocale('en')}
-                className={`transition-colors ${
-                  locale === 'en' ? 'text-[#ff8928] font-bold' : 'text-[#44474d] hover:text-[#031632]'
-                }`}
-              >
-                EN
-              </button>
-              <span className="text-[#c5c6ce] mx-0.5">|</span>
-              <button
-                onClick={() => switchLocale('sw')}
-                className={`transition-colors ${
-                  locale === 'sw' ? 'text-[#ff8928] font-bold' : 'text-[#44474d] hover:text-[#031632]'
-                }`}
-              >
-                SW
-              </button>
-            </div>
+            {/* Language Switcher - Single toggle button */}
+            <button
+              onClick={() => switchLocale(locale === 'en' ? 'sw' : 'en')}
+              className="flex items-center justify-center w-10 h-10 rounded-lg border-2 border-[#031632]/20 text-[#031632] font-bold text-xs hover:bg-[#031632] hover:text-white hover:border-[#031632] transition-all"
+              title={t.language.switchLanguage}
+            >
+              {locale === 'en' ? 'SW' : 'EN'}
+            </button>
             <Button
               variant="outline"
               onClick={onAdminClick}
@@ -156,26 +143,13 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
           {/* Mobile Menu */}
           <div className="flex items-center gap-2 lg:hidden">
             {/* Mobile Language Switcher */}
-            <div className="flex items-center gap-0.5 px-2 py-2 text-xs font-semibold rounded-lg hover:bg-[#f5f3ef] transition-all">
-              <Globe className="h-3.5 w-3.5 text-[#44474d] mr-0.5" />
-              <button
-                onClick={() => switchLocale('en')}
-                className={`transition-colors ${
-                  locale === 'en' ? 'text-[#ff8928] font-bold' : 'text-[#44474d]'
-                }`}
-              >
-                EN
-              </button>
-              <span className="text-[#c5c6ce]">|</span>
-              <button
-                onClick={() => switchLocale('sw')}
-                className={`transition-colors ${
-                  locale === 'sw' ? 'text-[#ff8928] font-bold' : 'text-[#44474d]'
-                }`}
-              >
-                SW
-              </button>
-            </div>
+            <button
+              onClick={() => switchLocale(locale === 'en' ? 'sw' : 'en')}
+              className="flex items-center justify-center w-9 h-9 rounded-lg border-2 border-[#031632]/20 text-[#031632] font-bold text-xs hover:bg-[#031632] hover:text-white hover:border-[#031632] transition-all"
+              title={t.language.switchLanguage}
+            >
+              {locale === 'en' ? 'SW' : 'EN'}
+            </button>
             <Button
               variant="outline"
               onClick={onAdminClick}
