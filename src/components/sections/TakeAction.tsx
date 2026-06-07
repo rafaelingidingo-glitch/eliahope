@@ -116,7 +116,7 @@ export default function TakeAction({ onDonateClick }: TakeActionProps) {
                     Most Popular
                   </div>
                 )}
-                <div className={`${action.featured ? 'w-20 h-20' : 'w-16 h-16'} ${action.iconBg} rounded-2xl flex items-center justify-center mb-6`}>
+                <div className={`${action.featured ? 'w-20 h-20' : 'w-16 h-16'} ${action.iconBg} rounded-[5px] flex items-center justify-center mb-6`}>
                   <Icon className={`${action.featured ? 'h-10 w-10' : 'h-8 w-8'} text-white`} />
                 </div>
                 <h3 className={`${action.featured ? 'text-2xl' : 'text-xl'} font-bold text-[#031632] mb-3`}>{action.title}</h3>
@@ -135,7 +135,7 @@ export default function TakeAction({ onDonateClick }: TakeActionProps) {
                       handleScrollTo(action.href)
                     }
                   }}
-                  className={`mt-auto px-6 py-3 bg-[#031632] text-white font-semibold rounded-none hover:bg-[#1a2b48] transition-colors text-sm ${
+                  className={`mt-auto px-6 py-3 bg-[#031632] text-white font-semibold rounded-[5px] hover:bg-[#1a2b48] transition-colors text-sm ${
                     action.featured ? 'bg-[#ff8928] hover:bg-[#e07820] animate-pulse' : ''
                   }`}
                 >

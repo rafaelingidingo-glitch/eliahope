@@ -177,7 +177,7 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
           onMouseLeave={() => setIsHovered(false)}
           className="fixed bottom-6 right-6 z-[60] w-[340px] max-w-[calc(100vw-3rem)] md:max-w-[340px] max-md:left-1/2 max-md:right-auto max-md:-translate-x-1/2 max-md:bottom-6 shadow-2xl"
         >
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-[0_20px_60px_-15px_rgba(3,22,50,0.3)]">
+          <div className="bg-white rounded-[5px] border border-gray-100 overflow-hidden shadow-[0_20px_60px_-15px_rgba(3,22,50,0.3)]">
             {/* Orange accent bar at top */}
             <div className="h-1.5 bg-gradient-to-r from-[#ff8928] to-[#ff6b00]" />
 
@@ -197,7 +197,7 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
                 <motion.div
                   animate={{ scale: [1, 1.15, 1] }}
                   transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                  className="w-8 h-8 bg-[#ff8928] rounded-lg flex items-center justify-center flex-shrink-0"
+                  className="w-8 h-8 bg-[#ff8928] rounded-[5px] flex items-center justify-center flex-shrink-0"
                 >
                   <Heart className="h-4 w-4 text-white fill-white" />
                 </motion.div>
@@ -251,7 +251,7 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleDonate}
-                className="w-full py-2.5 bg-[#031632] text-white rounded-none font-semibold text-sm hover:bg-[#1a2b48] transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-[#031632] text-white rounded-[5px] font-semibold text-sm hover:bg-[#1a2b48] transition-colors flex items-center justify-center gap-2"
               >
                 <Heart className="h-4 w-4" />
                 {t.notification.donateNow}

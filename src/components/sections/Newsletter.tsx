@@ -135,7 +135,7 @@ export default function Newsletter() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="h-12 rounded-xl border-gray-200 focus:border-orange focus:ring-orange"
+              className="h-12 rounded-[5px] border-gray-200 focus:border-orange focus:ring-orange"
             />
             <Input
               type="email"
@@ -143,12 +143,12 @@ export default function Newsletter() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="h-12 rounded-xl border-gray-200 focus:border-orange focus:ring-orange"
+              className="h-12 rounded-[5px] border-gray-200 focus:border-orange focus:ring-orange"
             />
             <Button
               type="submit"
               disabled={status === 'loading'}
-              className="w-full bg-orange hover:bg-orange-dark text-white font-semibold rounded-none h-12"
+              className="w-full bg-orange hover:bg-orange-dark text-white font-semibold rounded-[5px] h-12"
             >
               {status === 'loading' ? t.newsletter.subscribing : (
                 <>

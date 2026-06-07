@@ -156,7 +156,7 @@ export default function ImpactStats({ onDonateClick }: ImpactStatsProps) {
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 1.0 }}
                 onClick={onDonateClick}
-                className="mt-8 w-full bg-[#ff8928] hover:bg-[#e67a1e] text-white font-bold py-4 px-8 rounded-2xl transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                className="mt-8 w-full bg-[#ff8928] hover:bg-[#e67a1e] text-white font-bold py-4 px-8 rounded-[5px] transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
               >
                 <Heart className="h-5 w-5" />
                 {t.impact.supportOurMission}

@@ -50,7 +50,7 @@ export default function VisionMission() {
             </div>
 
             <div className="relative z-10">
-              <div className="w-16 h-16 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-white/10 backdrop-blur rounded-[5px] flex items-center justify-center mb-6">
                 <Eye className="h-8 w-8 text-[#ff8928]" />
               </div>
               <h3 className="text-2xl lg:text-3xl font-bold mb-4">{t.visionMission.ourVision}</h3>
@@ -91,7 +91,7 @@ export default function VisionMission() {
             </div>
 
             <div className="relative z-10">
-              <div className="w-16 h-16 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-white/10 backdrop-blur rounded-[5px] flex items-center justify-center mb-6">
                 <Flag className="h-8 w-8 text-[#ff8928]" />
               </div>
               <h3 className="text-2xl lg:text-3xl font-bold mb-4">{t.visionMission.ourMission}</h3>

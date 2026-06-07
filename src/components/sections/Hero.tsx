@@ -122,7 +122,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <button
                 onClick={() => onDonateClick?.(undefined, amount)}
-                className="bg-[#ff8928] text-white px-8 py-4 rounded-none font-semibold flex items-center gap-2 hover:bg-[#964900] shadow-xl active:scale-95 transition-all"
+                className="bg-[#ff8928] text-white px-8 py-4 rounded-[5px] font-semibold flex items-center gap-2 hover:bg-[#964900] shadow-xl active:scale-95 transition-all"
               >
                 <Heart className="h-5 w-5" />
                 {t.hero.donateNow}
@@ -134,7 +134,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
                   e.preventDefault()
                   document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })
                 }}
-                className="group inline-flex items-center gap-2 text-white font-semibold py-4 px-8 border-2 border-white/60 rounded-none hover:bg-white/10 hover:border-white active:scale-95 transition-all"
+                className="group inline-flex items-center gap-2 text-white font-semibold py-4 px-8 border-2 border-white/60 rounded-[5px] hover:bg-white/10 hover:border-white active:scale-95 transition-all"
               >
                 {t.hero.learnMore}
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -149,7 +149,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
             className="flex justify-center lg:justify-end"
           >
-            <div className="bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-[2rem] shadow-2xl border border-white/20 w-full max-w-md">
+            <div className="bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-[5px] shadow-2xl border border-white/20 w-full max-w-md">
               <h3 className="text-[#031632] text-2xl font-bold mb-2">{t.hero.helpUsToday}</h3>
               <p className="text-[#44474d] text-sm mb-6">
                 {t.hero.helpUsDescription}
@@ -162,7 +162,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full pl-14 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors bg-white"
+                  className="w-full pl-14 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors bg-white"
                   placeholder={t.hero.enterAmount}
                   min="1"
                 />
@@ -174,7 +174,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
                   <button
                     key={preset.value}
                     onClick={() => handleQuickAmount(preset.value)}
-                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all border-2 ${
+                    className={`flex-1 py-2 rounded-[5px] text-sm font-semibold transition-all border-2 ${
                       amount === String(preset.value)
                         ? 'bg-[#ff8928] text-white border-[#ff8928] shadow-md'
                         : 'bg-white text-[#031632] border-[#c5c6ce] hover:border-[#ff8928] hover:text-[#ff8928]'
@@ -188,14 +188,14 @@ export default function Hero({ onDonateClick }: HeroProps) {
               {/* Give Now Button */}
               <button
                 onClick={() => onDonateClick?.(undefined, amount)}
-                className="w-full py-4 bg-[#031632] text-white rounded-none font-semibold shadow-lg hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 bg-[#031632] text-white rounded-[5px] font-semibold shadow-lg hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 <Heart className="h-5 w-5" />
                 {t.hero.giveNow}
               </button>
 
               {/* Secure Badge - Enhanced */}
-              <div className="flex items-center justify-center gap-2 mt-5 bg-emerald-50 border border-emerald-200 rounded-xl py-2.5 px-4">
+              <div className="flex items-center justify-center gap-2 mt-5 bg-emerald-50 border border-emerald-200 rounded-[5px] py-2.5 px-4">
                 <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
                 <span className="text-emerald-700 text-xs font-semibold">{t.hero.secureDonation}</span>
               </div>

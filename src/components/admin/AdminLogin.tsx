@@ -253,7 +253,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-2xl border-0">
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-[5px] border-0">
         <DialogTitle className="sr-only">
           {view === 'login' ? t.admin.loginTitle : t.admin.forgotPasswordTitle}
         </DialogTitle>
@@ -264,7 +264,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.4 }}
-            className="mx-auto mb-4 w-16 h-16 bg-[#ff8928]/20 rounded-2xl flex items-center justify-center"
+            className="mx-auto mb-4 w-16 h-16 bg-[#ff8928]/20 rounded-[5px] flex items-center justify-center"
           >
             {view === 'login' ? (
               <Shield className="h-8 w-8 text-[#ff8928]" />
@@ -290,7 +290,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"
+                className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-[5px]"
               >
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
                 <span>{error}</span>
@@ -310,7 +310,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@eliashope.org"
-                  className="pl-10 h-12 border-2 border-[#c5c6ce] rounded-xl focus:border-[#ff8928] text-[#031632]"
+                  className="pl-10 h-12 border-2 border-[#c5c6ce] rounded-[5px] focus:border-[#ff8928] text-[#031632]"
                   autoComplete="email"
                 />
               </div>
@@ -329,7 +329,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="pl-10 pr-10 h-12 border-2 border-[#c5c6ce] rounded-xl focus:border-[#ff8928] text-[#031632]"
+                  className="pl-10 pr-10 h-12 border-2 border-[#c5c6ce] rounded-[5px] focus:border-[#ff8928] text-[#031632]"
                   autoComplete="current-password"
                 />
                 <button
@@ -346,7 +346,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 bg-[#031632] text-white rounded-xl font-semibold text-sm hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full h-12 bg-[#031632] text-white rounded-[5px] font-semibold text-sm hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
@@ -388,7 +388,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"
+                className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-[5px]"
               >
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
                 <span>{forgotError}</span>
@@ -399,7 +399,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl"
+                className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-[5px]"
               >
                 <KeyRound className="h-4 w-4 flex-shrink-0" />
                 <span>{forgotSuccess}</span>
@@ -418,7 +418,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
                   placeholder="admin@eliashope.org"
-                  className="pl-10 h-12 border-2 border-[#c5c6ce] rounded-xl focus:border-[#ff8928] text-[#031632]"
+                  className="pl-10 h-12 border-2 border-[#c5c6ce] rounded-[5px] focus:border-[#ff8928] text-[#031632]"
                   autoComplete="email"
                 />
               </div>
@@ -427,7 +427,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
             <button
               type="submit"
               disabled={forgotLoading}
-              className="w-full h-12 bg-[#ff8928] text-white rounded-xl font-semibold text-sm hover:bg-[#e07820] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full h-12 bg-[#ff8928] text-white rounded-[5px] font-semibold text-sm hover:bg-[#e07820] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {forgotLoading ? (
                 <>
@@ -467,7 +467,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"
+                className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-[5px]"
               >
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
                 <span>{otpError}</span>
@@ -483,7 +483,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
                 type="text"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
-                className="h-14 border-2 border-[#c5c6ce] rounded-xl focus:border-[#ff8928] text-[#031632] text-center font-mono text-2xl tracking-[0.5em]"
+                className="h-14 border-2 border-[#c5c6ce] rounded-[5px] focus:border-[#ff8928] text-[#031632] text-center font-mono text-2xl tracking-[0.5em]"
                 placeholder="------"
                 maxLength={6}
                 autoFocus
@@ -493,7 +493,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
             <button
               type="submit"
               disabled={otpLoading || otp.length < 6}
-              className="w-full h-12 bg-[#031632] text-white rounded-xl font-semibold text-sm hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full h-12 bg-[#031632] text-white rounded-[5px] font-semibold text-sm hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {otpLoading ? (
                 <>
@@ -553,7 +553,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"
+                className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-[5px]"
               >
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
                 <span>{resetError}</span>
@@ -564,7 +564,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl"
+                className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-[5px]"
               >
                 <Shield className="h-4 w-4 flex-shrink-0" />
                 <span>{resetSuccess}</span>
@@ -583,7 +583,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder={t.admin.newPasswordPlaceholder}
-                  className="pl-10 pr-10 h-12 border-2 border-[#c5c6ce] rounded-xl focus:border-[#ff8928] text-[#031632]"
+                  className="pl-10 pr-10 h-12 border-2 border-[#c5c6ce] rounded-[5px] focus:border-[#ff8928] text-[#031632]"
                   autoComplete="new-password"
                 />
                 <button
@@ -608,7 +608,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder={t.admin.confirmPasswordPlaceholder}
-                  className="pl-10 h-12 border-2 border-[#c5c6ce] rounded-xl focus:border-[#ff8928] text-[#031632]"
+                  className="pl-10 h-12 border-2 border-[#c5c6ce] rounded-[5px] focus:border-[#ff8928] text-[#031632]"
                   autoComplete="new-password"
                 />
               </div>
@@ -617,7 +617,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
             <button
               type="submit"
               disabled={resetLoading}
-              className="w-full h-12 bg-[#031632] text-white rounded-xl font-semibold text-sm hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full h-12 bg-[#031632] text-white rounded-[5px] font-semibold text-sm hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {resetLoading ? (
                 <>

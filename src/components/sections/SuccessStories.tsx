@@ -118,7 +118,7 @@ export default function SuccessStories({ onDonateClick }: SuccessStoriesProps) {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white rounded-2xl shadow-lg overflow-hidden"
+          className="bg-white rounded-[5px] shadow-lg overflow-hidden"
         >
           <div className="grid md:grid-cols-2">
             {/* Image */}
@@ -162,7 +162,7 @@ export default function SuccessStories({ onDonateClick }: SuccessStoriesProps) {
                     variant="outline"
                     size="icon"
                     onClick={prev}
-                    className="rounded-none border-navy/20 hover:bg-navy hover:text-white"
+                    className="rounded-[5px] border-navy/20 hover:bg-navy hover:text-white"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
@@ -170,7 +170,7 @@ export default function SuccessStories({ onDonateClick }: SuccessStoriesProps) {
                     variant="outline"
                     size="icon"
                     onClick={next}
-                    className="rounded-none border-navy/20 hover:bg-navy hover:text-white"
+                    className="rounded-[5px] border-navy/20 hover:bg-navy hover:text-white"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
@@ -180,7 +180,7 @@ export default function SuccessStories({ onDonateClick }: SuccessStoriesProps) {
                     variant="outline"
                     size="sm"
                     onClick={handleShare}
-                    className="rounded-none border-orange/30 text-orange hover:bg-orange hover:text-white text-xs gap-1.5"
+                    className="rounded-[5px] border-orange/30 text-orange hover:bg-orange hover:text-white text-xs gap-1.5"
                   >
                     <Share2 className="h-3.5 w-3.5" />
                     {t.stories.shareStory}
@@ -216,13 +216,13 @@ export default function SuccessStories({ onDonateClick }: SuccessStoriesProps) {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="mt-10 text-center"
           >
-            <div className="bg-white rounded-xl p-6 md:p-8 shadow-md border border-orange/10 inline-block max-w-lg">
+            <div className="bg-white rounded-[5px] p-6 md:p-8 shadow-md border border-orange/10 inline-block max-w-lg">
               <Heart className="h-8 w-8 text-orange mx-auto mb-3" />
               <h3 className="text-xl font-bold text-navy mb-2">{t.stories.helpMoreChildren}</h3>
               <p className="text-text-secondary text-sm mb-4">{t.stories.helpMoreChildrenDesc}</p>
               <Button
                 onClick={onDonateClick}
-                className="bg-orange hover:bg-orange/90 text-white font-semibold rounded-none px-8 h-12"
+                className="bg-orange hover:bg-orange/90 text-white font-semibold rounded-[5px] px-8 h-12"
               >
                 {t.stories.helpMoreChildren}
               </Button>

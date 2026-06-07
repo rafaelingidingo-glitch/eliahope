@@ -103,7 +103,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
               <button
                 key={item.key}
                 onClick={() => onNavClick(item.key)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? 'bg-orange text-white shadow-md'
                     : 'text-white/70 hover:text-white hover:bg-white/10'
@@ -126,7 +126,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
       <div className="p-3">
         <button
           onClick={onClose}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
         >
           <ArrowLeft className="h-5 w-5 flex-shrink-0" />
           <span className="hidden lg:inline">{t.adminDashboard.backToWebsite}</span>

@@ -56,7 +56,7 @@ export default function Partners() {
               transition={{ duration: 0.4, delay: i * 0.08 }}
               onMouseEnter={() => setHoveredIndex(i)}
               onMouseLeave={() => setHoveredIndex(null)}
-              className="group bg-white rounded-xl p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-gray-200 relative overflow-hidden cursor-pointer"
+              className="group bg-white rounded-[5px] p-6 flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-gray-200 relative overflow-hidden cursor-pointer"
               style={{
                 transform: hoveredIndex === i ? 'rotate(1deg) scale(1.03)' : 'rotate(0deg) scale(1)',
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease',
@@ -89,7 +89,7 @@ export default function Partners() {
           <Button
             onClick={scrollToContact}
             variant="outline"
-            className="border-[#ff8928] text-[#ff8928] hover:bg-[#ff8928] hover:text-white font-semibold rounded-xl px-8 py-3 transition-all duration-300 group/cta"
+            className="border-[#ff8928] text-[#ff8928] hover:bg-[#ff8928] hover:text-white font-semibold rounded-[5px] px-8 py-3 transition-all duration-300 group/cta"
           >
             <Handshake className="h-4 w-4 mr-2" />
             {t.partners.becomePartner}

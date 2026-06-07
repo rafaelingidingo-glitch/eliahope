@@ -101,9 +101,9 @@ export default function Contact() {
                 return (
                   <div
                     key={info.label}
-                    className="flex items-start gap-4 bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-orange/20"
+                    className="flex items-start gap-4 bg-white rounded-[5px] p-4 shadow-sm border border-gray-100 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-orange/20"
                   >
-                    <div className="bg-orange/10 p-2.5 rounded-lg shrink-0">
+                    <div className="bg-orange/10 p-2.5 rounded-[5px] shrink-0">
                       <Icon className="h-5 w-5 text-orange" />
                     </div>
                     <div>
@@ -121,9 +121,9 @@ export default function Contact() {
                 href="https://wa.me/255754208639"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start gap-4 bg-green-50 rounded-xl p-4 shadow-sm border border-green-200 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-green-400 group"
+                className="flex items-start gap-4 bg-green-50 rounded-[5px] p-4 shadow-sm border border-green-200 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-green-400 group"
               >
-                <div className="bg-green-500/10 p-2.5 rounded-lg shrink-0">
+                <div className="bg-green-500/10 p-2.5 rounded-[5px] shrink-0">
                   <MessageCircle className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
@@ -138,7 +138,7 @@ export default function Contact() {
             </div>
 
             {/* Map Embed */}
-            <div className="rounded-xl overflow-hidden shadow-sm border border-gray-100 h-52">
+            <div className="rounded-[5px] overflow-hidden shadow-sm border border-gray-100 h-52">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127672.75772628!2d32.85!3d-2.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19c2dbb6e5e4e3e3%3A0x4e8e8e8e8e8e8e8e!2sMwanza%2C%20Tanzania!5e0!3m2!1sen!2sus!4v1234567890"
                 width="100%"
@@ -158,7 +158,7 @@ export default function Contact() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 md:p-8 shadow-lg border border-gray-100">
+            <form onSubmit={handleSubmit} className="bg-white rounded-[5px] p-6 md:p-8 shadow-lg border border-gray-100">
               <h3 className="text-xl font-bold text-navy mb-6">{t.contact.sendMessage}</h3>
               <div className="space-y-4">
                 <div>
@@ -168,7 +168,7 @@ export default function Contact() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="h-12 rounded-xl border-gray-200 focus:border-orange focus:ring-orange"
+                    className="h-12 rounded-[5px] border-gray-200 focus:border-orange focus:ring-orange"
                   />
                 </div>
                 <div>
@@ -178,7 +178,7 @@ export default function Contact() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
-                    className="h-12 rounded-xl border-gray-200 focus:border-orange focus:ring-orange"
+                    className="h-12 rounded-[5px] border-gray-200 focus:border-orange focus:ring-orange"
                   />
                 </div>
                 <div>
@@ -187,7 +187,7 @@ export default function Contact() {
                     placeholder={t.contact.yourPhone}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="h-12 rounded-xl border-gray-200 focus:border-orange focus:ring-orange"
+                    className="h-12 rounded-[5px] border-gray-200 focus:border-orange focus:ring-orange"
                   />
                 </div>
                 <div>
@@ -201,7 +201,7 @@ export default function Contact() {
                     required
                     rows={5}
                     maxLength={MAX_MESSAGE_LENGTH}
-                    className="rounded-xl border-gray-200 focus:border-orange focus:ring-orange resize-none"
+                    className="rounded-[5px] border-gray-200 focus:border-orange focus:ring-orange resize-none"
                   />
                   <p className="text-xs text-text-secondary mt-1 text-right">
                     {t.contact.characterCount.replace('{count}', String(formData.message.length))}
@@ -210,7 +210,7 @@ export default function Contact() {
                 <Button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full bg-navy hover:bg-navy-light text-white font-semibold rounded-none h-12"
+                  className="w-full bg-navy hover:bg-navy-light text-white font-semibold rounded-[5px] h-12"
                 >
                   {status === 'loading' ? t.contact.sending : (
                     <>

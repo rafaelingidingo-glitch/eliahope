@@ -194,13 +194,13 @@ export default function Footer({ onDonateClick }: FooterProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 rounded-none h-10 text-sm focus-visible:ring-[#ff8928]"
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 rounded-[5px] h-10 text-sm focus-visible:ring-[#ff8928]"
                 disabled={subscribeStatus === 'loading'}
               />
               <Button
                 type="submit"
                 disabled={subscribeStatus === 'loading' || !email.trim()}
-                className="bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-none px-4 h-10 shrink-0 text-sm"
+                className="bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-[5px] px-4 h-10 shrink-0 text-sm"
               >
                 {subscribeStatus === 'loading' && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
                 {subscribeStatus === 'loading'

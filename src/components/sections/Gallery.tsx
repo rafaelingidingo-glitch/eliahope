@@ -129,7 +129,7 @@ export default function Gallery() {
                 variant={activeCategory === key ? 'default' : 'outline'}
                 size={isAll ? 'default' : 'sm'}
                 onClick={() => setActiveCategory(key)}
-                className={`rounded-none font-medium transition-all ${
+                className={`rounded-[5px] font-medium transition-all ${
                   isAll ? 'px-6 h-10 text-sm' : 'px-4 text-sm'
                 } ${
                   activeCategory === key
@@ -157,7 +157,7 @@ export default function Gallery() {
                 className="break-inside-avoid group cursor-pointer"
                 onClick={() => openLightbox(i)}
               >
-                <div className="relative rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                <div className="relative rounded-[5px] overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                   <img
                     src={item.src}
                     alt={item.title}
@@ -197,7 +197,7 @@ export default function Gallery() {
                   setVisibleCount((prev) => Math.min(prev + LOAD_MORE_COUNT, filtered.length))
                 }
               }}
-              className="group inline-flex items-center gap-2 px-8 py-3.5 border-2 border-[#031632] text-[#031632] font-bold rounded-none hover:bg-[#031632] hover:text-white transition-all"
+              className="group inline-flex items-center gap-2 px-8 py-3.5 border-2 border-[#031632] text-[#031632] font-bold rounded-[5px] hover:bg-[#031632] hover:text-white transition-all"
             >
               {isShowingAll ? (
                 <>

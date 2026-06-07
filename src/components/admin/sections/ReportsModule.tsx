@@ -287,15 +287,15 @@ export default function ReportsModule() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-center p-4 bg-blue-50 rounded-[5px]">
                     <p className="text-3xl font-bold text-blue-600">5</p>
                     <p className="text-sm text-gray-500">Total Events</p>
                   </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-center p-4 bg-green-50 rounded-[5px]">
                     <p className="text-3xl font-bold text-green-600">2</p>
                     <p className="text-sm text-gray-500">Upcoming</p>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <div className="text-center p-4 bg-gray-50 rounded-[5px]">
                     <p className="text-3xl font-bold text-gray-600">3</p>
                     <p className="text-sm text-gray-500">Completed</p>
                   </div>

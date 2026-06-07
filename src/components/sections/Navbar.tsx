@@ -118,7 +118,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
             {/* Language Switcher - Single toggle button */}
             <button
               onClick={() => switchLocale(locale === 'en' ? 'sw' : 'en')}
-              className="flex items-center justify-center w-10 h-10 rounded-lg border-2 border-[#031632]/20 text-[#031632] font-bold text-xs hover:bg-[#031632] hover:text-white hover:border-[#031632] transition-all"
+              className="flex items-center justify-center w-10 h-10 rounded-[5px] border-2 border-[#031632]/20 text-[#031632] font-bold text-xs hover:bg-[#031632] hover:text-white hover:border-[#031632] transition-all"
               title={t.language.switchLanguage}
             >
               {locale === 'en' ? 'SW' : 'EN'}
@@ -126,7 +126,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
             <Button
               variant="outline"
               onClick={onAdminClick}
-              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-5 transition-all"
+              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-[5px] px-5 transition-all"
             >
               {t.nav.login}
             </Button>
@@ -138,7 +138,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
             {/* Mobile Language Switcher */}
             <button
               onClick={() => switchLocale(locale === 'en' ? 'sw' : 'en')}
-              className="flex items-center justify-center w-9 h-9 rounded-lg border-2 border-[#031632]/20 text-[#031632] font-bold text-xs hover:bg-[#031632] hover:text-white hover:border-[#031632] transition-all"
+              className="flex items-center justify-center w-9 h-9 rounded-[5px] border-2 border-[#031632]/20 text-[#031632] font-bold text-xs hover:bg-[#031632] hover:text-white hover:border-[#031632] transition-all"
               title={t.language.switchLanguage}
             >
               {locale === 'en' ? 'SW' : 'EN'}
@@ -146,7 +146,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
             <Button
               variant="outline"
               onClick={onAdminClick}
-              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-4 text-xs transition-all"
+              className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-[5px] px-4 text-xs transition-all"
             >
               {t.nav.login}
             </Button>

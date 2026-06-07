@@ -472,7 +472,7 @@ export default function DonationManagement() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="bg-green-100 p-3 rounded-xl">
+            <div className="bg-green-100 p-3 rounded-[5px]">
               <DollarSign className="h-5 w-5 text-green-600" />
             </div>
             <div>
@@ -483,7 +483,7 @@ export default function DonationManagement() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="bg-blue-100 p-3 rounded-xl">
+            <div className="bg-blue-100 p-3 rounded-[5px]">
               <Users className="h-5 w-5 text-blue-600" />
             </div>
             <div>
@@ -494,7 +494,7 @@ export default function DonationManagement() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="bg-[#ffdcc6] p-3 rounded-xl">
+            <div className="bg-[#ffdcc6] p-3 rounded-[5px]">
               <TrendingUp className="h-5 w-5 text-[#964900]" />
             </div>
             <div>
@@ -505,7 +505,7 @@ export default function DonationManagement() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="bg-purple-100 p-3 rounded-xl">
+            <div className="bg-purple-100 p-3 rounded-[5px]">
               <Target className="h-5 w-5 text-purple-600" />
             </div>
             <div>
@@ -544,7 +544,7 @@ export default function DonationManagement() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search donor, email, txn ID..."
-                className="w-full pl-10 pr-4 py-2 border-2 border-[#c5c6ce] rounded-lg text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                className="w-full pl-10 pr-4 py-2 border-2 border-[#c5c6ce] rounded-[5px] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
               />
             </div>
             <Filter className="h-4 w-4 text-gray-400" />
@@ -669,7 +669,7 @@ export default function DonationManagement() {
                 setEditingCampaign(null)
                 setShowCampaignModal(true)
               }}
-              className="gap-2 bg-[#ff8928] hover:bg-[#e07820] rounded-none"
+              className="gap-2 bg-[#ff8928] hover:bg-[#e07820] rounded-[5px]"
             >
               <Plus className="h-4 w-4" /> Create Campaign
             </Button>
@@ -863,7 +863,7 @@ export default function DonationManagement() {
                   type="text"
                   value={bankAccount}
                   onChange={(e) => setBankAccount(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm font-mono focus:outline-none focus:border-[#ff8928] transition-colors"
+                  className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] text-sm font-mono focus:outline-none focus:border-[#ff8928] transition-colors"
                 />
               </div>
 
@@ -873,7 +873,7 @@ export default function DonationManagement() {
                   type="text"
                   value={bankBranch}
                   onChange={(e) => setBankBranch(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                  className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
                 />
               </div>
 
@@ -883,14 +883,14 @@ export default function DonationManagement() {
                   type="text"
                   value={bankSwift}
                   onChange={(e) => setBankSwift(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm font-mono focus:outline-none focus:border-[#ff8928] transition-colors"
+                  className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] text-sm font-mono focus:outline-none focus:border-[#ff8928] transition-colors"
                 />
               </div>
 
               <Button
                 onClick={handleSaveSettings}
                 disabled={settingsSaving}
-                className="gap-2 bg-[#ff8928] hover:bg-[#e07820] rounded-none"
+                className="gap-2 bg-[#ff8928] hover:bg-[#e07820] rounded-[5px]"
               >
                 {settingsSaving ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -981,7 +981,7 @@ export default function DonationManagement() {
                       variant={selectedDonation.status === s ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => handleUpdateDonationStatus(selectedDonation.id, s)}
-                      className={`rounded-none text-xs ${selectedDonation.status === s ? 'bg-[#031632]' : ''}`}
+                      className={`rounded-[5px] text-xs ${selectedDonation.status === s ? 'bg-[#031632]' : ''}`}
                     >
                       {s.charAt(0).toUpperCase() + s.slice(1)}
                     </Button>
@@ -999,7 +999,7 @@ export default function DonationManagement() {
                     a.download = `receipt-${selectedDonation.transactionId || selectedDonation.id}.txt`
                     a.click()
                   }}
-                  className="gap-1 rounded-none"
+                  className="gap-1 rounded-[5px]"
                 >
                   <Download className="h-3.5 w-3.5" /> Download Receipt
                 </Button>
@@ -1007,7 +1007,7 @@ export default function DonationManagement() {
                   variant="outline"
                   size="sm"
                   onClick={() => handleDeleteDonation(selectedDonation.id)}
-                  className="gap-1 text-red-500 hover:text-red-700 rounded-none"
+                  className="gap-1 text-red-500 hover:text-red-700 rounded-[5px]"
                 >
                   <Trash2 className="h-3.5 w-3.5" /> Delete
                 </Button>
@@ -1038,7 +1038,7 @@ export default function DonationManagement() {
                 type="text"
                 value={campaignTitle}
                 onChange={(e) => setCampaignTitle(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
                 placeholder="e.g. School Feeding Program"
               />
             </div>
@@ -1047,7 +1047,7 @@ export default function DonationManagement() {
               <textarea
                 value={campaignDesc}
                 onChange={(e) => setCampaignDesc(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors min-h-[100px] resize-y"
+                className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors min-h-[100px] resize-y"
                 placeholder="Describe the campaign and its goals..."
               />
             </div>
@@ -1059,7 +1059,7 @@ export default function DonationManagement() {
                   type="number"
                   value={campaignGoal}
                   onChange={(e) => setCampaignGoal(e.target.value)}
-                  className="w-full pl-14 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm font-semibold focus:outline-none focus:border-[#ff8928] transition-colors"
+                  className="w-full pl-14 pr-4 py-3 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] text-sm font-semibold focus:outline-none focus:border-[#ff8928] transition-colors"
                   placeholder="10000000"
                 />
               </div>
@@ -1073,14 +1073,14 @@ export default function DonationManagement() {
                 setEditingCampaign(null)
                 resetCampaignForm()
               }}
-              className="rounded-none"
+              className="rounded-[5px]"
             >
               Cancel
             </Button>
             <Button
               onClick={editingCampaign ? handleUpdateCampaign : handleCreateCampaign}
               disabled={campaignSaving}
-              className="gap-2 bg-[#ff8928] hover:bg-[#e07820] rounded-none"
+              className="gap-2 bg-[#ff8928] hover:bg-[#e07820] rounded-[5px]"
             >
               {campaignSaving ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -1144,10 +1144,10 @@ export default function DonationManagement() {
                     <img
                       src={selectedProof.receiptUrl}
                       alt="Payment receipt"
-                      className="max-h-48 rounded-lg border"
+                      className="max-h-48 rounded-[5px] border"
                     />
                   ) : (
-                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border">
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-[5px] border">
                       <FileCheck className="h-5 w-5 text-[#ff8928]" />
                       <span className="text-sm text-[#0F2D5C]">View Receipt File</span>
                     </div>
@@ -1173,7 +1173,7 @@ export default function DonationManagement() {
                     <textarea
                       value={proofNotes}
                       onChange={(e) => setProofNotes(e.target.value)}
-                      className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors min-h-[80px] resize-y"
+                      className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors min-h-[80px] resize-y"
                       placeholder="Add notes about this proof..."
                     />
                   </div>
@@ -1181,7 +1181,7 @@ export default function DonationManagement() {
                     <Button
                       onClick={() => handleProofAction(selectedProof.id, 'verified')}
                       disabled={proofActionLoading}
-                      className="gap-2 bg-green-600 hover:bg-green-700 rounded-none flex-1"
+                      className="gap-2 bg-green-600 hover:bg-green-700 rounded-[5px] flex-1"
                     >
                       {proofActionLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -1194,7 +1194,7 @@ export default function DonationManagement() {
                       onClick={() => handleProofAction(selectedProof.id, 'rejected')}
                       disabled={proofActionLoading}
                       variant="destructive"
-                      className="gap-2 rounded-none flex-1"
+                      className="gap-2 rounded-[5px] flex-1"
                     >
                       <XCircle className="h-4 w-4" />
                       Reject

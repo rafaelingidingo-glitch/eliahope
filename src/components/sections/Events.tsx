@@ -99,7 +99,7 @@ export default function Events({ onDonateClick }: EventsProps) {
                 {/* Content */}
                 <div className="p-10">
                   {/* Date Badge */}
-                  <div className="inline-flex items-center gap-2 text-[#ff8928] px-3 py-1 bg-[#ffdcc6]/30 rounded-lg mb-4">
+                  <div className="inline-flex items-center gap-2 text-[#ff8928] px-3 py-1 bg-[#ffdcc6]/30 rounded-[5px] mb-4">
                     <Calendar className="h-4 w-4" />
                     <span className="text-sm font-semibold">{event.date}</span>
                   </div>
@@ -109,7 +109,7 @@ export default function Events({ onDonateClick }: EventsProps) {
                   </p>
                   <button
                     onClick={() => onDonateClick?.()}
-                    className="w-full py-4 border-2 border-[#031632] text-[#031632] font-bold rounded-none hover:bg-[#031632] hover:text-white transition-all"
+                    className="w-full py-4 border-2 border-[#031632] text-[#031632] font-bold rounded-[5px] hover:bg-[#031632] hover:text-white transition-all"
                   >
                     {t.events.donateNow}
                   </button>
@@ -128,7 +128,7 @@ export default function Events({ onDonateClick }: EventsProps) {
           >
             <button
               onClick={() => setShowAll(!showAll)}
-              className="group inline-flex items-center gap-2 px-8 py-3.5 border-2 border-[#031632] text-[#031632] font-bold rounded-none hover:bg-[#031632] hover:text-white transition-all"
+              className="group inline-flex items-center gap-2 px-8 py-3.5 border-2 border-[#031632] text-[#031632] font-bold rounded-[5px] hover:bg-[#031632] hover:text-white transition-all"
             >
               {showAll ? (
                 <>

@@ -161,7 +161,7 @@ export default function ImageUpload({
             onDrop={handleDrop}
             onClick={() => !uploading && fileInputRef.current?.click()}
             className={`
-              relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer
+              relative border-2 border-dashed rounded-[5px] p-6 text-center cursor-pointer
               transition-all duration-200
               ${dragActive ? 'border-orange bg-orange/5 scale-[1.02]' : 'border-gray-300 hover:border-orange/50 hover:bg-gray-50'}
               ${uploading ? 'pointer-events-none opacity-60' : ''}
@@ -223,7 +223,7 @@ export default function ImageUpload({
 
       {/* Preview */}
       {(preview || value) && (
-        <div className="relative group mt-2 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+        <div className="relative group mt-2 rounded-[5px] overflow-hidden border border-gray-200 bg-gray-50">
           <img
             src={preview || value}
             alt="Preview"

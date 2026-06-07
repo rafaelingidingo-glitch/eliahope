@@ -24,14 +24,14 @@ export default function About() {
             >
               {/* Orange blur decoration */}
               <div className="absolute -top-6 -left-6 w-32 h-32 bg-[#ffdcc6]/30 rounded-full blur-3xl pointer-events-none" />
-              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] group">
+              <div className="relative rounded-[5px] overflow-hidden aspect-[4/3] group">
                 <img
                   src="/about-image.png"
                   alt="About Elia's Hope Community"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 {/* Overlay stat card */}
-                <div className="absolute bottom-6 left-6 right-6 p-6 bg-[#031632]/95 backdrop-blur-sm rounded-xl text-white">
+                <div className="absolute bottom-6 left-6 right-6 p-6 bg-[#031632]/95 backdrop-blur-sm rounded-[5px] text-white">
                   <div className="text-4xl font-bold">500+</div>
                   <div className="text-[#ff8928] font-medium">{t.about.childrenSupported}</div>
                 </div>
@@ -58,8 +58,8 @@ export default function About() {
               </p>
 
               {/* NGO Registration Badge */}
-              <div className="inline-flex items-center gap-4 p-5 bg-[#f5f3ef] rounded-2xl border border-[#c5c6ce]/40">
-                <div className="w-12 h-12 bg-[#031632] rounded-xl flex items-center justify-center shrink-0">
+              <div className="inline-flex items-center gap-4 p-5 bg-[#f5f3ef] rounded-[5px] border border-[#c5c6ce]/40">
+                <div className="w-12 h-12 bg-[#031632] rounded-[5px] flex items-center justify-center shrink-0">
                   <ShieldCheck className="h-6 w-6 text-[#ff8928]" />
                 </div>
                 <div>

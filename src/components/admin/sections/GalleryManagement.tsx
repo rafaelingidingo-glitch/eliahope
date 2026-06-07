@@ -103,7 +103,7 @@ export default function GalleryManagement() {
   const filtered = filter === 'all' ? images : images.filter((img) => img.category === filter)
 
   if (loading) {
-    return <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">{[1, 2, 3, 4].map((i) => <div key={i} className="aspect-square bg-gray-100 animate-pulse rounded-lg" />)}</div>
+    return <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">{[1, 2, 3, 4].map((i) => <div key={i} className="aspect-square bg-gray-100 animate-pulse rounded-[5px]" />)}</div>
   }
 
   return (

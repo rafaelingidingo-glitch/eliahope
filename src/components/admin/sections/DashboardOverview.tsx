@@ -155,7 +155,7 @@ export default function DashboardOverview({ onNavigate, onClose }: DashboardOver
             <Card key={stat.title} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${stat.iconBg}`}>
+                  <div className={`p-2 rounded-[5px] ${stat.iconBg}`}>
                     <Icon className={`h-5 w-5 ${stat.color.split(' ')[1]}`} />
                   </div>
                   <div className="min-w-0">
@@ -238,7 +238,7 @@ export default function DashboardOverview({ onNavigate, onClose }: DashboardOver
                 </div>
               ) : (
                 recentActivity.map((activity) => (
-                  <div key={activity.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <div key={activity.id} className="flex items-start gap-3 p-2 rounded-[5px] hover:bg-gray-50 transition-colors">
                     <div className="w-2 h-2 rounded-full bg-orange mt-2 flex-shrink-0" />
                     <div className="min-w-0">
                       <p className="text-sm text-gray-700">{activity.message}</p>
