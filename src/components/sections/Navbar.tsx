@@ -89,7 +89,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
           </a>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-0.5">
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -102,10 +102,10 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                     handleNavClick(link.href)
                   }
                 }}
-                className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
                   activeSection === link.href
-                    ? 'text-[#ff8928] font-bold border-b-2 border-[#ff8928]'
-                    : 'text-[#44474d] hover:text-[#031632]'
+                    ? 'text-[#ff8928] font-semibold bg-[#ff8928]/10'
+                    : 'text-[#44474d] hover:text-[#031632] hover:bg-[#031632]/5'
                 }`}
               >
                 {link.label}
@@ -181,9 +181,9 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                             handleNavClick(link.href)
                           }
                         }}
-                        className={`block px-6 py-3 font-medium transition-colors ${
+                        className={`block px-6 py-3 font-medium rounded-lg mx-2 transition-colors ${
                           activeSection === link.href
-                            ? 'text-[#ff8928] bg-[#ffdcc6]/20 border-r-2 border-[#ff8928]'
+                            ? 'text-[#ff8928] font-semibold bg-[#ff8928]/10'
                             : 'text-[#44474d] hover:text-[#031632] hover:bg-[#f5f3ef]'
                         }`}
                       >
