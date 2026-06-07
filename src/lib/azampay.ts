@@ -5,10 +5,13 @@ const AZAMPAY_APP_NAME = process.env.AZAMPAY_APP_NAME || ''
 const AZAMPAY_CLIENT_ID = process.env.AZAMPAY_CLIENT_ID || ''
 const AZAMPAY_CLIENT_SECRET = process.env.AZAMPAY_CLIENT_SECRET || ''
 
-// ─── Set Base URL and Endpoints Correctly ──────────────────────────────────
 const AZAMPAY_BASE_URL = AZAMPAY_ENV === 'sandbox'
   ? 'https://sandbox.azampay.co.tz'
   : 'https://checkout.azampay.co.tz'
+
+// ─── Exported Types standard kwa API zako ─────────────────────────────────────
+export type MnoProvider = 'mpesa' | 'tigo' | 'airtel' | 'halopesa'
+export type BankProvider = 'crdb' | 'nmb'
 
 export interface AzamPayWebhookData {
   msisdn?: string
@@ -23,17 +26,78 @@ export interface AzamPayWebhookData {
 }
 
 /**
- * 1. Request OAuth Token from AzamPay
- * Fixes the 404 error by explicitly pointing to the correct API endpoint.
+ * 1. Safisha na weka namba ya simu kwenye muundo wa AzamPay (255...)
+ */
+export function formatPhoneForAzampay(phone: string): string {
+  let formatted = phone.trim().replace(/\s+/g, '')
+  if (formatted.startsWith('0')) {
+    formatted = '255' + formatted.substring(1)
+  } else if (formatted.startsWith('+')) {
+    formatted = formatted.substring(1)
+  }
+  return formatted
+}
+
+/**
+ * 2. Vigezo vya ukomo wa malipo (Limits) vinavyotafutwa na /api/donate/config
+ */
+export function getPaymentLimits() {
+  return {
+    mno: { min: 1000, max: 3000000 },
+    bank: { min: 5000, max: 50000000 }
+  }
+}
+
+/**
+ * 3. Maelezo ya Benki ya Mfanyabiashara (Merchant Bank Details)
+ */
+export function getMerchantBankDetails() {
+  return {
+    bankName: process.env.MERCHANT_BANK_NAME || 'CRDB BANK',
+    accountName: process.env.MERCHANT_ACCOUNT_NAME || 'ELIAS HOPE FOUNDATION',
+    accountNumber: process.env.MERCHANT_ACCOUNT_NUMBER || '01JXXXXXXXXXX'
+  }
+}
+
+/**
+ * 4. Kagua kama mfumo uko kwenye majaribio au uigizaji (Simulation)
+ */
+export function shouldSimulate(): boolean {
+  return process.env.AZAMPAY_SIMULATE === 'true' || AZAMPAY_ENV === 'sandbox'
+}
+
+/**
+ * 5. Ramani ya ma-MNO kwenda kwenye majina rasmi ya AzamPay
+ */
+export function mapMnoProvider(provider: string): string {
+  const operatorMap: Record<string, string> = {
+    mpesa: 'Mpesa',
+    tigo: 'Tigo',
+    airtel: 'Airtel',
+    halopesa: 'Halopesa',
+  }
+  return operatorMap[provider.toLowerCase()] || 'Mpesa'
+}
+
+/**
+ * 6. Ramani ya Benki kwenda kwenye majina rasmi ya AzamPay
+ */
+export function mapBankProvider(provider: string): string {
+  const bankMap: Record<string, string> = {
+    crdb: 'CRDB',
+    nmb: 'NMB'
+  }
+  return bankMap[provider.toLowerCase()] || 'CRDB'
+}
+
+/**
+ * 7. Request OAuth Token kutoka AzamPay
  */
 export async function getAzamPayToken(): Promise<string> {
-  // MAREKEBISHO: Lazima URL iishie na /api/Authorization/GetToken
   const tokenUrl = `${AZAMPAY_BASE_URL}/api/Authorization/GetToken`
   
-  console.log(`[AzamPay] Requesting new token from ${tokenUrl} (env: ${AZAMPAY_ENV})`)
-
   if (!AZAMPAY_APP_NAME || !AZAMPAY_CLIENT_ID || !AZAMPAY_CLIENT_SECRET) {
-    throw new Error('AzamPay environment variables (APP_NAME, CLIENT_ID, CLIENT_SECRET) are missing!')
+    throw new Error('AzamPay variables are missing in environment configuration!')
   }
 
   try {
@@ -51,63 +115,45 @@ export async function getAzamPayToken(): Promise<string> {
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error(`[AzamPay Auth Failed] Status: ${response.status}, Response: ${errorText}`)
       throw new Error(`AzamPay authentication failed: ${response.status}`)
     }
 
     const data = await response.json()
-    
-    // AzamPay kawaida wanarudisha token kwenye: data.token au data.data.token
     const token = data.token || data.data?.token
     
     if (!token) {
-      throw new Error('Authentication response did not contain a valid token')
+      throw new Error('No token found in response')
     }
 
     return token
   } catch (error) {
-    console.error('[AzamPay] Token request error:', error)
+    console.error('[AzamPay Token Error]:', error)
     throw error
   }
 }
 
 /**
- * 2. Initiate MNO Checkout (M-Pesa, AirtelMoney, TigoPesa, Halopesa)
+ * 8. Anzisha MNO Checkout (M-Pesa, Airtel, Tigo, Halopesa)
  */
 export async function initiateMnoCheckout(params: {
   amount: number
-  phone: string // Mfano: 0757337929 au 255757337929
-  provider: string // mpesa, airtel, tigo, halopesa
+  phone: string
+  provider: string
   transactionId: string
 }) {
   try {
     const token = await getAzamPayToken()
     const checkoutUrl = `${AZAMPAY_BASE_URL}/api/v1/Checkout/MNOCheckout`
 
-    // Hakikisha namba ya simu ipo kwenye mfano unaokubalika na AzamPay (Kawaida 255...)
-    let formattedPhone = params.phone.trim()
-    if (formattedPhone.startsWith('0')) {
-      formattedPhone = '255' + formattedPhone.substring(1)
-    }
-
-    // Ramani ya ma-operator kwenda kwenye majina rasmi ya AzamPay
-    const operatorMap: Record<string, string> = {
-      mpesa: 'Mpesa',
-      tigo: 'Tigo',
-      airtel: 'Airtel',
-      halopesa: 'Halopesa',
-    }
-
     const payload = {
-      accountNumber: formattedPhone,
+      accountNumber: formatPhoneForAzampay(params.phone),
       amount: params.amount.toString(),
       currency: 'TZS',
       externalId: params.transactionId,
-      provider: operatorMap[params.provider.toLowerCase()] || 'Mpesa',
+      provider: mapMnoProvider(params.provider),
     }
 
-    console.log(`[AzamPay MNO] Requesting Checkout for TxId: ${params.transactionId}`)
+    console.log(`[AzamPay MNO] Triggering Checkout for ${params.transactionId}`)
 
     const response = await fetch(checkoutUrl, {
       method: 'POST',
@@ -119,22 +165,61 @@ export async function initiateMnoCheckout(params: {
     })
 
     const data = await response.json()
-
     if (!response.ok) {
-      console.error('[AzamPay MNO Failed]', JSON.stringify(data))
-      throw new Error(data.message || `MNO Checkout failed with status: ${response.status}`)
+      throw new Error(data.message || `MNO Checkout failed status: ${response.status}`)
     }
 
     return { success: true, data }
   } catch (error) {
-    console.error('[AzamPay MNO Checkout Error]:', error)
+    console.error('[AzamPay MNO Error]:', error)
     throw error
   }
 }
 
 /**
- * 3. Cross-Verify Payment Status via AzamPay API
- * (Inatumiwa upande wa Webhook kwa miamala mikubwa ya usalama)
+ * 9. Anzisha Bank Checkout (CRDB, NMB) - Inatafutwa na /api/donate/crdb
+ */
+export async function initiateBankCheckout(params: {
+  amount: number
+  bank: string
+  reference: string
+  transactionId: string
+}) {
+  try {
+    const token = await getAzamPayToken()
+    const bankUrl = `${AZAMPAY_BASE_URL}/api/v1/Checkout/BankCheckout`
+
+    const payload = {
+      amount: params.amount.toString(),
+      currency: 'TZS',
+      externalId: params.transactionId,
+      merchantReference: params.reference,
+      provider: mapBankProvider(params.bank),
+    }
+
+    const response = await fetch(bankUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    })
+
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data.message || `Bank Checkout failed: ${response.status}`)
+    }
+
+    return { success: true, data }
+  } catch (error) {
+    console.error('[AzamPay Bank Error]:', error)
+    throw error
+  }
+}
+
+/**
+ * 10. Cross-Verify Payment Status (Webhook verification)
  */
 export async function verifyPayment(transactionId: string) {
   try {
@@ -154,8 +239,6 @@ export async function verifyPayment(transactionId: string) {
     }
 
     const data = await response.json()
-    
-    // Angalia kama muamala umefanikiwa upande wa AzamPay API yenyewe
     const isSuccess = data.status?.toLowerCase() === 'success' || data.transactionstatus?.toLowerCase() === 'success'
 
     return {
