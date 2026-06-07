@@ -19,7 +19,6 @@ import {
   GraduationCap,
   Baby,
   Users,
-  Landmark,
   Shield,
   RefreshCw,
 } from 'lucide-react'
@@ -629,7 +628,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                         : 'bg-white text-[#44474d] hover:bg-gray-50'
                     }`}
                   >
-                    <Phone className="h-4 w-4" />
+                    <img src="/m-pesa-logo.png" alt="M-Pesa" className="h-5 w-auto" />
                     {t.donation.mobileMoney}
                   </button>
                   <button
@@ -640,7 +639,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                         : 'bg-white text-[#44474d] hover:bg-gray-50'
                     }`}
                   >
-                    <Landmark className="h-4 w-4" />
+                    <img src="/crdb-logo.png" alt="CRDB" className="h-5 w-auto" />
                     {t.donation.crdbBank}
                   </button>
                 </div>
@@ -650,9 +649,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                   <form onSubmit={handleMpesaSubmit} className="space-y-4">
                     {/* M-Pesa Provider Badge */}
                     <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-[5px]">
-                      <div className="w-8 h-8 bg-green-600 rounded-[5px] flex items-center justify-center">
-                        <Phone className="h-4 w-4 text-white" />
-                      </div>
+                      <img src="/m-pesa-logo.png" alt="M-Pesa" className="h-8 w-auto" />
                       <div>
                         <p className="text-[#031632] font-bold text-sm">M-Pesa</p>
                         <p className="text-green-600 text-[10px]">Vodacom Tanzania</p>
@@ -796,7 +793,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                         animate={{ opacity: 1 }}
                         className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-[5px]"
                       >
-                        <Phone className="h-5 w-5 text-green-600 animate-pulse" />
+                        <img src="/m-pesa-logo.png" alt="M-Pesa" className="h-5 w-auto animate-pulse" />
                         <div>
                           <p className="text-green-700 text-sm font-medium">
                             {t.donation.checkPhoneMpesa}
@@ -1011,12 +1008,12 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                         {t.donation.crdbAccountNumber} <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
-                        <Landmark className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
+                        <img src="/crdb-logo.png" alt="CRDB" className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-auto" />
                         <input
                           type="text"
                           value={crdbAccountNumber}
                           onChange={(e) => setCrdbAccountNumber(e.target.value.replace(/[^\d]/g, ''))}
-                          className="w-full pl-11 pr-10 py-3 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] text-sm font-mono tracking-wider focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-14 pr-10 py-3 border-2 border-[#c5c6ce] rounded-[5px] text-[#031632] text-sm font-mono tracking-wider focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder={t.donation.crdbAccountNumber}
                           required
                           disabled={crdbDonationState === 'loading'}
@@ -1088,7 +1085,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                         </>
                       ) : (
                         <>
-                          <Landmark className="h-5 w-5" />
+                          <img src="/crdb-logo.png" alt="CRDB" className="h-5 w-auto" />
                           {t.donation.donateViaCrdb}
                         </>
                       )}
