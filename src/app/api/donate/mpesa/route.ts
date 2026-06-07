@@ -10,7 +10,7 @@ import {
 } from '@/lib/azampay'
 import { sendDonationConfirmationEmail } from '@/lib/resend'
 import { generateTransactionId } from '@/lib/payment-utils'
-import { DonationMethod, DonationStatus, DonationType } from '@prisma/client'
+import { DonationMethod, DonationStatus, DonationType } from '@/generated/prisma/client'
 
 function normalizePhone(phone: string): string | null {
   // Remove spaces and dashes

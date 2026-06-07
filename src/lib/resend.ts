@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 import { db, toNumber } from '@/lib/db'
-import type { Prisma } from '@prisma/client'
-import { OtpPurpose } from '@prisma/client'
+import type { Prisma } from '@/generated/prisma/client'
+import { OtpPurpose } from '@/generated/prisma/client'
 import { randomInt } from 'crypto'
 
 // ─── Configuration ──────────────────────────────────────────────

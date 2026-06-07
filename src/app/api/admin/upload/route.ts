@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
+import { randomBytes } from 'crypto'
 import { requireAdmin } from '@/lib/auth'
 
 const ALLOWED_TYPES = [
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
     const fileExt = file.name.split('.').pop() || 'png'
     // Sanitize extension — only allow alphanumeric characters
     const sanitizedExt = fileExt.replace(/[^a-zA-Z0-9]/g, '') || 'png'
-    const fileName = `${subfolder}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${sanitizedExt}`
+    const fileName = `${subfolder}_${Date.now()}_${randomBytes(3).toString('hex')}.${sanitizedExt}`
     const filePath = path.join(uploadsDir, fileName)
 
     await writeFile(filePath, buffer)

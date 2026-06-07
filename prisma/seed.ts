@@ -1,5 +1,5 @@
 /**
- * Hierarchical & Unified Database Seed Script
+ * Hierarchical & Unified Database Seed Script (Prisma 7)
  *
  * ─── Database-Agnostic Design ─────────────────────────────────────────────
  * This script works identically on SQLite, PostgreSQL, and MySQL without
@@ -35,10 +35,46 @@
  *  20. User              (leaf)
  */
 
-import { PrismaClient } from '@prisma/client'
+import "dotenv/config"
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaClient } from '../src/generated/prisma/client'
 import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient()
+// ─── Database-Agnostic Client Creation ────────────────────────────────────
+// Detect engine from DATABASE_URL and create the appropriate adapter.
+
+const DATABASE_URL = process.env.DATABASE_URL || 'file:./db/custom.db'
+
+function detectEngine(url: string): 'sqlite' | 'postgresql' | 'mysql' {
+  if (url.startsWith('file:')) return 'sqlite'
+  if (url.startsWith('postgresql://') || url.startsWith('postgres://')) return 'postgresql'
+  if (url.startsWith('mysql://')) return 'mysql'
+  return 'sqlite'
+}
+
+function createPrismaClient(): PrismaClient {
+  const engine = detectEngine(DATABASE_URL)
+
+  if (engine === 'sqlite') {
+    const adapter = new PrismaBetterSqlite3({ url: DATABASE_URL })
+    return new PrismaClient({ adapter })
+  }
+
+  // For PostgreSQL/MySQL, the same adapter pattern as src/lib/db.ts applies.
+  // Install the appropriate adapter and uncomment the corresponding block.
+  // PostgreSQL: bun add @prisma/adapter-pg pg
+  // MySQL:     bun add @prisma/adapter-mariadb mariadb
+  // Then update this function and src/lib/db.ts accordingly.
+
+  console.warn(
+    `[Seed] Engine "${engine}" detected but adapter not configured. ` +
+    'Falling back to SQLite adapter. See comments for setup instructions.'
+  )
+  const adapter = new PrismaBetterSqlite3({ url: DATABASE_URL })
+  return new PrismaClient({ adapter })
+}
+
+const prisma = createPrismaClient()
 
 async function main() {
   console.log('🌱 Starting seed — wiping existing data in dependency order...\n')

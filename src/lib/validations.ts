@@ -18,7 +18,10 @@ export const forgotPasswordSchema = z.object({
   action: z.enum(['send_otp', 'verify_otp', 'resend_otp', 'reset_password']),
   email: z.string().email('Invalid email address').max(200),
   otp: z.string().length(6, 'OTP must be 6 digits').optional(),
-  newPassword: z.string().min(8, 'Password must be at least 8 characters').max(200).optional(),
+  newPassword: z.string().min(8, 'Password must be at least 8 characters').max(200).regex(
+    /^(?=.*[a-zA-Z])(?=.*\d)/,
+    'Password must contain at least one letter and one number'
+  ).optional(),
   emailLogId: z.string().optional(),
 })
 

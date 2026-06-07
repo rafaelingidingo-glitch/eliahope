@@ -1,5 +1,8 @@
 generator client {
-  provider = "prisma-client-js"
+  // Prisma 7: "prisma-client" replaces "prisma-client-js" (old name deprecated)
+  provider = "prisma-client"
+  // Required in Prisma 7: explicit output path (no longer defaults to node_modules)
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -11,8 +14,10 @@ datasource db {
   // Localhost (SQLite):     provider = "sqlite"
   // Vercel / Neon (PG):     provider = "postgresql"
   // PlanetScale / RDS:      provider = "mysql"
+  //
+  // NOTE: In Prisma 7, the connection URL is configured in prisma.config.ts
+  // and passed at runtime via driver adapters in src/lib/db.ts.
   provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────

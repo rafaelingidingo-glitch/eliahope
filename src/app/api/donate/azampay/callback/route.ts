@@ -4,7 +4,7 @@ import { verifyWebhookSignature } from '@/lib/auth'
 import { verifyPayment } from '@/lib/azampay'
 import type { AzamPayWebhookData } from '@/lib/azampay'
 import { sendDonationConfirmationEmail } from '@/lib/resend'
-import { DonationStatus } from '@prisma/client'
+import { DonationStatus } from '@/generated/prisma/client'
 
 /**
  * AzamPay Webhook/Callback Endpoint

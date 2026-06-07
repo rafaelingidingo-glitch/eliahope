@@ -9,7 +9,7 @@ import {
 } from '@/lib/azampay'
 import { sendDonationConfirmationEmail } from '@/lib/resend'
 import { generateTransactionId, generateBankReference } from '@/lib/payment-utils'
-import { DonationMethod, DonationStatus, DonationType } from '@prisma/client'
+import { DonationMethod, DonationStatus, DonationType } from '@/generated/prisma/client'
 
 /**
  * CRDB Bank Checkout Flow:

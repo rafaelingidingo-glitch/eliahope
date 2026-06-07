@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
-import { ChildStatus } from '@prisma/client'
+import { ChildStatus } from '@/generated/prisma/client'
 
 export async function GET(request: NextRequest) {
   const authError = requireAdmin(request)

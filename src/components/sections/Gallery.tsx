@@ -122,7 +122,8 @@ export default function Gallery() {
         {/* Filter Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-10">
           {categoryOrder.map((key) => {
-            const label = t.gallery[categoryLabels[key]]
+            const labelKey = categoryLabels[key] as keyof typeof t.gallery
+            const label = t.gallery[labelKey]
             const isAll = key === 'all'
             return (
               <Button
@@ -167,7 +168,7 @@ export default function Gallery() {
                   <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/40 transition-colors duration-300 flex items-end">
                     <div className="p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-1">
                       <p className="text-white font-semibold text-sm">{item.title}</p>
-                      <p className="text-white/70 text-xs">{t.gallery[categoryLabels[item.categoryKey]]}</p>
+                      <p className="text-white/70 text-xs">{t.gallery[categoryLabels[item.categoryKey] as keyof typeof t.gallery]}</p>
                     </div>
                     {/* Zoom icon overlay */}
                     <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -252,7 +253,7 @@ export default function Gallery() {
               {/* Bottom info bar */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
                 <p className="text-white font-semibold">{selectedItem.title}</p>
-                <p className="text-white/60 text-sm">{t.gallery[categoryLabels[selectedItem.categoryKey]]}</p>
+                <p className="text-white/60 text-sm">{t.gallery[categoryLabels[selectedItem.categoryKey] as keyof typeof t.gallery]}</p>
                 <p className="text-white/40 text-xs mt-1">{(lightboxIndex ?? 0) + 1} / {filtered.length}</p>
               </div>
             </div>
