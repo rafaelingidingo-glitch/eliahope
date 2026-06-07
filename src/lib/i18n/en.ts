@@ -103,6 +103,8 @@ const en = {
     communityHealthCamp: 'Community Health Camp',
     communityHealthCampDate: 'Sep 20, 2026',
     communityHealthCampDesc: 'A free health screening and wellness camp for children and families in the Nyamagana district, including vaccinations and nutrition guidance.',
+    viewMore: 'View More Events',
+    showLess: 'Show Less',
   },
 
   // Success Stories
@@ -158,6 +160,8 @@ const en = {
     volunteersTeaching: 'Volunteers teaching children',
     mealDistribution: 'Meal distribution',
     sundaySchool: 'Sunday school program',
+    viewMore: 'View More Photos',
+    showLess: 'Show Less',
   },
 
   // Take Action

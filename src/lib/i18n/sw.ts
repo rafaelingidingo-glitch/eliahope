@@ -105,6 +105,8 @@ const sw: Translations = {
     communityHealthCamp: 'Kambi ya Afya ya Jamii',
     communityHealthCampDate: '20 Sep 2026',
     communityHealthCampDesc: 'Kambi ya ukaguzi wa afya na ustawi bila malipo kwa watoto na familia katika wilaya ya Nyamagana, ikijumuisha chanjo na mwongozo wa lishe.',
+    viewMore: 'Tazama Matukio Zaidi',
+    showLess: 'Onyesha Kidogo',
   },
 
   // Success Stories
@@ -160,6 +162,8 @@ const sw: Translations = {
     volunteersTeaching: 'Watu wa kujitolea wakifundisha watoto',
     mealDistribution: 'Ugawaji wa chakula',
     sundaySchool: 'Programu ya shule ya Jumapili',
+    viewMore: 'Tazama Picha Zaidi',
+    showLess: 'Onyesha Kidogo',
   },
 
   // Take Action

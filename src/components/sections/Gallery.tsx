@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ZoomIn, ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -25,11 +25,15 @@ const categoryLabels: Record<CategoryKey, string> = {
 
 const categoryOrder: CategoryKey[] = ['all', 'education', 'feedingProgram', 'communityOutreach', 'bibleStudies', 'volunteers', 'events']
 
+const INITIAL_COUNT = 6
+const LOAD_MORE_COUNT = 6
+
 export default function Gallery() {
   const { t } = useLanguage()
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [activeCategory, setActiveCategory] = useState<CategoryKey>('all')
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT)
 
   const galleryItems: { src: string; categoryKey: CategoryKey; title: string }[] = [
     { src: '/program-education.png', categoryKey: 'education', title: t.gallery.childrenLearning },
@@ -50,6 +54,15 @@ export default function Gallery() {
     activeCategory === 'all'
       ? galleryItems
       : galleryItems.filter((item) => item.categoryKey === activeCategory)
+
+  // Reset visible count when category changes
+  useEffect(() => {
+    setVisibleCount(INITIAL_COUNT)
+  }, [activeCategory])
+
+  const visibleItems = filtered.slice(0, visibleCount)
+  const hasMore = visibleCount < filtered.length
+  const isShowingAll = visibleCount >= filtered.length
 
   // Lightbox state
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
@@ -101,7 +114,7 @@ export default function Gallery() {
             {t.gallery.description}
           </p>
           <p className="text-navy/50 text-sm font-medium mt-2">
-            {galleryItems.length} {t.gallery.photos}
+            {filtered.length} {t.gallery.photos}
           </p>
         </motion.div>
 
@@ -133,9 +146,9 @@ export default function Gallery() {
         {/* Masonry Grid */}
         <motion.div layout className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
           <AnimatePresence mode="popLayout">
-            {filtered.map((item, i) => (
+            {visibleItems.map((item, i) => (
               <motion.div
-                key={item.src + item.title}
+                key={item.src + item.title + i}
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -167,6 +180,45 @@ export default function Gallery() {
             ))}
           </AnimatePresence>
         </motion.div>
+
+        {/* View More / Show Less Button */}
+        {filtered.length > INITIAL_COUNT && (
+          <motion.div
+            layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center mt-10 gap-2"
+          >
+            <button
+              onClick={() => {
+                if (isShowingAll) {
+                  setVisibleCount(INITIAL_COUNT)
+                } else {
+                  setVisibleCount((prev) => Math.min(prev + LOAD_MORE_COUNT, filtered.length))
+                }
+              }}
+              className="group inline-flex items-center gap-2 px-8 py-3.5 border-2 border-[#031632] text-[#031632] font-bold rounded-none hover:bg-[#031632] hover:text-white transition-all"
+            >
+              {isShowingAll ? (
+                <>
+                  <ChevronUp className="h-4 w-4 group-hover:-translate-y-0.5 transition-transform" />
+                  {t.gallery.showLess}
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-4 w-4 group-hover:translate-y-0.5 transition-transform" />
+                  {t.gallery.viewMore}
+                </>
+              )}
+            </button>
+            {/* Counter hint */}
+            {!isShowingAll && (
+              <p className="text-[#44474d] text-xs">
+                Showing {visibleItems.length} of {filtered.length} {t.gallery.photos.toLowerCase()}
+              </p>
+            )}
+          </motion.div>
+        )}
       </div>
 
       {/* Lightbox Dialog */}
