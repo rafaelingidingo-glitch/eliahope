@@ -475,3 +475,37 @@ Stage Summary:
 - Content area scrolls independently with proper left margin offset
 - No more extra flex wrappers limiting the sidebar height
 - Dashboard truly takes the whole page
+---
+Task ID: login-redesign-split
+Agent: Main Agent
+Task: Redesign admin login page with split-screen layout (50/50)
+
+Work Log:
+- Generated new background image for left panel (admin-login-bg.png)
+- Completely rewrote /src/app/admin/login/page.tsx with split-screen layout
+- Left column (hidden on mobile, 50% on lg+):
+  - Background image with dark gradient overlay
+  - Logo + "Elia's Hope Community" branding
+  - Bold tagline: "Empowering Lives, Building Futures" with orange accent
+  - Testimonial card with quote from community member (Amina Mwangi)
+  - Feature highlights row: 200+ Children Educated, 500+ Meals Served Weekly, 50+ Volunteers
+- Right column (full width on mobile, 50% on lg+):
+  - White background, form centered vertically with Flexbox
+  - View icon (Shield/Lock/KeyRound) with orange accent background
+  - "Welcome back." greeting for login view
+  - Email field with Mail icon
+  - Password field with Lock icon + eye toggle (show/hide)
+  - "Forgot Password?" link next to password label
+  - High-contrast primary Sign In button (navy bg, white text, shadow)
+  - Footer credit with rwextech link
+- All 4 views (login, forgot_password, verify_otp, reset_password) use same split layout
+- Mobile: shows compact logo at top, form fills screen
+- Fixed i18n reference: t.admin.backToWebsite → t.adminDashboard.backToWebsite
+- Build verified: passes with zero errors
+
+Stage Summary:
+- Professional split-screen login design with 50/50 layout
+- Left: immersive brand experience with background image, tagline, testimonial, stats
+- Right: clean, minimalist form with all 4 auth flows
+- Fully responsive: full-width form on mobile, split on desktop
+- All interactions preserved (forgot password, OTP, reset password)
