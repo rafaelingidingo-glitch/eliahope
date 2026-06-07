@@ -85,7 +85,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
       {/* Logo */}
       <div className="p-4 flex items-center gap-3">
         <img src="/logo.jpeg" alt="Elia's Hope" className="h-9 w-9 rounded-full object-cover" />
-        <div className="hidden lg:block">
+        <div>
           <h2 className="text-white font-bold text-sm leading-tight">Elia&apos;s Hope</h2>
           <p className="text-white/60 text-xs">{t.adminDashboard.adminPanel}</p>
         </div>
@@ -110,9 +110,9 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
                 }`}
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
-                <span className="hidden lg:inline">{item.label}</span>
+                <span>{item.label}</span>
                 {isActive && (
-                  <ChevronRight className="h-4 w-4 ml-auto hidden lg:inline" />
+                  <ChevronRight className="h-4 w-4 ml-auto" />
                 )}
               </button>
             )
@@ -129,7 +129,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
         >
           <ArrowLeft className="h-5 w-5 flex-shrink-0" />
-          <span className="hidden lg:inline">{t.adminDashboard.backToWebsite}</span>
+          <span>{t.adminDashboard.backToWebsite}</span>
         </button>
       </div>
 
@@ -139,7 +139,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-orange text-white text-xs">AD</AvatarFallback>
           </Avatar>
-          <div className="hidden lg:block flex-1 min-w-0">
+          <div className="flex-1 min-w-0">
             <p className="text-white text-sm font-medium truncate">{t.adminDashboard.adminUser}</p>
             <p className="text-white/50 text-xs truncate">admin@eliashope.org</p>
           </div>
@@ -147,7 +147,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
             variant="ghost"
             size="icon"
             onClick={onLogout ?? undefined}
-            className="hidden lg:flex h-8 w-8 text-white/50 hover:text-white hover:bg-white/10"
+            className="h-8 w-8 text-white/50 hover:text-white hover:bg-white/10"
             title={t.adminDashboard.logout}
           >
             <LogOut className="h-4 w-4" />
@@ -161,7 +161,6 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
 export default function AdminDashboard({ isOpen, onClose, onLogout }: AdminDashboardProps) {
   const navItems = useNavItems()
   const [activeSection, setActiveSection] = useState<SectionKey>('dashboard')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   const handleNavClick = (key: SectionKey) => {
@@ -209,9 +208,7 @@ export default function AdminDashboard({ isOpen, onClose, onLogout }: AdminDashb
           {/* Desktop Sidebar */}
           <div className="hidden md:flex">
             <div
-              className={`bg-[#0F2D5C] transition-all duration-300 ${
-                sidebarOpen ? 'w-64' : 'w-16'
-              } flex-shrink-0`}
+              className="bg-[#0F2D5C] w-64 flex-shrink-0"
             >
               <SidebarContent activeSection={activeSection} onNavClick={handleNavClick} onClose={onClose} onLogout={onLogout} />
             </div>
@@ -250,14 +247,6 @@ export default function AdminDashboard({ isOpen, onClose, onLogout }: AdminDashb
                 size="icon"
                 className="md:hidden"
                 onClick={() => setMobileSidebarOpen(true)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hidden md:flex"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
               >
                 <Menu className="h-5 w-5" />
               </Button>
