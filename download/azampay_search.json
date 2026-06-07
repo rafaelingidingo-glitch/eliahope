@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://azampay.com/products/checkout",
+    "name": "AzamPay Checkout - Hosted Payment Page Tanzania",
+    "snippet": "Get your checkout page live in minutes with our simple API integration. No complex setup, no lengthy approvals. 1. Create your AzamPay merchant account. 2. Get ...",
+    "host_name": "azampay.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://pub.dev/documentation/azampaytanzania/latest",
+    "name": "AzamPay Tanzania - Dart API docs - Pub.dev",
+    "snippet": "A Flutter/Dart SDK for integrating with the AzamPesa Mobile Money API in Tanzania. ... Mobile Money Checkout (Collect Payment); Bank Checkout (Collect Payment) ...",
+    "host_name": "pub.dev",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/flexcodelabs/azampay",
+    "name": "flexcodelabs/azampay: SDK to help you seamlessly  - GitHub",
+    "snippet": "AzamPay NodeJs SDK to help you easily and seamlessly integrate with Azampay APIs. Table of Contents. Installations; Use 2.1 Get Token 2.2 Bank Checkout 2.3 Mno ...",
+    "host_name": "github.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://azampay.com",
+    "name": "AzamPay: Payment Gateway East Africa - M-Pesa, Cards API",
+    "snippet": "Accept payments across East Africa. M-Pesa, Airtel Money, cards in Kenya, Tanzania, Rwanda, Uganda. 1% mobile, 3.5% cards. 200+ businesses. Start today.",
+    "host_name": "azampay.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.linkedin.com/pulse/azampay-best-payment-gateway-tanzanian-businesses-azampay-0o1ke",
+    "name": "AzamPay: The Best Payment Gateway for Tanzanian Businesses",
+    "snippet": "AzamPay provides Open APIs, making integration easy ... AzamPay makes it easy to accept mobile money payments with zero coding required.",
+    "host_name": "www.linkedin.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/alphaolomi/azampay-a-convenient-payment-service-provider-in-tanzania-2afa",
+    "name": "Azampay: A Convenient Payment Service Provider in Tanzania",
+    "snippet": "Azampay supports two payment methods: mobileCheckout and bankCheckout . The mobileCheckout method is used to initiate payments via mobile money, ...",
+    "host_name": "dev.to",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://pypi.org/project/azampay",
+    "name": "azampay - PyPI",
+    "snippet": "Azampay API Flow. All Azampay APIs follow two step process: Step 1: Get token against the application authentication credentials. Step 2: Consume the actual api ...",
+    "host_name": "pypi.org",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://medium.com/clickpesa-engineering-blog/a-practical-guide-to-integration-with-tanzanias-mobile-money-providers-567b6bef1a61",
+    "name": "A practical guide to integration with Tanzania's mobile money",
+    "snippet": "To integrate with an MNO, all businesses must first register with that MNO. Registration requirements vary from one operator to the next.",
+    "host_name": "medium.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=skGbP69dwLc",
+    "name": "One API for Mobile Money & Card Payments | Stripe | MTN - YouTube",
+    "snippet": "... checkout that accepts both mobile money (UGX) and card payments (USD) ... I Built a Unified Payment Gateway — One API for Mobile Money & Card ...",
+    "host_name": "www.youtube.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://api-reference.checkout.com",
+    "name": "Checkout.com API Reference",
+    "snippet": "Checkout.com provides a collection of APIs that enable you to integrate with our various products and services. Our APIs accept and return JSON in the HTTP ...",
+    "host_name": "api-reference.checkout.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://azampay.com/developers",
+    "name": "Developer API Docs - East Africa Payment API - AzamPay",
+    "snippet": "AzamPay Comprehensive APIs, SDKs, and documentation to integrate payment processing into your applications. in Python, PHP, Node.js, and more languages\nLipia Link. Payment link generation APIs for social commerce and instant checkout ... Code Examples. Ready-to-use code examples in Python, PHP, Node.js, and more ...",
+    "host_name": "azampay.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/flexcodelabs/azampay/blob/main/README.md",
+    "name": "azampay/README.md at main - GitHub",
+    "snippet": "AzamPay NodeJs SDK to help you easily and seamlessly integrate with Azampay APIs. Token 2.2 Bank Checkout 2.3 um: SANDBOX | LIVE.",
+    "host_name": "github.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://pypi.org/project/azampay",
+    "name": "azampay - PyPI",
+    "snippet": "Step 1: Get token against the application authentication credentials. Step 2: Consume the actual api by providing x-api-key header and token acquired in step 1.\nAll Azampay APIs follow two step process: Step 1: Get token against the application authentication credentials. Step 2: Consume the actual api by providing x- ...",
+    "host_name": "pypi.org",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://pkg.go.dev/github.com/kateile/go-azampay",
+    "name": "azampay package - github.com/kateile/go-azampay - Go Packages",
+    "snippet": "They provide an API which allows developers to integrate their system's to Azampay's gateway. generates a token that will enable access to the ...\nBank Checkout. To perform an Bank Checkout, first create a variable of type BankCheckoutPayload and fill in its values. Then call the ...",
+    "host_name": "pkg.go.dev",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://pub.dev/documentation/azampaytanzania/latest",
+    "name": "AzamPay Tanzania - Dart API docs - Pub.dev",
+    "snippet": "A Flutter/Dart SDK for integrating with the AzamPesa Mobile Money API in Tanzania. Supports both Sandbox and Production environments.\nThis package provides a simple and developer-friendly interface for collecting mobile payments via various mobile network operators (MNOs), including: AzamPesa ...",
+    "host_name": "pub.dev",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.linkedin.com/pulse/getting-started-azampay-registration-api-keys-sandbox-setup-azampay-yv6kf",
+    "name": "AzamPay - Registration, API Keys, and Sandbox Setup - LinkedIn",
+    "snippet": "Step 1: Register on the Sandbox and Submit KYC Information. To begin the integration process, follow these steps: Access the API Documentation ...\nStep 1: Register on the Sandbox and Submit KYC Information · Step 2: Generate API Keys for Sandbox Testing · Step 3: Setting Up Test Accounts for ...",
+    "host_name": "www.linkedin.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=SymdOPCGvq4",
+    "name": "Sandbox 101: End to End Payments with Web Payments SDK",
+    "snippet": "Learn how to use Web Payments SDK with the Payments API, so you can take payments with Square on your website. This is a two-step process: 1 ...",
+    "host_name": "www.youtube.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.pawapay.io/using_the_api",
+    "name": "Using the API - PawaPay Merchant API",
+    "snippet": "The token generated from your sandbox account can only be used for authenticating against the Merchant API in sandbox.",
+    "host_name": "docs.pawapay.io",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://dev.to/alphaolomi/azampay-a-convenient-payment-service-provider-in-tanzania-2afa",
+    "name": "Azampay: A Convenient Payment Service Provider in Tanzania",
+    "snippet": "The mobileCheckout method is used to initiate payments via mobile money, while the bankCheckout method is used to initiate payments via bank ...\nAzampay supports two payment methods: mobileCheckout and bankCheckout . The mobileCheckout method is used to initiate payments via mobile ...",
+    "host_name": "dev.to",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://crosskey.io/tutorial",
+    "name": "Get Started - Open Banking Market",
+    "snippet": "The sandbox is a secure and isolated space containing only non-real test data, such as bank customers, accounts and transactions; used when integration testing ...",
+    "host_name": "crosskey.io",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

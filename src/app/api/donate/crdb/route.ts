@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import {
+  initiateBankCheckout,
+  shouldSimulate,
+  mapBankProvider,
+} from '@/lib/azampay'
 
 function generateTransactionId(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
@@ -38,7 +43,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate CRDB account number (should be 13 digits)
+    // Validate CRDB account number (should be 10-16 digits)
     const cleanedAccount = crdbAccountNumber.replace(/[\s-]/g, '')
     if (!/^\d{10,16}$/.test(cleanedAccount)) {
       return NextResponse.json(
@@ -88,9 +93,62 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Simulate CRDB Bank payment processing (async callback)
-    // In production, this would be a redirect to CRDB's secure payment gateway
-    // and a callback/webhook from CRDB confirming the transaction
+    // ---- Real AzamPay Bank Checkout ----
+    if (!shouldSimulate()) {
+      try {
+        const provider = mapBankProvider('crdb')
+        const merchantPhone = phone?.trim() || ''
+
+        const result = await initiateBankCheckout({
+          amount: amount.toString(),
+          currencyCode: 'TZS',
+          merchantAccountNumber: cleanedAccount,
+          merchantMobileNumber: merchantPhone,
+          merchantName: accountHolderName.trim(),
+          otp: '', // OTP can be empty for some flows; AzamPay will handle it
+          provider,
+          referenceId: transactionId,
+          additionalProperties: {
+            donationId: donation.id,
+            donorName,
+            campaignId: campaignId || '',
+            bankReference,
+          },
+        })
+
+        if (result.success) {
+          // Bank checkout initiated — AzamPay will process and send callback
+          return NextResponse.json({
+            success: true,
+            transactionId,
+            donationId: donation.id,
+            bankReference,
+            azampayTransactionId: typeof result.data === 'object' ? result.data?.transactionId : undefined,
+            message: 'Connecting to CRDB Bank. Please authorize the transaction.',
+          })
+        } else {
+          // AzamPay rejected the checkout request
+          await db.donation.update({
+            where: { id: donation.id },
+            data: { status: 'failed' },
+          })
+
+          return NextResponse.json(
+            { error: result.message || 'Bank payment initiation failed. Please try again.' },
+            { status: 400 }
+          )
+        }
+      } catch (azampayError: unknown) {
+        console.error('AzamPay Bank checkout error:', azampayError)
+        const errorMessage = azampayError instanceof Error ? azampayError.message : 'Unknown error'
+        return NextResponse.json(
+          { error: `Payment service error: ${errorMessage}. Please try again later.` },
+          { status: 502 }
+        )
+      }
+    }
+
+    // ---- Fallback: Simulated CRDB Bank payment processing (for development) ----
     setTimeout(async () => {
       try {
         // Simulate: 90% success rate
@@ -124,7 +182,7 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         console.error('CRDB simulation callback error:', err)
       }
-    }, 4000) // Slightly longer than M-Pesa to simulate bank processing time
+    }, 4000)
 
     return NextResponse.json({
       success: true,
@@ -132,6 +190,7 @@ export async function POST(request: NextRequest) {
       donationId: donation.id,
       bankReference,
       message: 'Connecting to CRDB Bank. Please authorize the transaction.',
+      _simulated: true, // Indicates this is a simulated payment (dev mode)
     })
   } catch (error) {
     console.error('CRDB donation error:', error)

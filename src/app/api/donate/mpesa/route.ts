@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import {
+  initiateMnoCheckout,
+  shouldSimulate,
+  mapMnoProvider,
+  formatPhoneForAzampay,
+} from '@/lib/azampay'
 
 function generateTransactionId(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
@@ -96,8 +102,59 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Simulate M-Pesa STK Push callback (async)
-    // In production, this would be a callback from M-Pesa API
+    // ---- Real AzamPay MNO Checkout ----
+    if (!shouldSimulate()) {
+      try {
+        const azampayPhone = formatPhoneForAzampay(phone)
+        const provider = mapMnoProvider('mpesa')
+
+        const result = await initiateMnoCheckout({
+          accountNumber: azampayPhone,
+          amount: amount.toString(),
+          currency: 'TZS',
+          externalId: transactionId,
+          provider,
+          additionalProperties: {
+            donationId: donation.id,
+            donorName,
+            campaignId: campaignId || '',
+          },
+        })
+
+        if (result.success) {
+          // Payment initiated — AzamPay will push STK to the phone
+          // We'll receive the final status via webhook callback
+          return NextResponse.json({
+            success: true,
+            transactionId,
+            donationId: donation.id,
+            azampayTransactionId: typeof result.data === 'object' ? result.data?.transactionId : undefined,
+            message: 'STK Push sent to your phone. Please enter your M-Pesa PIN to complete.',
+          })
+        } else {
+          // AzamPay rejected the checkout request
+          await db.donation.update({
+            where: { id: donation.id },
+            data: { status: 'failed' },
+          })
+
+          return NextResponse.json(
+            { error: result.message || 'Payment initiation failed. Please try again.' },
+            { status: 400 }
+          )
+        }
+      } catch (azampayError: unknown) {
+        console.error('AzamPay MNO checkout error:', azampayError)
+        // Fall through to simulation if AzamPay fails
+        const errorMessage = azampayError instanceof Error ? azampayError.message : 'Unknown error'
+        return NextResponse.json(
+          { error: `Payment service error: ${errorMessage}. Please try again later.` },
+          { status: 502 }
+        )
+      }
+    }
+
+    // ---- Fallback: Simulated M-Pesa STK Push (for development) ----
     setTimeout(async () => {
       try {
         const mockReceipt = `QHK${Date.now().toString().slice(-8)}`
@@ -128,6 +185,7 @@ export async function POST(request: NextRequest) {
       transactionId,
       donationId: donation.id,
       message: 'STK Push sent to your phone. Please enter your M-Pesa PIN to complete.',
+      _simulated: true, // Indicates this is a simulated payment (dev mode)
     })
   } catch (error) {
     console.error('M-Pesa donation error:', error)
