@@ -553,3 +553,22 @@ Stage Summary:
 - Standard API response helpers with pagination support
 - XSS prevention in newsletter broadcast
 - Build verified passing after all changes
+---
+Task ID: 1
+Agent: Main Agent
+Task: Convert database layer to Unified, Database-Agnostic Setup
+
+Work Log:
+- Read current src/lib/db.ts, prisma/seed.ts, prisma/schema.prisma, package.json, .env
+- Analyzed all foreign key relationships in schema to determine deletion dependency order
+- Rewrote src/lib/db.ts: Clean globalThis singleton PrismaClient with NO hardcoded datasources/datasourceUrl — Prisma natively resolves engine from DATABASE_URL env var
+- Rewrote prisma/seed.ts: Removed $transaction([...deleteMany()]) batch, replaced with explicit top-down deletion in dependency order (20 tables, children before parents); all relationship bindings use dynamic memory arrays (createdChildren[n].id, createdCampaigns[n].id, createdPrograms[n].id) instead of static IDs
+- Updated .env with comprehensive DATABASE_URL examples for SQLite/PostgreSQL/MySQL with clear switching instructions
+- Updated schema.prisma datasource comments for database-agnostic documentation
+- Verified: prisma generate ✅, prisma db push ✅, seed ✅ (all data created), next build ✅ (compiled + 32 pages)
+
+Stage Summary:
+- src/lib/db.ts now uses pure `new PrismaClient()` with globalThis singleton — no engine-specific config
+- prisma/seed.ts uses explicit dependency-ordered deletion — works on SQLite, PostgreSQL, and MySQL without FK rollback errors
+- All IDs are dynamically captured — compatible with both UUID (PostgreSQL cuid()) and integer (MySQL auto-increment)
+- No application logic or page layouts were changed

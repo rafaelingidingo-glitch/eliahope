@@ -3,11 +3,14 @@ generator client {
 }
 
 datasource db {
-  // Provider must be a literal string in Prisma (env() is NOT supported here).
-  // For development (SQLite):  provider = "sqlite"
-  // For production (PostgreSQL): provider = "postgresql"
-  // For production (MySQL):     provider = "mysql"
-  // When switching providers, run: npx prisma generate && npx prisma db push
+  // ─── Database-Agnostic Configuration ─────────────────────────────────
+  // The `provider` must be a literal string (Prisma does NOT support env() here).
+  // Change it to match your DATABASE_URL, then run:
+  //   npx prisma generate && npx prisma db push
+  //
+  // Localhost (SQLite):     provider = "sqlite"
+  // Vercel / Neon (PG):     provider = "postgresql"
+  // PlanetScale / RDS:      provider = "mysql"
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
