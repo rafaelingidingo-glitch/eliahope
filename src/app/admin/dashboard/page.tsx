@@ -209,13 +209,11 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="flex h-screen">
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex">
-        <div className="bg-[#0F2D5C] w-64 flex-shrink-0">
-          <SidebarContent activeSection={activeSection} onNavClick={handleNavClick} onClose={handleClose} onLogout={handleLogout} />
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#F8FAFC]">
+      {/* Fixed Desktop Sidebar — full viewport height, always visible on md+ */}
+      <aside className="hidden md:flex md:fixed md:inset-y-0 md:left-0 md:w-64 md:flex-col bg-[#0F2D5C] z-40">
+        <SidebarContent activeSection={activeSection} onNavClick={handleNavClick} onClose={handleClose} onLogout={handleLogout} />
+      </aside>
 
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
@@ -241,8 +239,8 @@ export default function AdminDashboardPage() {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
+      {/* Main Content Area — offset left margin on desktop for fixed sidebar */}
+      <div className="md:ml-64 min-h-screen flex flex-col">
         {/* Top Bar */}
         <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-4 sticky top-0 z-30">
           <Button

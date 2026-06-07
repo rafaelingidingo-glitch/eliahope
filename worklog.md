@@ -455,3 +455,23 @@ Stage Summary:
 - Path traversal vulnerability patched
 - Newsletter broadcast feature now works correctly
 - Build verified passing after all changes
+---
+Task ID: admin-fullpage-layout
+Agent: Main Agent
+Task: Make admin dashboard and sidebar take the whole page
+
+Work Log:
+- Reviewed current admin dashboard page at /src/app/admin/dashboard/page.tsx
+- Identified issue: sidebar was wrapped in extra flex containers that prevented full-height stretching
+- Changed sidebar from inline flex child to `fixed` positioning (inset-y-0 left-0 w-64) on desktop
+- Changed main content area to use `md:ml-64` margin to offset for fixed sidebar
+- Changed root container from `flex h-screen` to `min-h-screen bg-[#F8FAFC]`
+- Created /src/app/admin/layout.tsx as a passthrough layout (no constraints)
+- Mobile sidebar overlay unchanged (already works with fixed positioning)
+- Build verified: passes with zero errors
+
+Stage Summary:
+- Admin sidebar is now `fixed` position on desktop, spanning full viewport height
+- Content area scrolls independently with proper left margin offset
+- No more extra flex wrappers limiting the sidebar height
+- Dashboard truly takes the whole page
