@@ -747,19 +747,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
                         )}
                       </div>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {[5000, 10000, 25000, 50000, 100000].map((amt) => (
-                          <button
-                            key={amt}
-                            type="button"
-                            onClick={() => setMpesaAmount(amt.toString())}
-                            className="py-2 px-3 text-xs font-semibold border-2 border-[#c5c6ce] rounded-lg text-[#031632] hover:border-[#ff8928] hover:bg-[#ffdcc6]/30 transition-colors min-w-[48px]"
-                            disabled={donationState === 'loading'}
-                          >
-                            {(amt / 1000).toFixed(0)}K
-                          </button>
-                        ))}
-                      </div>
+
                     </div>
 
                     {/* Error Message */}
@@ -1064,19 +1052,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
                         )}
                       </div>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {[5000, 10000, 25000, 50000, 100000].map((amt) => (
-                          <button
-                            key={amt}
-                            type="button"
-                            onClick={() => setCrdbAmount(amt.toString())}
-                            className="py-2 px-3 text-xs font-semibold border-2 border-[#c5c6ce] rounded-lg text-[#031632] hover:border-[#ff8928] hover:bg-[#ffdcc6]/30 transition-colors min-w-[48px]"
-                            disabled={crdbDonationState === 'loading'}
-                          >
-                            {(amt / 1000).toFixed(0)}K
-                          </button>
-                        ))}
-                      </div>
+
                     </div>
 
                     {/* Error Message */}
