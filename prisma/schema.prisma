@@ -17,7 +17,7 @@ datasource db {
   //
   // NOTE: In Prisma 7, the connection URL is configured in prisma.config.ts
   // and passed at runtime via driver adapters in src/lib/db.ts.
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────

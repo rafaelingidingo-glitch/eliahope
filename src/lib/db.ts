@@ -70,13 +70,13 @@ function createPrismaClient(): PrismaClient {
   // ─── PostgreSQL Adapter ────────────────────────────────────────────
   // Uncomment after installing: bun add @prisma/adapter-pg pg
   //
-  // if (engine === 'postgresql') {
-  //   const { PrismaPg } = require('@prisma/adapter-pg')
-  //   const { Pool } = require('pg')
-  //   const pool = new Pool({ connectionString: DATABASE_URL })
-  //   const adapter = new PrismaPg(pool)
-  //   return new PrismaClient({ adapter, log })
-  // }
+   if (engine === 'postgresql') {
+   const { PrismaPg } = require('@prisma/adapter-pg')
+   const { Pool } = require('pg')
+   const pool = new Pool({ connectionString: DATABASE_URL })
+    const adapter = new PrismaPg(pool)
+   return new PrismaClient({ adapter, log })
+   }
 
   // ─── MySQL Adapter ─────────────────────────────────────────────────
   // Uncomment after installing: bun add @prisma/adapter-mariadb mariadb
