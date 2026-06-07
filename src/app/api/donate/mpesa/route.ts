@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       name?: string
       email?: string
       campaignId?: string
-      provider?: string // Optional: 'mpesa' (default), 'airtel', 'tigo', 'halopesa', 'azampesa'
+      provider?: string // Optional: 'mpesa' (default), 'airtel', 'tigo', 'halopesa'
     }
 
     const { phone, amount, name, email, campaignId, provider } = body
@@ -75,15 +75,15 @@ export async function POST(request: NextRequest) {
 
     // Check payment limits
     const limits = getPaymentLimits()
-    if (amount < limits.min) {
+    if (amount < limits.mno.min) {
       return NextResponse.json(
-        { error: `Minimum donation amount is TZS ${limits.min.toLocaleString()}` },
+        { error: `Minimum donation amount is TZS ${limits.mno.min.toLocaleString()}` },
         { status: 400 }
       )
     }
-    if (amount > limits.max) {
+    if (amount > limits.mno.max) {
       return NextResponse.json(
-        { error: `Maximum donation amount is TZS ${limits.max.toLocaleString()}. Please contact us for larger donations.` },
+        { error: `Maximum donation amount is TZS ${limits.mno.max.toLocaleString()}. Please contact us for larger donations.` },
         { status: 400 }
       )
     }
@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
 
     // Determine the MNO provider (default: mpesa)
     const mnoProvider = provider || 'mpesa'
+    const mappedProvider = mapMnoProvider(mnoProvider) as MnoProvider
 
     // Create donation record
     const donation = await db.donation.create({
@@ -124,26 +125,16 @@ export async function POST(request: NextRequest) {
     // ---- Real AzamPay MNO Checkout ----
     if (!shouldSimulate()) {
       try {
-        const azampayPhone = formatPhoneForAzampay(normalizedPhone)
-        const mappedProvider = mapMnoProvider(mnoProvider) as MnoProvider
-
+        // REKEBISHO: Parameters zinalingana na zile zilizopo kwenye kazi ya initiateMnoCheckout ndani ya azampay.ts
         const result = await initiateMnoCheckout({
-          accountNumber: azampayPhone,
-          amount: amount.toString(),
-          currency: 'TZS',
-          externalId: transactionId,
-          provider: mappedProvider,
-          additionalProperties: {
-            donationId: donation.id,
-            donorName,
-            campaignId: campaignId || '',
-          },
+          amount: toNumber(amount),
+          phone: normalizedPhone, 
+          provider: mnoProvider,
+          transactionId: transactionId,
         })
 
         if (result.success) {
-          // Payment initiated — AzamPay will push STK to the phone
-          // We'll receive the final status via webhook callback
-          const azampayTransactionId = typeof result.data === 'object' ? result.data?.transactionId : undefined
+          const azampayTransactionId = typeof result.data === 'object' ? (result.data as any)?.transactionId : undefined
 
           console.log(`[M-Pesa] AzamPay checkout initiated: azampayTxId=${azampayTransactionId}`)
 
@@ -162,10 +153,10 @@ export async function POST(request: NextRequest) {
             data: { status: 'failed' as DonationStatus },
           })
 
-          console.error(`[M-Pesa] AzamPay checkout rejected: ${result.message}`)
+          console.error(`[M-Pesa] AzamPay checkout rejected: ${(result as any).message}`)
 
           return NextResponse.json(
-            { error: result.message || 'Payment initiation failed. Please try again.' },
+            { error: (result as any).message || 'Payment initiation failed. Please try again.' },
             { status: 400 }
           )
         }
@@ -200,7 +191,6 @@ export async function POST(request: NextRequest) {
           },
         })
 
-        // Update campaign raised amount if applicable
         if (campaignId) {
           await db.campaign.update({
             where: { id: campaignId },
@@ -212,7 +202,6 @@ export async function POST(request: NextRequest) {
 
         console.log(`[M-Pesa] SIMULATED: Donation ${donation.id} marked as successful`)
 
-        // Send donation confirmation email if email was provided
         if (donation.donorEmail) {
           try {
             await sendDonationConfirmationEmail({
@@ -238,9 +227,9 @@ export async function POST(request: NextRequest) {
       success: true,
       transactionId,
       donationId: donation.id,
-      provider: mapMnoProvider(mnoProvider),
+      provider: mappedProvider,
       message: 'STK Push sent to your phone. Please enter your PIN to complete.',
-      _simulated: true, // Indicates this is a simulated payment (dev mode)
+      _simulated: true,
     })
   } catch (error) {
     console.error('[M-Pesa] Donation error:', error)
