@@ -19,6 +19,8 @@ const sw: Translations = {
   // Hero
   hero: {
     headline: 'Kutoa Tumaini, Elimu, na Mustakabali Mwema',
+    headlineHighlight: 'Kutoa Tumaini, Elimu, ',
+    headlineRest: 'na Mustakabali Mwema',
     description: 'Tunawawezesha watoto na familia dhaifu huko Mwanza, Tanzania kupitia elimu, afya, na programu za msaada zinazoendeshwa na jamii.',
     donateNow: 'Changia Sasa',
     learnMore: 'Soma Zaidi',

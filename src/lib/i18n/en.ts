@@ -17,6 +17,8 @@ const en = {
   // Hero
   hero: {
     headline: 'Giving Hope, Education, and a Brighter Future',
+    headlineHighlight: 'Giving Hope, Education, ',
+    headlineRest: 'and a Brighter Future',
     description: 'We empower vulnerable children and families in Mwanza, Tanzania through education, healthcare, and community-driven support programs.',
     donateNow: 'Donate Now',
     learnMore: 'Learn More',

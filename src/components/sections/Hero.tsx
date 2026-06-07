@@ -110,7 +110,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
           >
             {/* Headline */}
             <h1 className="text-[44px] sm:text-[48px] lg:text-[64px] lg:leading-[1.1] mb-6 drop-shadow-lg font-bold text-white">
-              {t.hero.headline}
+              <span className="text-[#ff8928]">{t.hero.headlineHighlight}</span>{t.hero.headlineRest}
             </h1>
 
             {/* Description */}
