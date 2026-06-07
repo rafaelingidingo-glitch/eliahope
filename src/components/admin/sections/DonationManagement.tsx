@@ -174,7 +174,7 @@ export default function DonationManagement() {
   const filteredDonations = donations.filter((d) => {
     if (statusFilter !== 'all' && d.status !== statusFilter) return false
     if (methodFilter !== 'all' && d.method !== methodFilter) return false
-    if (campaignFilter !== 'all' && d.campaign !== campaignFilter) return false
+    if (campaignFilter !== 'all' && d.campaignId !== campaignFilter) return false
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       const matchName = d.donorName.toLowerCase().includes(q)
@@ -317,7 +317,7 @@ export default function DonationManagement() {
   const handleToggleCampaignStatus = async (campaign: CampaignItem) => {
     const newStatus = campaign.status === 'active' ? 'completed' : 'active'
     try {
-      const res = await fetch(`/api/admin/donations?id=${campaign.id}`, {
+      const res = await fetch(`/api/admin/donations?id=${campaign.id}&type=campaign`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
@@ -577,7 +577,7 @@ export default function DonationManagement() {
               <SelectContent>
                 <SelectItem value="all">All Campaigns</SelectItem>
                 {campaigns.map((c) => (
-                  <SelectItem key={c.id} value={c.title}>{c.title}</SelectItem>
+                  <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     // ---- Real AzamPay MNO Checkout ----
     if (!shouldSimulate()) {
       try {
-        const azampayPhone = formatPhoneForAzampay(phone)
+        const azampayPhone = formatPhoneForAzampay(normalizedPhone)
         const provider = mapMnoProvider('mpesa')
 
         const result = await initiateMnoCheckout({

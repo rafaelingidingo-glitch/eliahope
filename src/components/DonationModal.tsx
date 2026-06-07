@@ -342,6 +342,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
         <button
           onClick={handleClose}
           className="absolute right-4 top-4 z-10 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+          aria-label="Close donation modal"
         >
           <X className="h-5 w-5 text-gray-400" />
         </button>
@@ -394,7 +395,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     <span className="text-[#44474d]">Amount:</span>
                     <span className="text-[#031632] font-semibold">TZS {parseFloat(successData.amount).toLocaleString()}</span>
                   </div>
-                  {crdbBankReference && (
+                  {crdbDonationState === 'success' && crdbBankReference && (
                     <div className="flex justify-between">
                       <span className="text-[#44474d]">Bank Ref:</span>
                       <span className="text-[#031632] font-semibold font-mono text-xs">{crdbBankReference}</span>
