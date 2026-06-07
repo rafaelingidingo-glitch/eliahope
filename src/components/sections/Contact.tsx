@@ -2,11 +2,13 @@
 
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { MapPin, Phone, Mail, Send, Clock } from 'lucide-react'
+import { MapPin, Phone, Mail, Send, Clock, MessageCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useLanguage } from '@/lib/i18n'
+
+const MAX_MESSAGE_LENGTH = 500
 
 export default function Contact() {
   const { t } = useLanguage()
@@ -87,17 +89,20 @@ export default function Contact() {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-10">
-          {/* Left - Contact Info + Map Placeholder */}
+          {/* Left - Contact Info + Map */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="space-y-4 mb-8">
+            <div className="space-y-4 mb-6">
               {contactInfo.map((info) => {
                 const Icon = info.icon
                 return (
-                  <div key={info.label} className="flex items-start gap-4 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                  <div
+                    key={info.label}
+                    className="flex items-start gap-4 bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-orange/20"
+                  >
                     <div className="bg-orange/10 p-2.5 rounded-lg shrink-0">
                       <Icon className="h-5 w-5 text-orange" />
                     </div>
@@ -110,15 +115,40 @@ export default function Contact() {
                   </div>
                 )
               })}
+
+              {/* WhatsApp Card */}
+              <a
+                href="https://wa.me/255754208639"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-4 bg-green-50 rounded-xl p-4 shadow-sm border border-green-200 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-green-400 group"
+              >
+                <div className="bg-green-500/10 p-2.5 rounded-lg shrink-0">
+                  <MessageCircle className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-1">
+                    {t.contact.whatsapp}
+                  </p>
+                  <p className="text-green-700 font-medium group-hover:text-green-800 transition-colors">
+                    {t.contact.whatsappLabel}
+                  </p>
+                </div>
+              </a>
             </div>
 
-            {/* Map Placeholder */}
-            <div className="bg-navy/5 rounded-xl h-52 flex items-center justify-center border-2 border-dashed border-navy/10">
-              <div className="text-center">
-                <MapPin className="h-8 w-8 text-navy/30 mx-auto mb-2" />
-                <p className="text-navy/40 font-medium text-sm">Mwanza, Tanzania</p>
-                <p className="text-navy/30 text-xs">{t.contact.mapView}</p>
-              </div>
+            {/* Map Embed */}
+            <div className="rounded-xl overflow-hidden shadow-sm border border-gray-100 h-52">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127672.75772628!2d32.85!3d-2.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19c2dbb6e5e4e3e3%3A0x4e8e8e8e8e8e8e8e!2sMwanza%2C%20Tanzania!5e0!3m2!1sen!2sus!4v1234567890"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Mwanza, Tanzania"
+              />
             </div>
           </motion.div>
 
@@ -164,11 +194,18 @@ export default function Contact() {
                   <Textarea
                     placeholder={t.contact.yourMessage}
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value.slice(0, MAX_MESSAGE_LENGTH)
+                      setFormData({ ...formData, message: val })
+                    }}
                     required
                     rows={5}
+                    maxLength={MAX_MESSAGE_LENGTH}
                     className="rounded-xl border-gray-200 focus:border-orange focus:ring-orange resize-none"
                   />
+                  <p className="text-xs text-text-secondary mt-1 text-right">
+                    {t.contact.characterCount.replace('{count}', String(formData.message.length))}
+                  </p>
                 </div>
                 <Button
                   type="submit"
@@ -183,6 +220,12 @@ export default function Contact() {
                   )}
                 </Button>
               </div>
+
+              {/* Response time note */}
+              <p className="text-xs text-text-secondary text-center mt-3 flex items-center justify-center gap-1.5">
+                <Clock className="h-3 w-3" />
+                {t.contact.responseTime}
+              </p>
 
               {status !== 'idle' && status !== 'loading' && (
                 <motion.p

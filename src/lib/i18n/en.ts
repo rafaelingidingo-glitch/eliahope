@@ -7,6 +7,8 @@ const en = {
     ourImpact: 'Our Impact',
     donate: 'Donate',
     login: 'Login',
+    volunteer: 'Volunteer',
+    contact: 'Contact',
     donateNow: 'Donate Now',
     openMenu: 'Open menu',
     navigationMenu: 'Navigation Menu',
@@ -23,6 +25,7 @@ const en = {
     enterAmount: 'Enter amount',
     giveNow: 'Give Now',
     secureDonation: 'Secure & Transparent Donation',
+    scrollDown: 'Scroll Down',
   },
 
   // About
@@ -42,6 +45,7 @@ const en = {
     visionDescription: 'A world where every child has access to education, nutrition, safety, and the opportunity to thrive within a supportive community rooted in faith and love. We envision communities where no child is left behind and every family has the resources they need to flourish.',
     ourMission: 'Our Mission',
     missionDescription: 'To provide hope, education, and support to vulnerable children and families, empowering them to reach their full potential through compassionate care and community development. We are committed to holistic transformation that addresses physical, spiritual, and educational needs.',
+    readOurStory: 'Read Our Story',
   },
 
   // Programs
@@ -61,6 +65,10 @@ const en = {
     bibleStudyDescription: 'Nurturing the spiritual growth of children and families through Bible study, prayer, and faith-based mentorship programs.',
     communitySupport: 'Community Support',
     communitySupportDescription: 'Empowering families and communities through skills training, health education, and sustainable livelihood programs.',
+    learnMore: 'Learn More',
+    childCareImageAlt: 'Child Care Program',
+    bibleStudyImageAlt: 'Bible Study Program',
+    communitySupportImageAlt: 'Community Support Program',
   },
 
   // Impact Stats
@@ -77,6 +85,9 @@ const en = {
     mealsServedDesc: 'Nutritious meals provided to children',
     educationGoal: '2026 Education Goal',
     educationGoalDescription: 'Helping another 50 children get to school',
+    feedingGoal: 'Feeding Program Goal',
+    feedingGoalDescription: 'Monthly meal target for vulnerable families',
+    supportOurMission: 'Support Our Mission',
   },
 
   // Events
@@ -100,6 +111,10 @@ const en = {
     featuredStory: 'Featured Story',
     before: 'Before',
     after: 'After',
+    shareStory: 'Share Story',
+    shareText: "Read {name}'s inspiring story of transformation with Elia's Hope Community!",
+    helpMoreChildren: 'Help More Children',
+    helpMoreChildrenDesc: 'Your support can change another child\'s story. Donate today.',
     graceTitle: "Grace's Journey",
     graceQuote: "Before Elia's Hope, I didn't know if I would ever go to school. Now I am top of my class and dreaming of becoming a doctor.",
     graceBefore: 'Grace was a struggling orphan living in extreme poverty with no access to education or regular meals. Her future seemed bleak, and hope was fading.',
@@ -119,7 +134,10 @@ const en = {
     subtitle: 'Visual Stories',
     title: 'Our Gallery',
     description: 'A glimpse into the lives we touch and the communities we serve through our programs.',
+    photos: 'Photos',
     all: 'All',
+    previousImage: 'Previous',
+    nextImage: 'Next',
     education: 'Education',
     feedingProgram: 'Feeding Program',
     communityOutreach: 'Community Outreach',
@@ -147,15 +165,19 @@ const en = {
     donate: 'Donate',
     donateDescription: 'Your financial contribution provides meals, school fees, and essential supplies for children in need.',
     donateNow: 'Donate Now',
+    donateStat: '500+ children helped',
     sponsor: 'Sponsor',
     sponsorDescription: "Sponsor a child's education and wellbeing, giving them the opportunity for a brighter future.",
     sponsorChild: 'Sponsor a Child',
+    sponsorStat: '50+ children sponsored',
     volunteer: 'Volunteer',
     volunteerDescription: 'Share your time and skills to directly impact the lives of children and families in our community.',
     volunteerNow: 'Volunteer Now',
+    volunteerStat: '200+ volunteers',
     partner: 'Partner',
     partnerDescription: 'Partner with us to create sustainable change and expand our reach across Mwanza and beyond.',
     becomePartner: 'Become a Partner',
+    partnerStat: '15+ organizations',
   },
 
   // Newsletter
@@ -168,6 +190,10 @@ const en = {
     subscribing: 'Subscribing...',
     successMessage: 'Thank you for subscribing!',
     errorMessage: 'Something went wrong. Please try again.',
+    benefitUpdates: 'Monthly Impact Updates',
+    benefitEvents: 'Event Notifications',
+    benefitVolunteer: 'Volunteer Opportunities',
+    privacyNote: 'We respect your privacy. Unsubscribe anytime.',
   },
 
   // Contact
@@ -180,12 +206,16 @@ const en = {
     email: 'Email',
     officeHours: 'Office Hours',
     officeHoursValue: 'Mon-Fri: 8:00 AM - 5:00 PM',
+    whatsapp: 'WhatsApp',
+    whatsappLabel: 'Chat on WhatsApp',
     mapView: 'Map view',
     sendMessage: 'Send us a Message',
     yourName: 'Your Name',
     yourEmail: 'Your Email',
     yourPhone: 'Your Phone (optional)',
     yourMessage: 'Your Message',
+    characterCount: '{count}/500 characters',
+    responseTime: 'We typically respond within 24 hours',
     send: 'Send Message',
     sending: 'Sending...',
     successMessage: 'Message sent successfully!',
@@ -207,6 +237,14 @@ const en = {
     copyright: 'All rights reserved.',
     privacyPolicy: 'Privacy Policy',
     termsConditions: 'Terms & Conditions',
+    backToTop: 'Back to Top',
+    newsletterTitle: 'Newsletter',
+    newsletterDescription: 'Subscribe for updates and stories of impact.',
+    emailAddress: 'Email Address',
+    subscribe: 'Subscribe',
+    subscribing: 'Subscribing...',
+    subscribeSuccess: 'Subscribed!',
+    subscribeError: 'Failed. Try again.',
   },
 
   // Donation Modal
@@ -280,6 +318,13 @@ const en = {
     resendOtp: 'Resend OTP',
     otpSent: 'OTP sent to your phone',
     mobileMoney: 'Mobile Money',
+    oneTime: 'One-time',
+    monthly: 'Monthly',
+    donationType: 'Donation Type',
+    receipt: 'Receipt',
+    receiptNumber: 'Receipt No.',
+    paymentMethod: 'Payment Method',
+    recurringNote: 'Your monthly donation will help sustain our programs year-round.',
   },
 
   // Campaign Notification
@@ -291,6 +336,7 @@ const en = {
     goalReached: 'Goal reached!',
     donateNow: 'Donate Now',
     everyContribution: 'Every contribution makes a difference',
+    remindMeLater: 'Remind me later',
   },
 
   // Admin Login
@@ -310,6 +356,7 @@ const en = {
     subtitle: 'Together We Serve',
     title: 'Our Partners',
     description: 'We are grateful for the support and collaboration of our partners who share our vision of a better future for every child.',
+    becomePartner: 'Become a Partner',
   },
 
   // Language

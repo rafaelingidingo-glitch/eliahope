@@ -1,8 +1,8 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { Mail, Send } from 'lucide-react'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { Mail, Send, CheckCircle, PartyPopper } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useLanguage } from '@/lib/i18n'
@@ -15,6 +15,12 @@ export default function Newsletter() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
+
+  const benefits = [
+    { icon: CheckCircle, text: t.newsletter.benefitUpdates },
+    { icon: CheckCircle, text: t.newsletter.benefitEvents },
+    { icon: CheckCircle, text: t.newsletter.benefitVolunteer },
+  ]
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,8 +51,8 @@ export default function Newsletter() {
 
   return (
     <section id="newsletter" ref={ref} className="py-20 md:py-28 bg-white relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute inset-0 opacity-[0.03]">
+      {/* Decorative background — opacity 0.06 */}
+      <div className="absolute inset-0 opacity-[0.06]">
         <div
           className="absolute inset-0"
           style={{
@@ -69,9 +75,25 @@ export default function Newsletter() {
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">
             {t.newsletter.title}
           </h2>
-          <p className="text-text-secondary max-w-xl mx-auto mb-8">
+          <p className="text-text-secondary max-w-xl mx-auto mb-6">
             {t.newsletter.description}
           </p>
+
+          {/* Benefit items */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mb-8">
+            {benefits.map((benefit, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
+                className="flex items-center gap-2 text-sm text-text-secondary"
+              >
+                <benefit.icon className="h-4 w-4 text-[#ff8928] flex-shrink-0" />
+                <span>{benefit.text}</span>
+              </motion.div>
+            ))}
+          </div>
 
           <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-3">
             <Input
@@ -104,17 +126,44 @@ export default function Newsletter() {
             </Button>
           </form>
 
-          {status !== 'idle' && status !== 'loading' && (
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`mt-4 text-sm font-medium ${
-                status === 'success' ? 'text-green-600' : 'text-red-500'
-              }`}
-            >
-              {message}
-            </motion.p>
-          )}
+          {/* Privacy note */}
+          <p className="text-text-secondary/60 text-xs mt-3">
+            {t.newsletter.privacyNote}
+          </p>
+
+          {/* Success / Error message with animation */}
+          <AnimatePresence>
+            {status !== 'idle' && status !== 'loading' && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                className="mt-4"
+              >
+                {status === 'success' ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                    >
+                      <PartyPopper className="h-5 w-5 text-green-500" />
+                    </motion.div>
+                    <motion.p
+                      initial={{ opacity: 0, x: -5 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-sm font-medium text-green-600"
+                    >
+                      {message}
+                    </motion.p>
+                  </div>
+                ) : (
+                  <p className="text-sm font-medium text-red-500">{message}</p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </section>

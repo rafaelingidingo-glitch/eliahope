@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, Globe } from 'lucide-react'
+import { Menu, Globe, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { useLanguage } from '@/lib/i18n'
@@ -15,6 +15,7 @@ interface NavbarProps {
 export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('#home')
+  const [scrolled, setScrolled] = useState(false)
   const { t, locale, setLocale } = useLanguage()
 
   const navLinks = [
@@ -22,12 +23,16 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
     { label: t.nav.aboutUs, href: '#about' },
     { label: t.nav.whatWeDo, href: '#programs' },
     { label: t.nav.ourImpact, href: '#impact' },
+    { label: t.nav.volunteer, href: '#take-action' },
+    { label: t.nav.contact, href: '#contact' },
     { label: t.nav.donate, href: '#donate-modal' },
   ]
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['#home', '#about', '#programs', '#impact']
+      setScrolled(window.scrollY > 50)
+
+      const sections = ['#home', '#about', '#programs', '#impact', '#take-action', '#contact']
       for (const section of [...sections].reverse()) {
         const el = document.querySelector(section)
         if (el) {
@@ -51,8 +56,10 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
     }
   }
 
-  const toggleLanguage = () => {
-    setLocale(locale === 'en' ? 'sw' : 'en')
+  const switchLocale = (newLocale: 'en' | 'sw') => {
+    if (newLocale !== locale) {
+      setLocale(newLocale)
+    }
   }
 
   return (
@@ -60,10 +67,14 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm h-20"
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${
+        scrolled
+          ? 'bg-white/98 shadow-md py-2'
+          : 'bg-white/95 shadow-sm py-4'
+      }`}
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-        <div className="flex items-center justify-between h-full">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-12">
           {/* Logo */}
           <a
             href="#home"
@@ -73,7 +84,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
             }}
             className="flex items-center gap-3"
           >
-            <img src="/logo.jpeg" alt="Elia's Hope Community" className="h-12 w-12 rounded-full object-cover" />
+            <img src="/logo.jpeg" alt="Elia's Hope Community" className="h-10 w-10 rounded-full object-cover" />
             <span className="text-[#031632] font-bold text-lg hidden sm:inline">Elia&apos;s Hope</span>
           </a>
 
@@ -104,15 +115,27 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* Language Switcher */}
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#44474d] hover:text-[#031632] hover:bg-[#f5f3ef] rounded-lg transition-all"
-              title={t.language.switchLanguage}
-            >
-              <Globe className="h-4 w-4" />
-              <span className="font-semibold">{locale === 'en' ? 'SW' : 'EN'}</span>
-            </button>
+            {/* Language Switcher - EN | SW with current highlighted */}
+            <div className="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg hover:bg-[#f5f3ef] transition-all">
+              <Globe className="h-4 w-4 text-[#44474d] mr-1" />
+              <button
+                onClick={() => switchLocale('en')}
+                className={`transition-colors ${
+                  locale === 'en' ? 'text-[#ff8928] font-bold' : 'text-[#44474d] hover:text-[#031632]'
+                }`}
+              >
+                EN
+              </button>
+              <span className="text-[#c5c6ce] mx-0.5">|</span>
+              <button
+                onClick={() => switchLocale('sw')}
+                className={`transition-colors ${
+                  locale === 'sw' ? 'text-[#ff8928] font-bold' : 'text-[#44474d] hover:text-[#031632]'
+                }`}
+              >
+                SW
+              </button>
+            </div>
             <Button
               variant="outline"
               onClick={onAdminClick}
@@ -133,14 +156,26 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
           {/* Mobile Menu */}
           <div className="flex items-center gap-2 lg:hidden">
             {/* Mobile Language Switcher */}
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-1 px-2.5 py-2 text-xs font-semibold text-[#44474d] hover:text-[#031632] hover:bg-[#f5f3ef] rounded-lg transition-all"
-              title={t.language.switchLanguage}
-            >
-              <Globe className="h-4 w-4" />
-              {locale === 'en' ? 'SW' : 'EN'}
-            </button>
+            <div className="flex items-center gap-0.5 px-2 py-2 text-xs font-semibold rounded-lg hover:bg-[#f5f3ef] transition-all">
+              <Globe className="h-3.5 w-3.5 text-[#44474d] mr-0.5" />
+              <button
+                onClick={() => switchLocale('en')}
+                className={`transition-colors ${
+                  locale === 'en' ? 'text-[#ff8928] font-bold' : 'text-[#44474d]'
+                }`}
+              >
+                EN
+              </button>
+              <span className="text-[#c5c6ce]">|</span>
+              <button
+                onClick={() => switchLocale('sw')}
+                className={`transition-colors ${
+                  locale === 'sw' ? 'text-[#ff8928] font-bold' : 'text-[#44474d]'
+                }`}
+              >
+                SW
+              </button>
+            </div>
             <Button
               variant="outline"
               onClick={onAdminClick}
@@ -158,13 +193,23 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
               <SheetContent side="right" className="bg-white w-72 p-0">
                 <SheetTitle className="sr-only">{t.nav.navigationMenu}</SheetTitle>
                 <div className="flex flex-col h-full">
+                  {/* Mobile Donate Banner */}
+                  <div className="bg-[#ff8928] p-4">
+                    <Button
+                      onClick={() => { onDonateClick?.(); setMobileOpen(false) }}
+                      className="w-full bg-white text-[#ff8928] hover:bg-white/90 font-bold rounded-none flex items-center justify-center gap-2 h-12"
+                    >
+                      <Heart className="h-4 w-4 fill-current" />
+                      {t.nav.donateNow}
+                    </Button>
+                  </div>
                   <div className="flex items-center justify-between p-4 border-b border-[#c5c6ce]/30">
                     <div className="flex items-center gap-3">
                       <img src="/logo.jpeg" alt="Elia's Hope" className="h-9 w-9 rounded-full object-cover" />
                       <span className="text-[#031632] font-bold">Elia&apos;s Hope</span>
                     </div>
                   </div>
-                  <div className="flex-1 py-4">
+                  <div className="flex-1 py-4 overflow-y-auto">
                     {navLinks.map((link) => (
                       <a
                         key={link.href}
@@ -187,16 +232,6 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                         {link.label}
                       </a>
                     ))}
-                  </div>
-                  <div className="p-4 space-y-3 border-t border-[#c5c6ce]/30">
-                    <Button
-                      asChild
-                      className="w-full bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-none"
-                    >
-                      <a href="#donate-modal" onClick={(e) => { e.preventDefault(); onDonateClick?.(); setMobileOpen(false) }}>
-                        {t.nav.donateNow}
-                      </a>
-                    </Button>
                   </div>
                 </div>
               </SheetContent>

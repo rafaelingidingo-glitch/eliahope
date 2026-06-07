@@ -1,17 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Heart, ArrowRight, Lock } from 'lucide-react'
+import { Heart, ArrowRight, ShieldCheck, ChevronDown } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
 
 interface HeroProps {
   onDonateClick?: (campaignId?: string, amount?: string) => void
 }
 
+/** Quick-preset donation amounts in TZS */
+const QUICK_AMOUNTS = [
+  { label: '5K', value: 5000 },
+  { label: '10K', value: 10000 },
+  { label: '25K', value: 25000 },
+  { label: '50K', value: 50000 },
+  { label: '100K', value: 100000 },
+]
+
+/** Generate floating particle data once so it doesn't change on re-renders */
+function useParticles(count: number) {
+  return useMemo(() => {
+    return Array.from({ length: count }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 4 + 2,
+      duration: Math.random() * 8 + 10,
+      delay: Math.random() * 5,
+      opacity: Math.random() * 0.3 + 0.1,
+    }))
+  }, [count])
+}
+
 export default function Hero({ onDonateClick }: HeroProps) {
   const [amount, setAmount] = useState('')
   const { t } = useLanguage()
+  const particles = useParticles(18)
+
+  const handleQuickAmount = (value: number) => {
+    setAmount(String(value))
+  }
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
@@ -23,6 +52,52 @@ export default function Hero({ onDonateClick }: HeroProps) {
       />
       {/* Overlay */}
       <div className="hero-overlay absolute inset-0" />
+
+      {/* Animated Gradient Layer */}
+      <div className="absolute inset-0 z-[1] pointer-events-none">
+        <motion.div
+          className="absolute inset-0"
+          animate={{
+            background: [
+              'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,137,40,0.12) 0%, transparent 70%)',
+              'radial-gradient(ellipse 80% 60% at 70% 60%, rgba(3,22,50,0.15) 0%, transparent 70%)',
+              'radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255,137,40,0.10) 0%, transparent 70%)',
+              'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,137,40,0.12) 0%, transparent 70%)',
+            ],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      </div>
+
+      {/* Floating Particles */}
+      <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden">
+        {particles.map((p) => (
+          <motion.div
+            key={p.id}
+            className="absolute rounded-full bg-white/30"
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              width: p.size,
+              height: p.size,
+            }}
+            animate={{
+              y: [0, -40, 0],
+              opacity: [p.opacity, p.opacity * 1.8, p.opacity],
+            }}
+            transition={{
+              duration: p.duration,
+              repeat: Infinity,
+              delay: p.delay,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+      </div>
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-28 pb-20 lg:pt-36 lg:pb-28">
@@ -52,13 +127,14 @@ export default function Hero({ onDonateClick }: HeroProps) {
                 <Heart className="h-5 w-5" />
                 {t.hero.donateNow}
               </button>
+              {/* Outlined Learn More Button */}
               <a
                 href="#about"
                 onClick={(e) => {
                   e.preventDefault()
                   document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })
                 }}
-                className="group inline-flex items-center gap-2 text-white font-bold hover:text-[#ffdcc6] transition-colors py-4"
+                className="group inline-flex items-center gap-2 text-white font-semibold py-4 px-8 border-2 border-white/60 rounded-none hover:bg-white/10 hover:border-white active:scale-95 transition-all"
               >
                 {t.hero.learnMore}
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -80,7 +156,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
               </p>
 
               {/* Amount Input */}
-              <div className="relative mb-4">
+              <div className="relative mb-3">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-sm">TSh</span>
                 <input
                   type="number"
@@ -92,6 +168,23 @@ export default function Hero({ onDonateClick }: HeroProps) {
                 />
               </div>
 
+              {/* Quick Amount Presets */}
+              <div className="flex gap-2 mb-5">
+                {QUICK_AMOUNTS.map((preset) => (
+                  <button
+                    key={preset.value}
+                    onClick={() => handleQuickAmount(preset.value)}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all border-2 ${
+                      amount === String(preset.value)
+                        ? 'bg-[#ff8928] text-white border-[#ff8928] shadow-md'
+                        : 'bg-white text-[#031632] border-[#c5c6ce] hover:border-[#ff8928] hover:text-[#ff8928]'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+
               {/* Give Now Button */}
               <button
                 onClick={() => onDonateClick?.(undefined, amount)}
@@ -101,15 +194,33 @@ export default function Hero({ onDonateClick }: HeroProps) {
                 {t.hero.giveNow}
               </button>
 
-              {/* Secure Badge */}
-              <div className="flex items-center justify-center gap-2 mt-5 text-[#44474d] text-xs">
-                <Lock className="h-3.5 w-3.5" />
-                <span>{t.hero.secureDonation}</span>
+              {/* Secure Badge - Enhanced */}
+              <div className="flex items-center justify-center gap-2 mt-5 bg-emerald-50 border border-emerald-200 rounded-xl py-2.5 px-4">
+                <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span className="text-emerald-700 text-xs font-semibold">{t.hero.secureDonation}</span>
               </div>
             </div>
           </motion.div>
         </div>
       </div>
+
+      {/* Scroll Down Indicator */}
+      <motion.a
+        href="#about"
+        onClick={(e) => {
+          e.preventDefault()
+          document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })
+        }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 cursor-pointer group"
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        aria-label={t.hero.scrollDown}
+      >
+        <span className="text-white/60 text-xs font-medium tracking-widest uppercase group-hover:text-white/90 transition-colors">
+          {t.hero.scrollDown}
+        </span>
+        <ChevronDown className="h-5 w-5 text-white/60 group-hover:text-white/90 transition-colors" />
+      </motion.a>
     </section>
   )
 }

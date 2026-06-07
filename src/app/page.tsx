@@ -58,7 +58,7 @@ export default function Home() {
         <About />
         <VisionMission />
         <Programs />
-        <ImpactStats />
+        <ImpactStats onDonateClick={() => handleDonateClick()} />
         <Events onDonateClick={handleDonateClick} />
         <SuccessStories />
         <Gallery />

@@ -56,13 +56,13 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
 
   // Form states
   const [activeTab, setActiveTab] = useState<PaymentTab>('mpesa')
-  const [selectedCampaign, setSelectedCampaign] = useState<string>('')
+  const [selectedCampaign, setSelectedCampaign] = useState<string>(preselectedCampaignId || '')
 
   // M-Pesa form
   const [mpesaName, setMpesaName] = useState('')
   const [mpesaPhone, setMpesaPhone] = useState('')
   const [mpesaEmail, setMpesaEmail] = useState('')
-  const [mpesaAmount, setMpesaAmount] = useState('')
+  const [mpesaAmount, setMpesaAmount] = useState(prefilledAmount || '')
   const [mnoProvider, setMnoProvider] = useState<MnoProviderValue>('mpesa')
   const [donationState, setDonationState] = useState<DonationState>('idle')
   const [transactionId, setTransactionId] = useState('')
@@ -75,7 +75,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
   const [crdbPhone, setCrdbPhone] = useState('')
   const [crdbAccountHolder, setCrdbAccountHolder] = useState('')
   const [crdbAccountNumber, setCrdbAccountNumber] = useState('')
-  const [crdbAmount, setCrdbAmount] = useState('')
+  const [crdbAmount, setCrdbAmount] = useState(prefilledAmount || '')
   const [crdbDonationState, setCrdbDonationState] = useState<DonationState>('idle')
   const [crdbTransactionId, setCrdbTransactionId] = useState('')
   const [crdbDonationId, setCrdbDonationId] = useState('')
@@ -87,6 +87,9 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
 
   // Campaigns
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
+
+  // Donation type
+  const [donationType, setDonationType] = useState<'one-time' | 'monthly'>('one-time')
 
   // Polling for payment status
   const [polling, setPolling] = useState(false)
@@ -105,25 +108,22 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
   }, [])
 
   useEffect(() => {
-    if (isOpen) {
-      fetchCampaigns()
+    if (!isOpen) return
+    let cancelled = false
+    async function loadCampaigns() {
+      try {
+        const res = await fetch('/api/donate/campaigns')
+        if (res.ok && !cancelled) {
+          const data = await res.json()
+          setCampaigns(data.campaigns || [])
+        }
+      } catch {
+        // Silent fail
+      }
     }
-  }, [isOpen, fetchCampaigns])
-
-  // Apply preselected campaign
-  useEffect(() => {
-    if (preselectedCampaignId) {
-      setSelectedCampaign(preselectedCampaignId)
-    }
-  }, [preselectedCampaignId])
-
-  // Apply prefilled amount
-  useEffect(() => {
-    if (prefilledAmount) {
-      setMpesaAmount(prefilledAmount)
-      setCrdbAmount(prefilledAmount)
-    }
-  }, [prefilledAmount])
+    loadCampaigns()
+    return () => { cancelled = true }
+  }, [isOpen])
 
   // Poll for payment status (both M-Pesa and CRDB)
   useEffect(() => {
@@ -192,6 +192,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     setMpesaEmail('')
     setMpesaAmount('')
     setMnoProvider('mpesa')
+    setDonationType('one-time')
     // CRDB
     setCrdbDonationState('idle')
     setCrdbTransactionId('')
@@ -446,31 +447,52 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                   {t.donation.thankYouMessage}
                 </p>
 
-                <div className="bg-[#f5f3ef] rounded-2xl p-4 text-left max-w-xs mx-auto mb-6 space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-[#44474d]">{t.donation.donor}</span>
-                    <span className="text-[#031632] font-semibold">{successData.name || t.donation.anonymous}</span>
+                <div className="border-2 border-dashed border-[#c5c6ce] rounded-2xl p-5 text-left max-w-xs mx-auto mb-6">
+                  {/* Receipt header */}
+                  <div className="text-center mb-3 pb-3 border-b border-dashed border-[#c5c6ce]">
+                    <p className="text-[#031632] font-bold text-sm uppercase tracking-wider">{t.donation.receipt}</p>
+                    <p className="text-[#ff8928] text-[10px] font-semibold mt-0.5">Elia's Hope Community</p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#44474d]">{t.donation.amount}</span>
-                    <span className="text-[#031632] font-semibold">TZS {parseFloat(successData.amount).toLocaleString()}</span>
-                  </div>
-                  {crdbDonationState === 'success' && crdbBankReference && (
+                  <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-[#44474d]">{t.donation.bankRef}</span>
-                      <span className="text-[#031632] font-semibold font-mono text-xs">{crdbBankReference}</span>
+                      <span className="text-[#44474d]">{t.donation.receiptNumber}</span>
+                      <span className="text-[#031632] font-semibold font-mono text-xs">{successData.tid}</span>
                     </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-[#44474d]">{t.donation.transactionId}</span>
-                    <span className="text-[#031632] font-semibold font-mono text-xs">{successData.tid}</span>
+                    <div className="flex justify-between">
+                      <span className="text-[#44474d]">{t.donation.donor}</span>
+                      <span className="text-[#031632] font-semibold">{successData.name || t.donation.anonymous}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#44474d]">{t.donation.amount}</span>
+                      <span className="text-[#031632] font-semibold">TZS {parseFloat(successData.amount).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#44474d]">{t.donation.paymentMethod}</span>
+                      <span className="text-[#031632] font-semibold text-xs">
+                        {activeTab === 'mpesa' ? t.donation.mobileMoney : t.donation.crdbBank}
+                      </span>
+                    </div>
+                    {crdbDonationState === 'success' && crdbBankReference && (
+                      <div className="flex justify-between">
+                        <span className="text-[#44474d]">{t.donation.bankRef}</span>
+                        <span className="text-[#031632] font-semibold font-mono text-xs">{crdbBankReference}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-[#44474d]">{t.donation.transactionId}</span>
+                      <span className="text-[#031632] font-semibold font-mono text-xs">{successData.tid}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#44474d]">{t.donation.dateTime}</span>
+                      <span className="text-[#031632] font-semibold text-xs">
+                        {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}{' '}
+                        {new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#44474d]">{t.donation.dateTime}</span>
-                    <span className="text-[#031632] font-semibold text-xs">
-                      {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}{' '}
-                      {new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                  {/* Receipt footer */}
+                  <div className="text-center mt-3 pt-3 border-t border-dashed border-[#c5c6ce]">
+                    <p className="text-[#44474d] text-[10px]">Thank you for your generosity ❤</p>
                   </div>
                 </div>
 
@@ -523,8 +545,71 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d] pointer-events-none" />
                     </div>
+                    {/* Campaign progress bar when a campaign is selected */}
+                    {selectedCampaign && (() => {
+                      const campaign = campaigns.find((c) => c.id === selectedCampaign)
+                      if (!campaign) return null
+                      return (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="mt-2 bg-[#f5f3ef] rounded-lg p-2.5"
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[#031632] font-semibold text-xs">{campaign.title}</span>
+                            <span className="text-[#ff8928] font-bold text-xs">{campaign.percentage}%</span>
+                          </div>
+                          <Progress value={campaign.percentage} className="h-1.5 mb-1 [&>div]:bg-[#ff8928]" />
+                          <div className="flex items-center justify-between text-[10px] text-[#44474d]">
+                            <span>TZS {campaign.raised.toLocaleString()} {t.donation.raised}</span>
+                            <span>{t.donation.goal} TZS {campaign.goal.toLocaleString()}</span>
+                          </div>
+                        </motion.div>
+                      )
+                    })()}
                   </div>
                 )}
+
+                {/* Donation Type Toggle: One-time / Monthly */}
+                <div className="mb-5">
+                  <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
+                    {t.donation.donationType}
+                  </label>
+                  <div className="flex border-2 border-[#c5c6ce] rounded-xl overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setDonationType('one-time')}
+                      className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                        donationType === 'one-time'
+                          ? 'bg-[#ff8928] text-white'
+                          : 'bg-white text-[#44474d] hover:bg-gray-50'
+                      }`}
+                    >
+                      {t.donation.oneTime}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDonationType('monthly')}
+                      className={`flex-1 py-2.5 text-sm font-semibold transition-colors border-l-2 border-[#c5c6ce] ${
+                        donationType === 'monthly'
+                          ? 'bg-[#ff8928] text-white'
+                          : 'bg-white text-[#44474d] hover:bg-gray-50'
+                      }`}
+                    >
+                      {t.donation.monthly}
+                    </button>
+                  </div>
+                  {donationType === 'monthly' && (
+                    <motion.p
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="text-[#ff8928] text-xs mt-1.5 font-medium"
+                    >
+                      {t.donation.recurringNote}
+                    </motion.p>
+                  )}
+                </div>
 
                 {/* Payment Tabs */}
                 <div className="flex mb-5 border-2 border-[#c5c6ce] rounded-xl overflow-hidden">
@@ -560,7 +645,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
                         {t.donation.selectProvider} <span className="text-red-500">*</span>
                       </label>
-                      <div className="grid grid-cols-5 gap-1.5">
+                      <div className="flex flex-wrap gap-2">
                         {([
                           { value: 'mpesa' as MnoProviderValue, label: 'M-Pesa', color: 'bg-green-600 border-green-600 text-white' },
                           { value: 'airtel' as MnoProviderValue, label: 'Airtel', color: 'bg-red-600 border-red-600 text-white' },
@@ -573,7 +658,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                             type="button"
                             onClick={() => setMnoProvider(p.value)}
                             disabled={donationState === 'loading'}
-                            className={`py-2 px-1 text-xs font-bold rounded-lg border-2 transition-all ${
+                            className={`py-2.5 px-3 text-xs font-bold rounded-lg border-2 transition-all min-w-[60px] sm:min-w-0 sm:flex-1 ${
                               mnoProvider === p.value
                                 ? p.color
                                 : 'border-[#c5c6ce] text-[#44474d] bg-white hover:border-[#ff8928]'
@@ -595,10 +680,13 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="text"
                           value={mpesaName}
                           onChange={(e) => setMpesaName(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-11 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder={`${t.donation.fullName} ${t.donation.optional}`}
                           disabled={donationState === 'loading'}
                         />
+                        {mpesaName.trim() && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
                     </div>
 
@@ -615,11 +703,14 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="tel"
                           value={mpesaPhone}
                           onChange={(e) => setMpesaPhone(e.target.value)}
-                          className="w-full pl-16 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-16 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder="7XX XXX XXX"
                           required
                           disabled={donationState === 'loading'}
                         />
+                        {mpesaPhone.length >= 9 && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
                     </div>
 
@@ -634,10 +725,13 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="email"
                           value={mpesaEmail}
                           onChange={(e) => setMpesaEmail(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-11 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder="your@email.com"
                           disabled={donationState === 'loading'}
                         />
+                        {mpesaEmail.trim() && mpesaEmail.includes('@') && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
                     </div>
 
@@ -654,20 +748,23 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="number"
                           value={mpesaAmount}
                           onChange={(e) => setMpesaAmount(e.target.value)}
-                          className="w-full pl-14 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-14 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder={t.donation.enterAmount}
                           min="1"
                           required
                           disabled={donationState === 'loading'}
                         />
+                        {mpesaAmount && parseFloat(mpesaAmount) > 0 && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
-                      <div className="flex gap-2 mt-2">
+                      <div className="flex flex-wrap gap-2 mt-2">
                         {[5000, 10000, 25000, 50000, 100000].map((amt) => (
                           <button
                             key={amt}
                             type="button"
                             onClick={() => setMpesaAmount(amt.toString())}
-                            className="flex-1 py-1.5 text-xs font-semibold border-2 border-[#c5c6ce] rounded-lg text-[#031632] hover:border-[#ff8928] hover:bg-[#ffdcc6]/30 transition-colors"
+                            className="py-2 px-3 text-xs font-semibold border-2 border-[#c5c6ce] rounded-lg text-[#031632] hover:border-[#ff8928] hover:bg-[#ffdcc6]/30 transition-colors min-w-[48px]"
                             disabled={donationState === 'loading'}
                           >
                             {(amt / 1000).toFixed(0)}K
@@ -850,10 +947,13 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="text"
                           value={crdbName}
                           onChange={(e) => setCrdbName(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-11 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder={`${t.donation.fullName} ${t.donation.optional}`}
                           disabled={crdbDonationState === 'loading'}
                         />
+                        {crdbName.trim() && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
                     </div>
 
@@ -868,10 +968,13 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="email"
                           value={crdbEmail}
                           onChange={(e) => setCrdbEmail(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-11 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder="your@email.com"
                           disabled={crdbDonationState === 'loading'}
                         />
+                        {crdbEmail.trim() && crdbEmail.includes('@') && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
                     </div>
 
@@ -886,10 +989,13 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="tel"
                           value={crdbPhone}
                           onChange={(e) => setCrdbPhone(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-11 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder="+255 7XX XXX XXX"
                           disabled={crdbDonationState === 'loading'}
                         />
+                        {crdbPhone.trim().length >= 9 && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
                     </div>
 
@@ -911,11 +1017,14 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="text"
                           value={crdbAccountHolder}
                           onChange={(e) => setCrdbAccountHolder(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-11 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder={t.donation.nameOnAccount}
                           required
                           disabled={crdbDonationState === 'loading'}
                         />
+                        {crdbAccountHolder.trim() && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
                     </div>
 
@@ -930,12 +1039,15 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="text"
                           value={crdbAccountNumber}
                           onChange={(e) => setCrdbAccountNumber(e.target.value.replace(/[^\d]/g, ''))}
-                          className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm font-mono tracking-wider focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-11 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm font-mono tracking-wider focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder={t.donation.crdbAccountNumber}
                           required
                           disabled={crdbDonationState === 'loading'}
                           maxLength={16}
                         />
+                        {crdbAccountNumber.length >= 10 && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
                       <p className="text-[#44474d] text-xs mt-1">{t.donation.crdbAccountHint}</p>
                     </div>
@@ -953,20 +1065,23 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           type="number"
                           value={crdbAmount}
                           onChange={(e) => setCrdbAmount(e.target.value)}
-                          className="w-full pl-14 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
+                          className="w-full pl-14 pr-10 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
                           placeholder={t.donation.enterAmount}
                           min="1"
                           required
                           disabled={crdbDonationState === 'loading'}
                         />
+                        {crdbAmount && parseFloat(crdbAmount) > 0 && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                        )}
                       </div>
-                      <div className="flex gap-2 mt-2">
+                      <div className="flex flex-wrap gap-2 mt-2">
                         {[5000, 10000, 25000, 50000, 100000].map((amt) => (
                           <button
                             key={amt}
                             type="button"
                             onClick={() => setCrdbAmount(amt.toString())}
-                            className="flex-1 py-1.5 text-xs font-semibold border-2 border-[#c5c6ce] rounded-lg text-[#031632] hover:border-[#ff8928] hover:bg-[#ffdcc6]/30 transition-colors"
+                            className="py-2 px-3 text-xs font-semibold border-2 border-[#c5c6ce] rounded-lg text-[#031632] hover:border-[#ff8928] hover:bg-[#ffdcc6]/30 transition-colors min-w-[48px]"
                             disabled={crdbDonationState === 'loading'}
                           >
                             {(amt / 1000).toFixed(0)}K

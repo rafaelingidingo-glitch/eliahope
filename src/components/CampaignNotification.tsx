@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Heart, TrendingUp, ArrowRight } from 'lucide-react'
+import { X, Heart, TrendingUp, ArrowRight, Clock } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import { useLanguage } from '@/lib/i18n'
 
@@ -23,40 +23,48 @@ interface CampaignNotificationProps {
 
 const NOTIFICATION_DELAY = 3000 // 3 seconds after page load
 const SESSION_KEY = 'elia_hope_campaign_dismissed'
+const SNOOZE_KEY = 'elia_hope_campaign_snoozed_until'
+const AUTO_DISMISS_MS = 15000 // 15 seconds
+const SNOOZE_DURATION_MS = 5 * 60 * 1000 // 5 minutes
 
 export default function CampaignNotification({ onDonateClick }: CampaignNotificationProps) {
   const { t } = useLanguage()
   const [visible, setVisible] = useState(false)
   const [campaign, setCampaign] = useState<Campaign | null>(null)
-  const [dismissed, setDismissed] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+  const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pausedElapsedRef = useRef<number>(0)
 
-  const fetchLatestCampaign = useCallback(async () => {
-    try {
-      const res = await fetch('/api/donate/campaigns')
-      if (res.ok) {
-        const data = await res.json()
-        const campaigns: Campaign[] = data.campaigns || []
-        // Pick the most recent active campaign
-        if (campaigns.length > 0) {
-          setCampaign(campaigns[0])
-        }
-      }
-    } catch {
-      // Silent fail
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      if (sessionStorage.getItem(SESSION_KEY)) return true
+      const snoozedUntil = localStorage.getItem(SNOOZE_KEY)
+      if (snoozedUntil && Date.now() < parseInt(snoozedUntil, 10)) return true
     }
-  }, [])
+    return false
+  })
 
   useEffect(() => {
-    // Check if already dismissed in this session
-    const wasDismissed = sessionStorage.getItem(SESSION_KEY)
-    if (wasDismissed) {
-      setDismissed(true)
-      return
-    }
+    if (dismissed) return
 
-    // Fetch campaigns and show notification after delay
-    fetchLatestCampaign()
-  }, [fetchLatestCampaign])
+    let cancelled = false
+    async function loadCampaign() {
+      try {
+        const res = await fetch('/api/donate/campaigns')
+        if (res.ok && !cancelled) {
+          const data = await res.json()
+          const campaigns: Campaign[] = data.campaigns || []
+          if (campaigns.length > 0) {
+            setCampaign(campaigns[0])
+          }
+        }
+      } catch {
+        // Silent fail
+      }
+    }
+    loadCampaign()
+    return () => { cancelled = true }
+  }, [dismissed])
 
   useEffect(() => {
     if (!campaign || dismissed) return
@@ -68,11 +76,82 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
     return () => clearTimeout(timer)
   }, [campaign, dismissed])
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setVisible(false)
     setDismissed(true)
     sessionStorage.setItem(SESSION_KEY, 'true')
-  }
+    if (dismissTimerRef.current) {
+      clearTimeout(dismissTimerRef.current)
+      dismissTimerRef.current = null
+    }
+  }, [])
+
+  const handleRemindLater = useCallback(() => {
+    setVisible(false)
+    const snoozeUntil = Date.now() + SNOOZE_DURATION_MS
+    localStorage.setItem(SNOOZE_KEY, snoozeUntil.toString())
+    if (dismissTimerRef.current) {
+      clearTimeout(dismissTimerRef.current)
+      dismissTimerRef.current = null
+    }
+    setTimeout(() => {
+      setDismissed(false)
+      localStorage.removeItem(SNOOZE_KEY)
+    }, SNOOZE_DURATION_MS)
+  }, [])
+
+  // Auto-dismiss timer — pauses when hovered
+  useEffect(() => {
+    if (!visible) return
+
+    pausedElapsedRef.current = 0
+    const startTime = Date.now()
+
+    const scheduleDismiss = (remainingMs: number) => {
+      dismissTimerRef.current = setTimeout(() => {
+        handleDismiss()
+      }, remainingMs)
+    }
+
+    scheduleDismiss(AUTO_DISMISS_MS)
+
+    return () => {
+      if (dismissTimerRef.current) {
+        clearTimeout(dismissTimerRef.current)
+        dismissTimerRef.current = null
+      }
+    }
+  }, [visible, handleDismiss])
+
+  // Handle hover pause/resume for the auto-dismiss timer
+  useEffect(() => {
+    if (!visible) return
+
+    if (isHovered) {
+      // Pause: clear the timer and record how much time has elapsed
+      if (dismissTimerRef.current) {
+        clearTimeout(dismissTimerRef.current)
+        dismissTimerRef.current = null
+      }
+      // We track paused elapsed via a ref set on the next resume
+      pausedElapsedRef.current = pausedElapsedRef.current || 0
+    } else {
+      // Resume: calculate remaining time and reschedule
+      // Since we can't easily know exact elapsed, we use a simple approach:
+      // Track total paused time and adjust
+      if (!dismissTimerRef.current) {
+        const remainingMs = Math.max(0, AUTO_DISMISS_MS - pausedElapsedRef.current)
+        if (remainingMs > 0) {
+          dismissTimerRef.current = setTimeout(() => {
+            handleDismiss()
+          }, remainingMs)
+        } else {
+          // Use setTimeout to avoid calling setState synchronously in the effect
+          setTimeout(handleDismiss, 0)
+        }
+      }
+    }
+  }, [isHovered, visible, handleDismiss])
 
   const handleDonate = () => {
     setVisible(false)
@@ -94,7 +173,9 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
           animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, x: 0, scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          className="fixed bottom-4 right-4 z-[60] w-[340px] max-w-[calc(100vw-2rem)] shadow-2xl"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className="fixed bottom-6 right-6 z-[60] w-[340px] max-w-[calc(100vw-3rem)] md:max-w-[340px] max-md:left-1/2 max-md:right-auto max-md:-translate-x-1/2 max-md:bottom-6 shadow-2xl"
         >
           <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-[0_20px_60px_-15px_rgba(3,22,50,0.3)]">
             {/* Orange accent bar at top */}
@@ -177,10 +258,40 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
                 <ArrowRight className="h-3.5 w-3.5" />
               </motion.button>
 
-              {/* Footer note */}
-              <p className="text-center text-[#44474d] text-[10px] mt-2">
-                {t.notification.everyContribution}
-              </p>
+              {/* Footer with remind me later */}
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-[#44474d] text-[10px]">
+                  {t.notification.everyContribution}
+                </p>
+                <button
+                  onClick={handleRemindLater}
+                  className="text-[#44474d] hover:text-[#ff8928] text-[10px] flex items-center gap-1 transition-colors"
+                >
+                  <Clock className="h-3 w-3" />
+                  {t.notification.remindMeLater}
+                </button>
+              </div>
+            </div>
+
+            {/* Auto-dismiss progress bar — CSS animation, pauses on hover */}
+            <div className="h-1 bg-gray-100 relative overflow-hidden">
+              <div
+                className="h-full bg-[#ff8928]/40 origin-left"
+                style={{
+                  animation: `notificationCountdown ${AUTO_DISMISS_MS}ms linear forwards`,
+                  animationPlayState: isHovered ? 'paused' : 'running',
+                }}
+              />
+              <style
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    @keyframes notificationCountdown {
+                      from { transform: scaleX(1); }
+                      to { transform: scaleX(0); }
+                    }
+                  `,
+                }}
+              />
             </div>
           </div>
         </motion.div>

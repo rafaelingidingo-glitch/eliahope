@@ -10,6 +10,8 @@ const sw: Translations = {
     donate: 'Changia',
     login: 'Ingia',
     donateNow: 'Changia Sasa',
+    volunteer: 'Jitolee',
+    contact: 'Wasiliana',
     openMenu: 'Fungua menyu',
     navigationMenu: 'Menyu ya Urambazaji',
   },
@@ -25,6 +27,7 @@ const sw: Translations = {
     enterAmount: 'Weka kiasi',
     giveNow: 'Toa Sasa',
     secureDonation: 'Mchango Salama na Wazi',
+    scrollDown: 'Sogeza Chini',
   },
 
   // About
@@ -44,6 +47,7 @@ const sw: Translations = {
     visionDescription: 'Dunia ambapo kila mtoto ana ufikiaji wa elimu, lishe, usalama, na fursa ya kustawi ndani ya jamii inayounga mkono iliyojikita katika imani na upendo. Tunatamani jamii ambapo hakuna mtoto anayeachiwa nyuma na kila familia ina rasilimali zinazohitaji kwa kustawi.',
     ourMission: 'Dhamira Yetu',
     missionDescription: 'Kutoa tumaini, elimu, na msaada kwa watoto na familia dhaifu, kuwawezesha kufikia uwezo wao wote kupitia utunzaji wenye huruma na maendeleo ya jamii. Tunajitolea kwa mabadiliko ya jumla yanayoshughulikia mahitaji ya kimwili, ya kiroho, na ya elimu.',
+    readOurStory: 'Soma Hadithi Yetu',
   },
 
   // Programs
@@ -63,6 +67,10 @@ const sw: Translations = {
     bibleStudyDescription: 'Kulisha maisha ya kiroho ya watoto na familia kupitia masomo ya Biblia, maombi, na programu za urafiki wa kiroho.',
     communitySupport: 'Msaada wa Jamii',
     communitySupportDescription: 'Kuwawezesha familia na jamii kupitia mafunzo ya ujuzi, elimu ya afya, na programu za maisha endelevu.',
+    learnMore: 'Soma Zaidi',
+    childCareImageAlt: 'Programu ya Utunzaji wa Watoto',
+    bibleStudyImageAlt: 'Programu ya Masomo ya Biblia',
+    communitySupportImageAlt: 'Programu ya Msaada wa Jamii',
   },
 
   // Impact Stats
@@ -79,6 +87,9 @@ const sw: Translations = {
     mealsServedDesc: 'Chakula chenye virutubisho kilichotolewa kwa watoto',
     educationGoal: 'Lengo la Elimu 2026',
     educationGoalDescription: 'Kusaidia watoto 50 zaidi kufika shuleni',
+    feedingGoal: 'Lengo la Programu ya Chakula',
+    feedingGoalDescription: 'Lengo la chakula cha kila mwezi kwa familia dhaifu',
+    supportOurMission: 'Tuunge Mkono Dhamira Yetu',
   },
 
   // Events
@@ -102,6 +113,10 @@ const sw: Translations = {
     featuredStory: 'Hadithi Iliyochaguliwa',
     before: 'Kabla',
     after: 'Baada',
+    shareStory: 'Shiriki Hadithi',
+    shareText: 'Soma hadithi ya kutia moyo ya {name} ya mabadiliko na Elia\'s Hope Community!',
+    helpMoreChildren: 'Wasaidie Watoto Zaidi',
+    helpMoreChildrenDesc: 'Msaada wako unaweza kubadilisha hadithi ya mtoto mwingine. Changia leo.',
     graceTitle: 'Safari ya Grace',
     graceQuote: "Kabla ya Elia's Hope, sikujuwa kama nitawahi kwenda shuleni. Sasa niko mtaji wa darasa langu ninatumai kuwa daktari.",
     graceBefore: 'Grace alikuwa yatima mwenye shida akiishi katika umaskini mkubwa bila ufikiaji wa elimu au chakula cha kawaida. Mustakabali wake ulionekana kuwa mbaya, na tumaini lilikuwa likizima.',
@@ -121,7 +136,10 @@ const sw: Translations = {
     subtitle: 'Hadithi za Picha',
     title: 'Galari Yetu',
     description: 'Muhtasari wa maisha tunayogusa na jamii tunazohudumia kupitia programu zetu.',
+    photos: 'Picha',
     all: 'Zote',
+    previousImage: 'Iliyopita',
+    nextImage: 'Inayofuata',
     education: 'Elimu',
     feedingProgram: 'Programu ya Chakula',
     communityOutreach: 'Ufikiaji wa Jamii',
@@ -149,15 +167,19 @@ const sw: Translations = {
     donate: 'Changia',
     donateDescription: 'Mchango wako wa kifedha unatoa chakula, ada ya shule, na vifaa muhimu kwa watoto wanaohitaji.',
     donateNow: 'Changia Sasa',
+    donateStat: 'Watoto 500+ wamesaidiwa',
     sponsor: 'Mdhamini',
     sponsorDescription: 'Mdhamini elimu na ustawi wa mtoto, kumpa fursa ya mustakabali mwema.',
     sponsorChild: 'Mdhamini Mtoto',
+    sponsorStat: 'Watoto 50+ wamedhaminiwa',
     volunteer: 'Jitolee',
     volunteerDescription: 'Shiriki wakati na ujuzi wako kuathiri moja kwa moja maisha ya watoto na familia katika jamii yetu.',
     volunteerNow: 'Jitolee Sasa',
+    volunteerStat: 'Wajitoleaji 200+',
     partner: 'Shiriki',
     partnerDescription: 'Shiriki nasi kuunda mabadiliko ya kudumu na kupanua ufikiaji wetu katika Mwanza na zaidi.',
     becomePartner: 'Kuwa Mshirika',
+    partnerStat: 'Mashirika 15+',
   },
 
   // Newsletter
@@ -170,6 +192,10 @@ const sw: Translations = {
     subscribing: 'Inasajili...',
     successMessage: 'Asante kwa kujisajili!',
     errorMessage: 'Hitilafu fulani imetokea. Tafadhali jaribu tena.',
+    benefitUpdates: 'Taarifa za Athari za Kila Mwezi',
+    benefitEvents: 'Arifa za Matukio',
+    benefitVolunteer: 'Fursa za Kujitolea',
+    privacyNote: 'Tunaheshimu faragha yako. Jisajili upendapo.',
   },
 
   // Contact
@@ -182,12 +208,16 @@ const sw: Translations = {
     email: 'Barua Pepe',
     officeHours: 'Masaa ya Ofisi',
     officeHoursValue: 'Jumatatu-Ijumaa: 8:00 AM - 5:00 PM',
+    whatsapp: 'WhatsApp',
+    whatsappLabel: 'Ongea kwenye WhatsApp',
     mapView: 'Muonekano wa ramani',
     sendMessage: 'Tuma Ujumbe',
     yourName: 'Jina Lako',
     yourEmail: 'Barua Pepe Yako',
     yourPhone: 'Simu Yako (si lazima)',
     yourMessage: 'Ujumbe Wako',
+    characterCount: '{count}/500 herufi',
+    responseTime: 'Kwa kawaida tunajibu ndani ya masaa 24',
     send: 'Tuma Ujumbe',
     sending: 'Inatuma...',
     successMessage: 'Ujumbe umetumwa kwa mafanikio!',
@@ -209,6 +239,14 @@ const sw: Translations = {
     copyright: 'Haki zote zimehifadhiwa.',
     privacyPolicy: 'Sera ya Faragha',
     termsConditions: 'Masharti & Vyanzo',
+    backToTop: 'Rudi Juu',
+    newsletterTitle: 'Jarida',
+    newsletterDescription: 'Jisajili kwa taarifa na hadithi za athari.',
+    emailAddress: 'Anwani ya Barua Pepe',
+    subscribe: 'Jisajili',
+    subscribing: 'Inasajili...',
+    subscribeSuccess: 'Umesajiliwa!',
+    subscribeError: 'Imeshindwa. Jaribu tena.',
   },
 
   // Donation Modal
@@ -282,6 +320,13 @@ const sw: Translations = {
     resendOtp: 'Tuma OTP Tena',
     otpSent: 'OTP imetumwa kwenye simu yako',
     mobileMoney: 'Pesa ya Simu',
+    oneTime: 'Mara moja',
+    monthly: 'Kila mwezi',
+    donationType: 'Aina ya Mchango',
+    receipt: 'Risiti',
+    receiptNumber: 'Namba ya Risiti',
+    paymentMethod: 'Njia ya Malipo',
+    recurringNote: 'Mchango wako wa kila mwezi utasaidia kuendeleza programu zetu mwaka nzima.',
   },
 
   // Campaign Notification
@@ -293,6 +338,7 @@ const sw: Translations = {
     goalReached: 'Lengo limefikwa!',
     donateNow: 'Changia Sasa',
     everyContribution: 'Kila mchango unaleta tofauti',
+    remindMeLater: 'Nikumbushe baadaye',
   },
 
   // Admin Login
@@ -312,6 +358,7 @@ const sw: Translations = {
     subtitle: 'Pamoja Tunahudumu',
     title: 'Washirika Wetu',
     description: 'Tunashukuru kwa msaada na ushirikiano wa washirika wetu ambao wanashiriki dira yetu ya mustakabali bora kwa kila mtoto.',
+    becomePartner: 'Kuwa Mshirika',
   },
 
   // Language
