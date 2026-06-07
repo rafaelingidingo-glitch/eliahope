@@ -50,13 +50,22 @@ export function getPaymentLimits() {
 
 /**
  * 3. Maelezo ya Benki ya Mfanyabiashara (Merchant Bank Details)
+ * REKEBISHO: Tumeongeza 'branch' hapa ili kuondoa kosa la TypeScript kwenye Vercel!
  */
 export function getMerchantBankDetails() {
   return {
     bankName: process.env.MERCHANT_BANK_NAME || 'CRDB BANK',
     accountName: process.env.MERCHANT_ACCOUNT_NAME || 'ELIAS HOPE FOUNDATION',
-    accountNumber: process.env.MERCHANT_ACCOUNT_NUMBER || '01JXXXXXXXXXX'
+    accountNumber: process.env.MERCHANT_ACCOUNT_NUMBER || '01JXXXXXXXXXX',
+    branch: process.env.MERCHANT_BANK_BRANCH || 'Corporate Branch'
   }
+}
+
+/**
+ * 3b. Nyongeza ya jina mbadala la kazi kama API yako inaitafuta kwa jina hili
+ */
+export function getMerchantAccountDetails() {
+  return getMerchantBankDetails()
 }
 
 /**
