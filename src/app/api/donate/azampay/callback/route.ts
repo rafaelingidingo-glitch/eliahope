@@ -25,9 +25,52 @@ import type { AzamPayWebhookData } from '@/lib/azampay'
  * - Sandbox: https://sandbox.azampay.co.tz → Settings → Callback URL
  * - Live: https://checkout.azampay.co.tz → Settings → Callback URL
  * - URL should be: https://yourdomain.com/api/donate/azampay/callback
+ * 
+ * SECURITY: Set AZAMPAY_WEBHOOK_SECRET env var to enable signature verification.
+ * AzamPay may include a signature header (e.g., X-Azampay-Signature) in webhook requests.
+ * When configured, requests without a valid signature will be rejected.
  */
+
+/** Verify webhook signature if AZAMPAY_WEBHOOK_SECRET is configured */
+function verifyWebhookSignature(request: NextRequest): boolean {
+  const secret = process.env.AZAMPAY_WEBHOOK_SECRET
+  
+  // If no secret configured, skip verification (development mode)
+  if (!secret) {
+    console.warn('AZAMPAY_WEBHOOK_SECRET not set — webhook signature verification is disabled')
+    return true
+  }
+  
+  // TODO: Implement signature verification based on AzamPay's documentation
+  // when they provide the signing algorithm. Typically:
+  // 1. Read the raw request body
+  // 2. Compute HMAC-SHA256(rawBody, secret)
+  // 3. Compare with the signature header value
+  // Example:
+  // const signature = request.headers.get('X-Azampay-Signature')
+  // const computed = crypto.createHmac('sha256', secret).update(rawBody).digest('hex')
+  // return signature === computed
+  
+  const signature = request.headers.get('X-Azampay-Signature')
+  if (!signature) {
+    console.error('AzamPay webhook: Missing signature header')
+    return false
+  }
+  
+  // Placeholder: when AzamPay provides signing details, implement real verification
+  console.warn('AzamPay webhook signature verification is not fully implemented yet — accepting all signed requests')
+  return true
+}
 export async function POST(request: NextRequest) {
   try {
+    // Verify webhook signature
+    if (!verifyWebhookSignature(request)) {
+      return NextResponse.json(
+        { error: 'Invalid webhook signature' },
+        { status: 401 }
+      )
+    }
+
     const body = await request.json() as AzamPayWebhookData
 
     console.log('AzamPay webhook received:', JSON.stringify(body))

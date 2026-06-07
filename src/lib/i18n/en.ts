@@ -300,7 +300,42 @@ const en = {
     swahili: 'Kiswahili',
     switchLanguage: 'Switch Language',
   },
-} as const
+
+  // Admin Dashboard (sidebar labels)
+  adminDashboard: {
+    adminPanel: 'Admin Panel',
+    backToWebsite: 'Back to Website',
+    adminUser: 'Admin User',
+    dashboard: 'Dashboard',
+    content: 'Content',
+    events: 'Events',
+    gallery: 'Gallery',
+    donations: 'Donations',
+    volunteers: 'Volunteers',
+    sponsorChild: 'Sponsor a Child',
+    newsletter: 'Newsletter',
+    blog: 'Blog',
+    reports: 'Reports',
+    logout: 'Logout',
+  },
+
+  // Common
+  common: {
+    mwanzaTanzania: 'Mwanza, Tanzania',
+    phonePlaceholder: '7XX XXX XXX',
+    emailPlaceholder: 'your@email.com',
+  },
+}
 
 export default en
-export type Translations = typeof en
+
+/** Recursively convert all leaf values to `string` for type-safe translations */
+type DeepStringify<T> = {
+  [K in keyof T]: T[K] extends string
+    ? string
+    : T[K] extends object
+    ? DeepStringify<T[K]>
+    : T[K]
+}
+
+export type Translations = DeepStringify<typeof en>

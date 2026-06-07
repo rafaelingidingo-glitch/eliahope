@@ -10,48 +10,47 @@ import {
 } from '@/components/ui/dialog'
 import { useLanguage } from '@/lib/i18n'
 
+type CategoryKey = 'all' | 'education' | 'feedingProgram' | 'communityOutreach' | 'bibleStudies' | 'volunteers' | 'events'
+
+const categoryLabels: Record<CategoryKey, string> = {
+  all: 'all',
+  education: 'education',
+  feedingProgram: 'feedingProgram',
+  communityOutreach: 'communityOutreach',
+  bibleStudies: 'bibleStudies',
+  volunteers: 'volunteers',
+  events: 'events',
+}
+
+const categoryOrder: CategoryKey[] = ['all', 'education', 'feedingProgram', 'communityOutreach', 'bibleStudies', 'volunteers', 'events']
+
 export default function Gallery() {
-  const { t, locale } = useLanguage()
+  const { t } = useLanguage()
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const [activeCategory, setActiveCategory] = useState(t.gallery.all)
+  const [activeCategory, setActiveCategory] = useState<CategoryKey>('all')
 
-  // Reset active category when language changes
-  useEffect(() => {
-    setActiveCategory(t.gallery.all)
-  }, [locale, t.gallery.all])
+  const [selectedImage, setSelectedImage] = useState<{ src: string; categoryKey: CategoryKey; title: string } | null>(null)
 
-  const [selectedImage, setSelectedImage] = useState<{ src: string; category: string; title: string } | null>(null)
-
-  const categories = [
-    t.gallery.all,
-    t.gallery.education,
-    t.gallery.feedingProgram,
-    t.gallery.communityOutreach,
-    t.gallery.bibleStudies,
-    t.gallery.volunteers,
-    t.gallery.events,
-  ]
-
-  const galleryItems = [
-    { src: '/program-education.png', category: t.gallery.education, title: t.gallery.childrenLearning },
-    { src: '/program-feeding.png', category: t.gallery.feedingProgram, title: t.gallery.servingMeals },
-    { src: '/program-childcare.png', category: t.gallery.communityOutreach, title: t.gallery.childcareActivities },
-    { src: '/program-bible.png', category: t.gallery.bibleStudies, title: t.gallery.bibleStudySession },
-    { src: '/program-community.png', category: t.gallery.communityOutreach, title: t.gallery.communitySupportPrograms },
-    { src: '/event-sample.png', category: t.gallery.events, title: t.gallery.annualCharityGala },
-    { src: '/about-image.png', category: t.gallery.volunteers, title: t.gallery.dedicatedVolunteers },
-    { src: '/success-story.png', category: t.gallery.education, title: t.gallery.successCelebration },
-    { src: '/hero-bg.png', category: t.gallery.communityOutreach, title: t.gallery.outreachDay },
-    { src: '/program-education.png', category: t.gallery.volunteers, title: t.gallery.volunteersTeaching },
-    { src: '/program-feeding.png', category: t.gallery.feedingProgram, title: t.gallery.mealDistribution },
-    { src: '/program-bible.png', category: t.gallery.bibleStudies, title: t.gallery.sundaySchool },
+  const galleryItems: { src: string; categoryKey: CategoryKey; title: string }[] = [
+    { src: '/program-education.png', categoryKey: 'education', title: t.gallery.childrenLearning },
+    { src: '/program-feeding.png', categoryKey: 'feedingProgram', title: t.gallery.servingMeals },
+    { src: '/program-childcare.png', categoryKey: 'communityOutreach', title: t.gallery.childcareActivities },
+    { src: '/program-bible.png', categoryKey: 'bibleStudies', title: t.gallery.bibleStudySession },
+    { src: '/program-community.png', categoryKey: 'communityOutreach', title: t.gallery.communitySupportPrograms },
+    { src: '/event-sample.png', categoryKey: 'events', title: t.gallery.annualCharityGala },
+    { src: '/about-image.png', categoryKey: 'volunteers', title: t.gallery.dedicatedVolunteers },
+    { src: '/success-story.png', categoryKey: 'education', title: t.gallery.successCelebration },
+    { src: '/hero-bg.png', categoryKey: 'communityOutreach', title: t.gallery.outreachDay },
+    { src: '/program-education.png', categoryKey: 'volunteers', title: t.gallery.volunteersTeaching },
+    { src: '/program-feeding.png', categoryKey: 'feedingProgram', title: t.gallery.mealDistribution },
+    { src: '/program-bible.png', categoryKey: 'bibleStudies', title: t.gallery.sundaySchool },
   ]
 
   const filtered =
-    activeCategory === t.gallery.all
+    activeCategory === 'all'
       ? galleryItems
-      : galleryItems.filter((item) => item.category === activeCategory)
+      : galleryItems.filter((item) => item.categoryKey === activeCategory)
 
   return (
     <section id="gallery" ref={ref} className="py-20 md:py-28 bg-white">
@@ -76,21 +75,24 @@ export default function Gallery() {
 
         {/* Filter Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {categories.map((cat) => (
-            <Button
-              key={cat}
-              variant={activeCategory === cat ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setActiveCategory(cat)}
-              className={`rounded-none px-4 text-sm font-medium transition-all ${
-                activeCategory === cat
-                  ? 'bg-navy text-white hover:bg-navy-light'
-                  : 'border-navy/20 text-navy hover:bg-navy hover:text-white'
-              }`}
-            >
-              {cat}
-            </Button>
-          ))}
+          {categoryOrder.map((key) => {
+            const label = t.gallery[categoryLabels[key]]
+            return (
+              <Button
+                key={key}
+                variant={activeCategory === key ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setActiveCategory(key)}
+                className={`rounded-none px-4 text-sm font-medium transition-all ${
+                  activeCategory === key
+                    ? 'bg-navy text-white hover:bg-navy-light'
+                    : 'border-navy/20 text-navy hover:bg-navy hover:text-white'
+                }`}
+              >
+                {label}
+              </Button>
+            )
+          })}
         </div>
 
         {/* Masonry Grid */}
@@ -116,7 +118,7 @@ export default function Gallery() {
                   <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/40 transition-colors duration-300 flex items-end">
                     <div className="p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <p className="text-white font-semibold text-sm">{item.title}</p>
-                      <p className="text-white/70 text-xs">{item.category}</p>
+                      <p className="text-white/70 text-xs">{t.gallery[categoryLabels[item.categoryKey]]}</p>
                     </div>
                   </div>
                 </div>
@@ -139,7 +141,7 @@ export default function Gallery() {
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
                 <p className="text-white font-semibold">{selectedImage.title}</p>
-                <p className="text-white/60 text-sm">{selectedImage.category}</p>
+                <p className="text-white/60 text-sm">{t.gallery[categoryLabels[selectedImage.categoryKey]]}</p>
               </div>
             </div>
           )}

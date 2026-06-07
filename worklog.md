@@ -146,3 +146,34 @@ Stage Summary:
 - Language switcher with Globe icon in navbar (desktop between nav links and CTAs, mobile as compact button)
 - HTML lang attribute updates dynamically when switching
 - All user-facing text is translated; proper nouns, phone numbers, emails kept as-is
+
+---
+Task ID: review-fixes
+Agent: Main Agent
+Task: Comprehensive code review and bug fixes
+
+Work Log:
+- Reviewed all source files (components, API routes, config, schema, translations)
+- Fixed Swahili translation error: "Chakula cha Kwiki" → "Chakula cha Kila Wiki" (was "Quick Food" instead of "Weekly Meals")
+- Fixed Swahili date formats: "Ago 15, 2026" → "15 Ago 2026", "Sep 20, 2026" → "20 Sep 2026"
+- Added missing i18n keys: adminDashboard (14 keys for admin sidebar), common (mwanzaTanzania, phonePlaceholder, emailPlaceholder)
+- Updated AdminDashboard to use useLanguage() for all sidebar labels (previously hardcoded English)
+- Updated Footer to use t.common.mwanzaTanzania instead of hardcoded "Mwanza, Tanzania"
+- Fixed Gallery category filtering bug: switched from translated-string-based keys to stable CategoryKey type ('all', 'education', etc.) so filtering works correctly across language switches
+- Fixed i18n type system: replaced `as const` with `DeepStringify<T>` utility type so Swahili translations don't fail type checking
+- Removed 9 unused npm dependencies: next-auth, next-intl, zustand, @tanstack/react-query, @mdxeditor/editor, @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities, react-syntax-highlighter
+- Fixed next.config.ts: enabled reactStrictMode (was false), disabled ignoreBuildErrors (was true)
+- Added auth middleware helper at /src/lib/auth.ts (requireAdmin function with Bearer token validation)
+- Added AzamPay webhook signature verification placeholder to callback route (with AZAMPAY_WEBHOOK_SECRET env var support)
+- Fixed tsconfig.json: excluded "examples" and "skills" directories from TypeScript compilation
+- Fixed prisma/seed.ts type error: added explicit type annotation for childRecords array
+- Build verified: passes with TypeScript strict mode and ignoreBuildErrors=false
+
+Stage Summary:
+- 8 bugs/features fixed in this review
+- TypeScript strict checking now enabled (was bypassed by ignoreBuildErrors)
+- 9 unused packages removed (smaller bundle)
+- Admin dashboard now fully translatable
+- Gallery filtering no longer breaks on language switch
+- Swahili translations corrected
+- Webhook security scaffold in place

@@ -54,7 +54,7 @@ const sw: Translations = {
     educationDescription: 'Kutoa elimu bora, vifaa vya shule, na msaada wa ada kuhakikisha kila mtoto ana fursa ya kujifunza na kufanikiwa kielimu.',
     feedingProgram: 'Programu ya Chakula',
     feedingDescription: 'Kuhakikisha hakuna mtoto anayekosa chakula kwa kutoa chakula cha kila siku chenye virutubisho kwa watoto na familia dhaifu katika jamii yetu.',
-    weeklyMeals: 'Chakula cha Kwiki',
+    weeklyMeals: 'Chakula cha Kila Wiki',
     nutritious: 'Chenye Virutubisho',
     healthyDiet: 'Lishe Bora',
     childCare: 'Utunzaji wa Watoto',
@@ -87,10 +87,10 @@ const sw: Translations = {
     title: 'Matukio Yanayokuja',
     donateNow: 'Changia Sasa',
     annualCharityGala: 'Sherehe ya Heshima ya Mwaka',
-    annualCharityGalaDate: 'Ago 15, 2026',
+    annualCharityGalaDate: '15 Ago 2026',
     annualCharityGalaDesc: 'Jiunge nasi kwa jioni ya sherehe, kukusanya pesa, na jamii tunapoirejea mwaka na kutazama fursa mpya za kuhudumu.',
     communityHealthCamp: 'Kambi ya Afya ya Jamii',
-    communityHealthCampDate: 'Sep 20, 2026',
+    communityHealthCampDate: '20 Sep 2026',
     communityHealthCampDesc: 'Kambi ya ukaguzi wa afya na ustawi bila malipo kwa watoto na familia katika wilaya ya Nyamagana, ikijumuisha chanjo na mwongozo wa lishe.',
   },
 
@@ -301,6 +301,31 @@ const sw: Translations = {
     english: 'English',
     swahili: 'Kiswahili',
     switchLanguage: 'Badilisha Lugha',
+  },
+
+  // Admin Dashboard (sidebar labels)
+  adminDashboard: {
+    adminPanel: 'Paneli ya Msimamizi',
+    backToWebsite: 'Rudi kwenye Tovuti',
+    adminUser: 'Mtumiaji Msimamizi',
+    dashboard: 'Dashibodi',
+    content: 'Maudhui',
+    events: 'Matukio',
+    gallery: 'Galari',
+    donations: 'Michango',
+    volunteers: 'Wajitoleaji',
+    sponsorChild: 'Mdhamini Mtoto',
+    newsletter: 'Jarida',
+    blog: 'Blogu',
+    reports: 'Ripoti',
+    logout: 'Toka',
+  },
+
+  // Common
+  common: {
+    mwanzaTanzania: 'Mwanza, Tanzania',
+    phonePlaceholder: '7XX XXX XXX',
+    emailPlaceholder: 'barua.pepe@mfano.com',
   },
 }
 

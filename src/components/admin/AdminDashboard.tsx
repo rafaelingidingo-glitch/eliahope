@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { useLanguage } from '@/lib/i18n'
 import DashboardOverview from './sections/DashboardOverview'
 import ContentManagement from './sections/ContentManagement'
 import EventManagement from './sections/EventManagement'
@@ -52,18 +53,21 @@ type SectionKey =
   | 'blog'
   | 'reports'
 
-const navItems: { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { key: 'content', label: 'Content', icon: FileEdit },
-  { key: 'events', label: 'Events', icon: Calendar },
-  { key: 'gallery', label: 'Gallery', icon: Image },
-  { key: 'donations', label: 'Donations', icon: DollarSign },
-  { key: 'volunteers', label: 'Volunteers', icon: Users },
-  { key: 'sponsor-child', label: 'Sponsor a Child', icon: Baby },
-  { key: 'newsletter', label: 'Newsletter', icon: Mail },
-  { key: 'blog', label: 'Blog', icon: Newspaper },
-  { key: 'reports', label: 'Reports', icon: BarChart3 },
-]
+function useNavItems() {
+  const { t } = useLanguage()
+  return [
+    { key: 'dashboard' as SectionKey, label: t.adminDashboard.dashboard, icon: LayoutDashboard },
+    { key: 'content' as SectionKey, label: t.adminDashboard.content, icon: FileEdit },
+    { key: 'events' as SectionKey, label: t.adminDashboard.events, icon: Calendar },
+    { key: 'gallery' as SectionKey, label: t.adminDashboard.gallery, icon: Image },
+    { key: 'donations' as SectionKey, label: t.adminDashboard.donations, icon: DollarSign },
+    { key: 'volunteers' as SectionKey, label: t.adminDashboard.volunteers, icon: Users },
+    { key: 'sponsor-child' as SectionKey, label: t.adminDashboard.sponsorChild, icon: Baby },
+    { key: 'newsletter' as SectionKey, label: t.adminDashboard.newsletter, icon: Mail },
+    { key: 'blog' as SectionKey, label: t.adminDashboard.blog, icon: Newspaper },
+    { key: 'reports' as SectionKey, label: t.adminDashboard.reports, icon: BarChart3 },
+  ]
+}
 
 interface SidebarContentProps {
   activeSection: SectionKey
@@ -73,6 +77,9 @@ interface SidebarContentProps {
 }
 
 function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: SidebarContentProps) {
+  const { t } = useLanguage()
+  const navItems = useNavItems()
+
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
@@ -80,7 +87,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
         <img src="/logo.jpeg" alt="Elia's Hope" className="h-9 w-9 rounded-full object-cover" />
         <div className="hidden lg:block">
           <h2 className="text-white font-bold text-sm leading-tight">Elia&apos;s Hope</h2>
-          <p className="text-white/60 text-xs">Admin Panel</p>
+          <p className="text-white/60 text-xs">{t.adminDashboard.adminPanel}</p>
         </div>
       </div>
 
@@ -122,7 +129,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
         >
           <ArrowLeft className="h-5 w-5 flex-shrink-0" />
-          <span className="hidden lg:inline">Back to Website</span>
+          <span className="hidden lg:inline">{t.adminDashboard.backToWebsite}</span>
         </button>
       </div>
 
@@ -133,7 +140,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
             <AvatarFallback className="bg-orange text-white text-xs">AD</AvatarFallback>
           </Avatar>
           <div className="hidden lg:block flex-1 min-w-0">
-            <p className="text-white text-sm font-medium truncate">Admin User</p>
+            <p className="text-white text-sm font-medium truncate">{t.adminDashboard.adminUser}</p>
             <p className="text-white/50 text-xs truncate">admin@eliashope.org</p>
           </div>
           <Button
@@ -141,7 +148,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
             size="icon"
             onClick={onLogout ?? undefined}
             className="hidden lg:flex h-8 w-8 text-white/50 hover:text-white hover:bg-white/10"
-            title="Logout"
+            title={t.adminDashboard.logout}
           >
             <LogOut className="h-4 w-4" />
           </Button>
@@ -152,6 +159,7 @@ function SidebarContent({ activeSection, onNavClick, onClose, onLogout }: Sideba
 }
 
 export default function AdminDashboard({ isOpen, onClose, onLogout }: AdminDashboardProps) {
+  const navItems = useNavItems()
   const [activeSection, setActiveSection] = useState<SectionKey>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)

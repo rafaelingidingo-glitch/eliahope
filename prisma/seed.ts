@@ -151,7 +151,7 @@ async function main() {
     { name: 'Asha Mohamed', age: 9, gender: 'female', story: 'Asha\'s family struggles to afford basic needs. She enjoys reading and wants to be a nurse.', photo: '/success-story.png', status: 'available', program: 'Education Program' },
     { name: 'David Lucas', age: 7, gender: 'male', story: 'David has a hearing impairment but doesn\'t let that stop him. He loves painting.', photo: '/success-story.png', status: 'sponsored', program: 'Healthcare Program' },
   ]
-  const childRecords = []
+  const childRecords: { id: string; name: string; createdAt: Date; updatedAt: Date; program: string | null; status: string; age: number | null; gender: string | null; story: string | null; photo: string | null; }[] = []
   for (const c of children) {
     const child = await prisma.child.create({ data: c })
     childRecords.push(child)

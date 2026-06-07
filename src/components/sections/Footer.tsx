@@ -116,7 +116,7 @@ export default function Footer({ onDonateClick }: FooterProps) {
           <div>
             <h3 className="font-bold text-lg mb-4">{t.footer.contactInfo}</h3>
             <div className="space-y-3 text-sm text-white/60">
-              <p>Mwanza, Tanzania</p>
+              <p>{t.common.mwanzaTanzania}</p>
               <p>+255 754 208 639</p>
               <p>elianixsonl27@gmail.com</p>
               <div className="pt-2">
