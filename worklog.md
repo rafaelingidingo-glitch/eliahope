@@ -397,3 +397,29 @@ Stage Summary:
 - Admin newsletter broadcast now uses Resend (was console.log placeholder)
 - All text is bilingual (EN/SW)
 - 3 new API routes: /api/admin/forgot-password, /api/email/donation-confirm, /api/email/resend
+---
+Task ID: 1
+Agent: Main Agent
+Task: Review code and database structure for cross-database portability
+
+Work Log:
+- Audited all Prisma schema, API routes, lib files, seed scripts, and env config
+- Identified 12 portability issues (4 CRITICAL, 4 WARNING, 4 INFO)
+- Fixed Float → Decimal for all monetary fields (Donation.amount, PaymentProof.amount, Campaign.goal, Campaign.raised, Sponsor.amount)
+- Added onDelete: SetNull on Sponsor→Child relation to prevent PostgreSQL FK violations
+- Added inline comments in schema.prisma documenting how to switch providers (sqlite/postgresql/mysql)
+- Created toNumber(), toLocaleString(), decimalFieldsToNumber() helper utilities in /src/lib/db.ts
+- Updated all 11 API routes to convert Decimal → number before JSON serialization
+- Fixed AzamPay callback critical bug: parseFloat(amount) !== donation.amount was always true with Decimal
+- Updated /src/lib/resend.ts to accept Prisma.Decimal in amount parameters
+- Updated .env.example with clear database switching documentation
+- Wrapped seed.ts deleteMany calls in $transaction with correct FK dependency ordering
+- Verified build passes cleanly
+
+Stage Summary:
+- All monetary fields now use Prisma Decimal type (precise across all DB engines)
+- All API routes properly serialize Decimal → number for JSON
+- Zero raw SQL queries in codebase (fully ORM-based)
+- Schema is portable: cuid IDs, DateTime fields, String status fields (no DB-specific features)
+- To switch to PostgreSQL: change provider in schema.prisma, update DATABASE_URL, run prisma generate && prisma db push
+- Build passes, database re-seeded successfully

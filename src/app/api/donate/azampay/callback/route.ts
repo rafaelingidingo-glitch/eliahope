@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
 import { verifyWebhookSignature } from '@/lib/auth'
 import { verifyPayment } from '@/lib/azampay'
 import type { AzamPayWebhookData } from '@/lib/azampay'
@@ -104,8 +104,8 @@ export async function POST(request: NextRequest) {
     // ---- Optional: Cross-verify with AzamPay API ----
     // For high-value transactions or additional security, verify the
     // payment directly with AzamPay's transaction status API
-    if (isSuccess && donation.amount >= 500000) { // Verify payments >= 500,000 TZS
-      console.log(`[AzamPay Webhook] Cross-verifying high-value payment: TZS ${donation.amount}`)
+    if (isSuccess && toNumber(donation.amount) >= 500000) { // Verify payments >= 500,000 TZS
+      console.log(`[AzamPay Webhook] Cross-verifying high-value payment: TZS ${toNumber(donation.amount)}`)
 
       const verification = await verifyPayment(donation.transactionId || '')
       if (verification.verified && verification.status !== 'successful') {
@@ -121,13 +121,13 @@ export async function POST(request: NextRequest) {
 
     if (isSuccess) {
       // Verify amount matches (prevent amount manipulation)
-      if (amount && parseFloat(amount) !== donation.amount) {
-        console.error(`[AzamPay Webhook] Amount mismatch! Expected: ${donation.amount}, Received: ${amount}`)
+      if (amount && parseFloat(amount) !== toNumber(donation.amount)) {
+        console.error(`[AzamPay Webhook] Amount mismatch! Expected: ${toNumber(donation.amount)}, Received: ${amount}`)
         await db.donation.update({
           where: { id: donation.id },
           data: {
             status: 'pending',
-            message: `Amount mismatch: expected ${donation.amount}, received ${amount}. Requires manual verification.`,
+            message: `Amount mismatch: expected ${toNumber(donation.amount)}, received ${amount}. Requires manual verification.`,
           },
         })
         return NextResponse.json({ success: true, message: 'Payment flagged for amount verification' })
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
         })
       }
 
-      console.log(`[AzamPay Webhook] Donation ${donation.id} marked SUCCESSFUL. Amount: TZS ${donation.amount}, Operator: ${operator}, Ref: ${utilityref}`)
+      console.log(`[AzamPay Webhook] Donation ${donation.id} marked SUCCESSFUL. Amount: TZS ${toNumber(donation.amount)}, Operator: ${operator}, Ref: ${utilityref}`)
 
       // Send donation confirmation email if email was provided
       if (donation.donorEmail) {
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
           await sendDonationConfirmationEmail({
             to: donation.donorEmail,
             name: donation.donorName,
-            amount: donation.amount,
+            amount: toNumber(donation.amount),
             transactionId: donation.transactionId || donation.id,
             method: donation.method,
             date: donation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
@@ -225,7 +225,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       id: donation.id,
       status: donation.status,
-      amount: donation.amount,
+      amount: toNumber(donation.amount),
       donorName: donation.donorName,
       transactionId: donation.transactionId,
       method: donation.method,

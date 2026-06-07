@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
       db.donation.findMany({ orderBy: { createdAt: 'desc' } }),
       db.campaign.findMany({ orderBy: { createdAt: 'desc' } }),
     ])
-    return NextResponse.json({ donations, campaigns })
+    // Convert Decimal fields to numbers for JSON serialization
+    const serializedDonations = donations.map(d => ({ ...d, amount: toNumber(d.amount) }))
+    const serializedCampaigns = campaigns.map(c => ({ ...c, goal: toNumber(c.goal), raised: toNumber(c.raised) }))
+    return NextResponse.json({ donations: serializedDonations, campaigns: serializedCampaigns })
   } catch (error) {
     console.error('Donations GET error:', error)
     return NextResponse.json({ error: 'Failed to load donations' }, { status: 500 })
@@ -62,7 +65,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({ success: true, campaign })
+    return NextResponse.json({ success: true, campaign: { ...campaign, goal: toNumber(campaign.goal), raised: toNumber(campaign.raised) } })
   } catch (error) {
     console.error('Donations POST error:', error)
     return NextResponse.json({ error: 'Failed to create campaign' }, { status: 500 })
@@ -101,7 +104,7 @@ export async function PUT(request: NextRequest) {
           ...(body.status && { status: body.status }),
         },
       })
-      return NextResponse.json(campaign)
+      return NextResponse.json({ ...campaign, goal: toNumber(campaign.goal), raised: toNumber(campaign.raised) })
     }
 
     // Donation update - validate status
@@ -115,7 +118,7 @@ export async function PUT(request: NextRequest) {
       data: { ...(body.status && { status: body.status }) },
     })
 
-    return NextResponse.json(donation)
+    return NextResponse.json({ ...donation, amount: toNumber(donation.amount) })
   } catch (error) {
     console.error('Donations PUT error:', error)
     return NextResponse.json({ error: 'Failed to update record' }, { status: 500 })

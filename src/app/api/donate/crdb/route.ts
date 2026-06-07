@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
 import {
   initiateBankCheckout,
   shouldSimulate,
@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
                 await sendDonationConfirmationEmail({
                   to: existingDonation.donorEmail,
                   name: existingDonation.donorName,
-                  amount: existingDonation.amount,
+                  amount: toNumber(existingDonation.amount),
                   transactionId: existingDonation.transactionId || existingDonation.id,
                   method: existingDonation.method,
                   date: existingDonation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
@@ -412,7 +412,7 @@ export async function POST(request: NextRequest) {
               await sendDonationConfirmationEmail({
                 to: donation.donorEmail,
                 name: donation.donorName,
-                amount: donation.amount,
+                amount: toNumber(donation.amount),
                 transactionId: donation.transactionId || donation.id,
                 method: donation.method,
                 date: donation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
@@ -480,7 +480,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       id: donation.id,
       status: donation.status,
-      amount: donation.amount,
+      amount: toNumber(donation.amount),
       donorName: donation.donorName,
       transactionId: donation.transactionId,
       crdbReference: donation.crdbReference,

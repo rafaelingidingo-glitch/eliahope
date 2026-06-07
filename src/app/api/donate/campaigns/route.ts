@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
 
 export async function GET() {
@@ -9,11 +9,17 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     })
 
-    const campaignsWithProgress = campaigns.map((c) => ({
-      ...c,
-      percentage: c.goal > 0 ? Math.round((c.raised / c.goal) * 100) : 0,
-      remaining: Math.max(0, c.goal - c.raised),
-    }))
+    const campaignsWithProgress = campaigns.map((c) => {
+      const goal = toNumber(c.goal)
+      const raised = toNumber(c.raised)
+      return {
+        ...c,
+        goal,
+        raised,
+        percentage: goal > 0 ? Math.round((raised / goal) * 100) : 0,
+        remaining: Math.max(0, goal - raised),
+      }
+    })
 
     return NextResponse.json({ campaigns: campaignsWithProgress })
   } catch (error) {

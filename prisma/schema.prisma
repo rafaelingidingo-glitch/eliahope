@@ -3,6 +3,11 @@ generator client {
 }
 
 datasource db {
+  // Provider must be a literal string in Prisma (env() is NOT supported here).
+  // For development (SQLite):  provider = "sqlite"
+  // For production (PostgreSQL): provider = "postgresql"
+  // For production (MySQL):     provider = "mysql"
+  // When switching providers, run: npx prisma generate && npx prisma db push
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
@@ -52,7 +57,7 @@ model Donation {
   donorName         String
   donorEmail        String?
   donorPhone        String?
-  amount            Float
+  amount            Decimal
   currency          String   @default("TZS")
   method            String
   type              String   @default("one-time")
@@ -73,7 +78,7 @@ model PaymentProof {
   id           String   @id @default(cuid())
   donorName    String
   donorPhone   String
-  amount       Float
+  amount       Decimal
   receiptUrl   String
   campaignId   String?
   status       String   @default("pending")
@@ -86,8 +91,8 @@ model Campaign {
   id          String   @id @default(cuid())
   title       String
   description String
-  goal        Float
-  raised      Float    @default(0)
+  goal        Decimal
+  raised      Decimal    @default(0)
   image       String?
   status      String   @default("active")
   createdAt   DateTime @default(now())
@@ -127,13 +132,13 @@ model Sponsor {
   email       String
   phone       String?
   childId     String?
-  amount      Float
+  amount      Decimal
   frequency   String   @default("monthly")
   status      String   @default("active")
   startDate   DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  child       Child?   @relation(fields: [childId], references: [id])
+  child       Child?   @relation(fields: [childId], references: [id], onDelete: SetNull)
 }
 
 model Newsletter {

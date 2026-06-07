@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
@@ -10,7 +10,9 @@ export async function GET(request: NextRequest) {
     const proofs = await db.paymentProof.findMany({
       orderBy: { createdAt: 'desc' },
     })
-    return NextResponse.json({ proofs })
+    // Convert Decimal fields to numbers for JSON serialization
+    const serializedProofs = proofs.map(p => ({ ...p, amount: toNumber(p.amount) }))
+    return NextResponse.json({ proofs: serializedProofs })
   } catch (error) {
     console.error('Payment proofs GET error:', error)
     return NextResponse.json(
@@ -97,7 +99,7 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ success: true, proof })
+    return NextResponse.json({ success: true, proof: { ...proof, amount: toNumber(proof.amount) } })
   } catch (error) {
     console.error('Payment proof PUT error:', error)
     return NextResponse.json(

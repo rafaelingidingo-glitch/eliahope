@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
 import {
   sendDonationConfirmationEmail,
   resendDonationConfirmationEmail,
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     const emailData = {
       to: donation.donorEmail,
       name: donation.donorName || 'Donor',
-      amount: donation.amount,
+      amount: toNumber(donation.amount),
       transactionId: donation.transactionId || donation.id,
       method: donation.method,
       date: donation.createdAt.toLocaleDateString('en-GB', {

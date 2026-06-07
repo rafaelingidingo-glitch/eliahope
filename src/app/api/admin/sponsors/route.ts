@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
@@ -11,7 +11,9 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
       include: { child: { select: { name: true } } },
     })
-    return NextResponse.json(sponsors)
+    // Convert Decimal fields to numbers for JSON serialization
+    const serializedSponsors = sponsors.map(s => ({ ...s, amount: toNumber(s.amount) }))
+    return NextResponse.json(serializedSponsors)
   } catch (error) {
     console.error('Sponsors GET error:', error)
     return NextResponse.json({ error: 'Failed to load sponsors' }, { status: 500 })
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(sponsor, { status: 201 })
+    return NextResponse.json({ ...sponsor, amount: toNumber(sponsor.amount) }, { status: 201 })
   } catch (error) {
     console.error('Sponsors POST error:', error)
     return NextResponse.json({ error: 'Failed to create sponsor' }, { status: 500 })
@@ -83,7 +85,7 @@ export async function PUT(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(sponsor)
+    return NextResponse.json({ ...sponsor, amount: toNumber(sponsor.amount) })
   } catch (error) {
     console.error('Sponsors PUT error:', error)
     return NextResponse.json({ error: 'Failed to update sponsor' }, { status: 500 })

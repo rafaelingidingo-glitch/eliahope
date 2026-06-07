@@ -51,7 +51,7 @@ Phone:         ${donation.donorPhone || 'N/A'}
 ────────────────────────────────────────────
 DONATION DETAILS
 ────────────────────────────────────────────
-Amount:        TZS ${donation.amount.toLocaleString()}
+Amount:        TZS ${Number(donation.amount).toLocaleString()}
 Currency:      ${donation.currency}
 Method:        ${donation.method === 'mpesa' ? 'M-Pesa' : donation.method === 'crdb' ? 'CRDB Bank' : 'Bank Transfer'}
 Type:          ${donation.type}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     ])
 
     const stats = {
-      totalDonations: donations._sum.amount || 0,
+      totalDonations: toNumber(donations._sum.amount),
       childrenSupported: children,
       totalVolunteers: volunteers,
       activeEvents: events,
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       ...recentDonations.map((d) => ({
         id: d.id,
         type: 'donation',
-        message: `New donation of TZS ${d.amount.toLocaleString()} from ${d.donorName}`,
+        message: `New donation of TZS ${toNumber(d.amount).toLocaleString()} from ${d.donorName}`,
         time: getTimeAgo(d.createdAt),
       })),
       ...recentVolunteers.map((v) => ({

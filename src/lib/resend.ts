@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
-import { db } from '@/lib/db'
+import { db, toNumber } from '@/lib/db'
+import type { Prisma } from '@prisma/client'
 
 // ─── Configuration ──────────────────────────────────────────────
 const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
@@ -96,12 +97,13 @@ function newsletterWelcomeHtml(name: string): string {
 
 function donationConfirmationHtml(data: {
   name: string
-  amount: number
+  amount: number | Prisma.Decimal
   transactionId: string
   method: string
   date: string
   campaign?: string
 }): string {
+  const amountNum = toNumber(data.amount)
   const methodLabel = data.method === 'mpesa' ? 'M-Pesa (Mobile Money)' : 'CRDB Bank Transfer'
   return `
     <!DOCTYPE html>
@@ -120,7 +122,7 @@ function donationConfirmationHtml(data: {
           <div class="receipt-box">
             <div class="receipt-row">
               <span class="receipt-label">Amount</span>
-              <span class="receipt-value" style="font-size:18px; color:#ff8928;">TZS ${data.amount.toLocaleString()}</span>
+              <span class="receipt-value" style="font-size:18px; color:#ff8928;">TZS ${amountNum.toLocaleString()}</span>
             </div>
             <div class="receipt-row">
               <span class="receipt-label">Transaction ID</span>
@@ -301,15 +303,16 @@ export async function resendNewsletterWelcomeEmail(
 export async function sendDonationConfirmationEmail(data: {
   to: string
   name: string
-  amount: number
+  amount: number | Prisma.Decimal
   transactionId: string
   method: string
   date: string
   campaign?: string
 }): Promise<{ success: boolean; id?: string; error?: string }> {
+  const amountNum = toNumber(data.amount)
   return sendEmail({
     to: data.to,
-    subject: `Donation Confirmation - TZS ${data.amount.toLocaleString()} | Elia's Hope Community`,
+    subject: `Donation Confirmation - TZS ${amountNum.toLocaleString()} | Elia's Hope Community`,
     html: donationConfirmationHtml(data),
     type: 'donation_confirmation',
   })
@@ -322,7 +325,7 @@ export async function resendDonationConfirmationEmail(
   data: {
     to: string
     name: string
-    amount: number
+    amount: number | Prisma.Decimal
     transactionId: string
     method: string
     date: string
@@ -330,9 +333,10 @@ export async function resendDonationConfirmationEmail(
   },
   originalEmailId: string
 ): Promise<{ success: boolean; id?: string; error?: string }> {
+  const amountNum = toNumber(data.amount)
   return sendEmail({
     to: data.to,
-    subject: `Donation Confirmation - TZS ${data.amount.toLocaleString()} | Elia's Hope Community`,
+    subject: `Donation Confirmation - TZS ${amountNum.toLocaleString()} | Elia's Hope Community`,
     html: donationConfirmationHtml(data),
     type: 'donation_confirmation',
     resentFromId: originalEmailId,

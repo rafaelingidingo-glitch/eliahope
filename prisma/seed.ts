@@ -3,24 +3,30 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  // Clean existing data
-  await prisma.contactMessage.deleteMany()
-  await prisma.sponsor.deleteMany()
-  await prisma.child.deleteMany()
-  await prisma.volunteer.deleteMany()
-  await prisma.donation.deleteMany()
-  await prisma.campaign.deleteMany()
-  await prisma.blogPost.deleteMany()
-  await prisma.newsletter.deleteMany()
-  await prisma.galleryImage.deleteMany()
-  await prisma.event.deleteMany()
-  await prisma.testimonial.deleteMany()
-  await prisma.partner.deleteMany()
-  await prisma.successStory.deleteMany()
-  await prisma.program.deleteMany()
-  await prisma.stat.deleteMany()
-  await prisma.siteSetting.deleteMany()
-  await prisma.user.deleteMany()
+  // Clean existing data in dependency order (children before sponsors due to FK)
+  // Use a transaction for atomicity — works across SQLite, PostgreSQL, MySQL
+  await prisma.$transaction([
+    prisma.emailLog.deleteMany(),
+    prisma.otpCode.deleteMany(),
+    prisma.sponsor.deleteMany(),   // Must be before child (FK dependency)
+    prisma.contactMessage.deleteMany(),
+    prisma.donation.deleteMany(),
+    prisma.paymentProof.deleteMany(),
+    prisma.child.deleteMany(),     // Referenced by sponsor
+    prisma.campaign.deleteMany(),
+    prisma.volunteer.deleteMany(),
+    prisma.newsletter.deleteMany(),
+    prisma.blogPost.deleteMany(),
+    prisma.galleryImage.deleteMany(),
+    prisma.event.deleteMany(),
+    prisma.testimonial.deleteMany(),
+    prisma.partner.deleteMany(),
+    prisma.successStory.deleteMany(),
+    prisma.program.deleteMany(),
+    prisma.stat.deleteMany(),
+    prisma.siteSetting.deleteMany(),
+    prisma.user.deleteMany(),
+  ])
 
   // Admin user
   const admin = await prisma.user.create({
