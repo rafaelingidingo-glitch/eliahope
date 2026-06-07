@@ -102,10 +102,10 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                     handleNavClick(link.href)
                   }
                 }}
-                className={`px-4 py-2 text-sm font-medium transition-colors duration-300 ${
+                className={`px-4 py-2 text-sm font-medium transition-all duration-300 ${
                   activeSection === link.href
                     ? 'text-[#ff8928] font-semibold'
-                    : 'text-[#44474d] hover:text-[#ff8928]'
+                    : 'text-[#44474d] hover:text-[#ff8928] hover:scale-105'
                 }`}
               >
                 {link.label}
@@ -181,10 +181,10 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                             handleNavClick(link.href)
                           }
                         }}
-                        className={`block px-6 py-3 font-medium transition-colors duration-300 ${
+                        className={`block px-6 py-3 font-medium transition-all duration-300 ${
                           activeSection === link.href
                             ? 'text-[#ff8928] font-semibold'
-                            : 'text-[#44474d] hover:text-[#ff8928]'
+                            : 'text-[#44474d] hover:text-[#ff8928] hover:translate-x-1'
                         }`}
                       >
                         {link.label}
