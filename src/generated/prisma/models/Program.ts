@@ -1332,6 +1332,7 @@ export type ProgramCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Programs.
    */
   data: Prisma.ProgramCreateManyInput | Prisma.ProgramCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1350,6 +1351,7 @@ export type ProgramCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Programs.
    */
   data: Prisma.ProgramCreateManyInput | Prisma.ProgramCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

@@ -756,6 +756,7 @@ export type DonationCreateOrConnectWithoutCampaignInput = {
 
 export type DonationCreateManyCampaignInputEnvelope = {
   data: Prisma.DonationCreateManyCampaignInput | Prisma.DonationCreateManyCampaignInput[]
+  skipDuplicates?: boolean
 }
 
 export type DonationUpsertWithWhereUniqueWithoutCampaignInput = {
@@ -1678,6 +1679,7 @@ export type DonationCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * The data used to create many Donations.
    */
   data: Prisma.DonationCreateManyInput | Prisma.DonationCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1696,6 +1698,7 @@ export type DonationCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many Donations.
    */
   data: Prisma.DonationCreateManyInput | Prisma.DonationCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

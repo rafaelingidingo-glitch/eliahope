@@ -1020,6 +1020,7 @@ export type NewsletterCreateManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * The data used to create many Newsletters.
    */
   data: Prisma.NewsletterCreateManyInput | Prisma.NewsletterCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1038,6 +1039,7 @@ export type NewsletterCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    * The data used to create many Newsletters.
    */
   data: Prisma.NewsletterCreateManyInput | Prisma.NewsletterCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

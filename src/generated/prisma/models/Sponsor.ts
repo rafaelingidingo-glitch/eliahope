@@ -576,6 +576,7 @@ export type SponsorCreateOrConnectWithoutChildInput = {
 
 export type SponsorCreateManyChildInputEnvelope = {
   data: Prisma.SponsorCreateManyChildInput | Prisma.SponsorCreateManyChildInput[]
+  skipDuplicates?: boolean
 }
 
 export type SponsorUpsertWithWhereUniqueWithoutChildInput = {
@@ -1421,6 +1422,7 @@ export type SponsorCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Sponsors.
    */
   data: Prisma.SponsorCreateManyInput | Prisma.SponsorCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1439,6 +1441,7 @@ export type SponsorCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Sponsors.
    */
   data: Prisma.SponsorCreateManyInput | Prisma.SponsorCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

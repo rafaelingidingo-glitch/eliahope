@@ -1344,6 +1344,7 @@ export type ChildCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Children.
    */
   data: Prisma.ChildCreateManyInput | Prisma.ChildCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1362,6 +1363,7 @@ export type ChildCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Children.
    */
   data: Prisma.ChildCreateManyInput | Prisma.ChildCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

@@ -36,12 +36,8 @@
  */
 
 import "dotenv/config"
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import { PrismaClient } from '../src/generated/prisma/client'
 import bcrypt from 'bcryptjs'
-
-// ─── Database-Agnostic Client Creation ────────────────────────────────────
-// Detect engine from DATABASE_URL and create the appropriate adapter.
 
 const DATABASE_URL = process.env.DATABASE_URL || 'file:./db/custom.db'
 
@@ -55,25 +51,32 @@ function detectEngine(url: string): 'sqlite' | 'postgresql' | 'mysql' {
 function createPrismaClient(): PrismaClient {
   const engine = detectEngine(DATABASE_URL)
 
-  if (engine === 'sqlite') {
-    const adapter = new PrismaBetterSqlite3({ url: DATABASE_URL })
+  if (engine === 'postgresql') {
+    // Dynamic require ili isivuruge setup isiyo na pg drivers
+    const { PrismaPg } = require('@prisma/adapter-pg')
+    const { Pool } = require('pg')
+    
+    const pool = new Pool({ connectionString: DATABASE_URL })
+    const adapter = new PrismaPg(pool)
     return new PrismaClient({ adapter })
   }
 
-  // For PostgreSQL/MySQL, the same adapter pattern as src/lib/db.ts applies.
-  // Install the appropriate adapter and uncomment the corresponding block.
-  // PostgreSQL: bun add @prisma/adapter-pg pg
-  // MySQL:     bun add @prisma/adapter-mariadb mariadb
-  // Then update this function and src/lib/db.ts accordingly.
+  if (engine === 'mysql') {
+    const { PrismaMariaDB } = require('@prisma/adapter-mariadb')
+    const mariadb = require('mariadb')
+    
+    const pool = mariadb.createPool({ connectionString: DATABASE_URL })
+    const adapter = new PrismaMariaDB(pool)
+    return new PrismaClient({ adapter })
+  }
 
-  console.warn(
-    `[Seed] Engine "${engine}" detected but adapter not configured. ` +
-    'Falling back to SQLite adapter. See comments for setup instructions.'
-  )
+  // Kama ni SQLite, itapakia adapter ya sqlite pekee
+  const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
   const adapter = new PrismaBetterSqlite3({ url: DATABASE_URL })
   return new PrismaClient({ adapter })
 }
 
+// Sahihi ni createPrismaClient()
 const prisma = createPrismaClient()
 
 async function main() {

@@ -1076,6 +1076,7 @@ export type OtpCodeCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many OtpCodes.
    */
   data: Prisma.OtpCodeCreateManyInput | Prisma.OtpCodeCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1094,6 +1095,7 @@ export type OtpCodeCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many OtpCodes.
    */
   data: Prisma.OtpCodeCreateManyInput | Prisma.OtpCodeCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

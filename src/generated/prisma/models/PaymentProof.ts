@@ -544,6 +544,7 @@ export type PaymentProofCreateOrConnectWithoutCampaignInput = {
 
 export type PaymentProofCreateManyCampaignInputEnvelope = {
   data: Prisma.PaymentProofCreateManyCampaignInput | Prisma.PaymentProofCreateManyCampaignInput[]
+  skipDuplicates?: boolean
 }
 
 export type PaymentProofUpsertWithWhereUniqueWithoutCampaignInput = {
@@ -1378,6 +1379,7 @@ export type PaymentProofCreateManyArgs<ExtArgs extends runtime.Types.Extensions.
    * The data used to create many PaymentProofs.
    */
   data: Prisma.PaymentProofCreateManyInput | Prisma.PaymentProofCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1396,6 +1398,7 @@ export type PaymentProofCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many PaymentProofs.
    */
   data: Prisma.PaymentProofCreateManyInput | Prisma.PaymentProofCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

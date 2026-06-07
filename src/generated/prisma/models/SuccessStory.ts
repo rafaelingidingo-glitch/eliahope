@@ -1156,6 +1156,7 @@ export type SuccessStoryCreateManyArgs<ExtArgs extends runtime.Types.Extensions.
    * The data used to create many SuccessStories.
    */
   data: Prisma.SuccessStoryCreateManyInput | Prisma.SuccessStoryCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1174,6 +1175,7 @@ export type SuccessStoryCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many SuccessStories.
    */
   data: Prisma.SuccessStoryCreateManyInput | Prisma.SuccessStoryCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

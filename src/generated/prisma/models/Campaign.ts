@@ -1414,6 +1414,7 @@ export type CampaignCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * The data used to create many Campaigns.
    */
   data: Prisma.CampaignCreateManyInput | Prisma.CampaignCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1432,6 +1433,7 @@ export type CampaignCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many Campaigns.
    */
   data: Prisma.CampaignCreateManyInput | Prisma.CampaignCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

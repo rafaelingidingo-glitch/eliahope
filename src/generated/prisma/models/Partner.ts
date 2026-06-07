@@ -1116,6 +1116,7 @@ export type PartnerCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Partners.
    */
   data: Prisma.PartnerCreateManyInput | Prisma.PartnerCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1134,6 +1135,7 @@ export type PartnerCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Partners.
    */
   data: Prisma.PartnerCreateManyInput | Prisma.PartnerCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
