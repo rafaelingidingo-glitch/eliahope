@@ -220,13 +220,26 @@ export default function Footer({ onDonateClick }: FooterProps) {
       {/* Divider line above bottom bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
-            <p>Copyright &copy; {new Date().getFullYear()} Elia&apos;s Hope Community. {t.footer.copyright}</p>
-            <div className="flex items-center gap-4">
-              <a href="#" className="hover:text-orange transition-colors">{t.footer.privacyPolicy}</a>
-              <span>|</span>
-              <a href="#" className="hover:text-orange transition-colors">{t.footer.termsConditions}</a>
+          <div className="flex flex-col items-center gap-3 text-sm text-white/50">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+              <p>Copyright &copy; {new Date().getFullYear()} Elia&apos;s Hope Community. {t.footer.copyright}</p>
+              <div className="flex items-center gap-4">
+                <a href="#" className="hover:text-orange transition-colors">{t.footer.privacyPolicy}</a>
+                <span>|</span>
+                <a href="#" className="hover:text-orange transition-colors">{t.footer.termsConditions}</a>
+              </div>
             </div>
+            <p className="text-white/40 text-xs">
+              Created and designed by{' '}
+              <a
+                href="https://rwextech.co.tz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#ff8928] hover:text-[#ff8928]/80 transition-colors font-medium"
+              >
+                rwextech
+              </a>
+            </p>
           </div>
         </div>
       </div>
