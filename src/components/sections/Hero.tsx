@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Heart, ArrowRight, Lock } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 interface HeroProps {
   onDonateClick?: (campaignId?: string, amount?: string) => void
@@ -10,6 +11,7 @@ interface HeroProps {
 
 export default function Hero({ onDonateClick }: HeroProps) {
   const [amount, setAmount] = useState('')
+  const { t } = useLanguage()
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
@@ -33,12 +35,12 @@ export default function Hero({ onDonateClick }: HeroProps) {
           >
             {/* Headline */}
             <h1 className="text-[44px] sm:text-[48px] lg:text-[64px] lg:leading-[1.1] mb-6 drop-shadow-lg font-bold text-white">
-              Giving Hope, Education, and a Brighter Future
+              {t.hero.headline}
             </h1>
 
             {/* Description */}
             <p className="text-white/80 text-lg sm:text-xl leading-relaxed mb-10 max-w-lg">
-              We empower vulnerable children and families in Mwanza, Tanzania through education, healthcare, and community-driven support programs.
+              {t.hero.description}
             </p>
 
             {/* CTAs */}
@@ -48,7 +50,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
                 className="bg-[#ff8928] text-white px-8 py-4 rounded-none font-semibold flex items-center gap-2 hover:bg-[#964900] shadow-xl active:scale-95 transition-all"
               >
                 <Heart className="h-5 w-5" />
-                Donate Now
+                {t.hero.donateNow}
               </button>
               <a
                 href="#about"
@@ -58,7 +60,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
                 }}
                 className="group inline-flex items-center gap-2 text-white font-bold hover:text-[#ffdcc6] transition-colors py-4"
               >
-                Learn More
+                {t.hero.learnMore}
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </a>
             </div>
@@ -72,9 +74,9 @@ export default function Hero({ onDonateClick }: HeroProps) {
             className="flex justify-center lg:justify-end"
           >
             <div className="bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-[2rem] shadow-2xl border border-white/20 w-full max-w-md">
-              <h3 className="text-[#031632] text-2xl font-bold mb-2">Help Us Today</h3>
+              <h3 className="text-[#031632] text-2xl font-bold mb-2">{t.hero.helpUsToday}</h3>
               <p className="text-[#44474d] text-sm mb-6">
-                Your support provides meals and school fees for children in need.
+                {t.hero.helpUsDescription}
               </p>
 
               {/* Amount Input */}
@@ -85,7 +87,7 @@ export default function Hero({ onDonateClick }: HeroProps) {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   className="w-full pl-14 pr-4 py-3.5 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors bg-white"
-                  placeholder="Enter amount"
+                  placeholder={t.hero.enterAmount}
                   min="1"
                 />
               </div>
@@ -96,13 +98,13 @@ export default function Hero({ onDonateClick }: HeroProps) {
                 className="w-full py-4 bg-[#031632] text-white rounded-none font-semibold shadow-lg hover:bg-[#1a2b48] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 <Heart className="h-5 w-5" />
-                Give Now
+                {t.hero.giveNow}
               </button>
 
               {/* Secure Badge */}
               <div className="flex items-center justify-center gap-2 mt-5 text-[#44474d] text-xs">
                 <Lock className="h-3.5 w-3.5" />
-                <span>Secure &amp; Transparent Donation</span>
+                <span>{t.hero.secureDonation}</span>
               </div>
             </div>
           </motion.div>

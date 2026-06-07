@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Heart, TrendingUp, ArrowRight } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
+import { useLanguage } from '@/lib/i18n'
 
 interface Campaign {
   id: string
@@ -24,6 +25,7 @@ const NOTIFICATION_DELAY = 3000 // 3 seconds after page load
 const SESSION_KEY = 'elia_hope_campaign_dismissed'
 
 export default function CampaignNotification({ onDonateClick }: CampaignNotificationProps) {
+  const { t } = useLanguage()
   const [visible, setVisible] = useState(false)
   const [campaign, setCampaign] = useState<Campaign | null>(null)
   const [dismissed, setDismissed] = useState(false)
@@ -120,7 +122,7 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
                 </motion.div>
                 <div>
                   <p className="text-[#ff8928] text-[10px] font-bold uppercase tracking-wider">
-                    New Campaign
+                    {t.notification.newCampaign}
                   </p>
                   <h4 className="text-[#031632] font-bold text-sm leading-tight line-clamp-1 pr-6">
                     {campaign.title}
@@ -141,7 +143,7 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
                     <span className="text-[#031632] text-xs font-bold">
                       TZS {campaign.raised.toLocaleString()}
                     </span>
-                    <span className="text-[#44474d] text-[10px]">raised</span>
+                    <span className="text-[#44474d] text-[10px]">{t.notification.raised}</span>
                   </div>
                   <span className="text-[#ff8928] text-xs font-bold">
                     {campaign.percentage}%
@@ -153,12 +155,12 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
                 />
                 <div className="flex items-center justify-between mt-1">
                   <span className="text-[#44474d] text-[10px]">
-                    Goal: TZS {campaign.goal.toLocaleString()}
+                    {t.notification.goal}: TZS {campaign.goal.toLocaleString()}
                   </span>
                   <span className="text-[#44474d] text-[10px]">
                     {campaign.remaining > 0
-                      ? `TZS ${campaign.remaining.toLocaleString()} to go`
-                      : 'Goal reached!'}
+                      ? `TZS ${campaign.remaining.toLocaleString()} ${t.notification.toGo}`
+                      : t.notification.goalReached}
                   </span>
                 </div>
               </div>
@@ -171,13 +173,13 @@ export default function CampaignNotification({ onDonateClick }: CampaignNotifica
                 className="w-full py-2.5 bg-[#031632] text-white rounded-none font-semibold text-sm hover:bg-[#1a2b48] transition-colors flex items-center justify-center gap-2"
               >
                 <Heart className="h-4 w-4" />
-                Donate Now
+                {t.notification.donateNow}
                 <ArrowRight className="h-3.5 w-3.5" />
               </motion.button>
 
               {/* Footer note */}
               <p className="text-center text-[#44474d] text-[10px] mt-2">
-                Every contribution makes a difference
+                {t.notification.everyContribution}
               </p>
             </div>
           </div>

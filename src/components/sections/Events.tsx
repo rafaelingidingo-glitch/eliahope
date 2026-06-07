@@ -3,23 +3,7 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { Calendar } from 'lucide-react'
-
-const events = [
-  {
-    title: 'Annual Charity Gala',
-    date: 'Aug 15, 2026',
-    description:
-      'Join us for an evening of celebration, fundraising, and community as we reflect on the year and look ahead to new opportunities to serve.',
-    image: '/event-sample.png',
-  },
-  {
-    title: 'Community Health Camp',
-    date: 'Sep 20, 2026',
-    description:
-      'A free health screening and wellness camp for children and families in the Nyamagana district, including vaccinations and nutrition guidance.',
-    image: '/event-sample.png',
-  },
-]
+import { useLanguage } from '@/lib/i18n'
 
 interface EventsProps {
   onDonateClick?: (campaignId?: string, amount?: string) => void
@@ -28,6 +12,22 @@ interface EventsProps {
 export default function Events({ onDonateClick }: EventsProps) {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const { t } = useLanguage()
+
+  const events = [
+    {
+      title: t.events.annualCharityGala,
+      date: t.events.annualCharityGalaDate,
+      description: t.events.annualCharityGalaDesc,
+      image: '/event-sample.png',
+    },
+    {
+      title: t.events.communityHealthCamp,
+      date: t.events.communityHealthCampDate,
+      description: t.events.communityHealthCampDesc,
+      image: '/event-sample.png',
+    },
+  ]
 
   return (
     <section id="events" ref={ref} className="py-20 bg-[#fbf9f5]">
@@ -39,10 +39,10 @@ export default function Events({ onDonateClick }: EventsProps) {
           className="text-center mb-14"
         >
           <span className="text-[#ff8928] font-bold text-xs uppercase tracking-widest mb-4 block">
-            GET INVOLVED
+            {t.events.getInvolved}
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-[#031632] mb-4">
-            Upcoming Events
+            {t.events.title}
           </h2>
         </motion.div>
 
@@ -78,7 +78,7 @@ export default function Events({ onDonateClick }: EventsProps) {
                   onClick={() => onDonateClick?.()}
                   className="w-full py-4 border-2 border-[#031632] text-[#031632] font-bold rounded-none hover:bg-[#031632] hover:text-white transition-all"
                 >
-                  Donate Now
+                  {t.events.donateNow}
                 </button>
               </div>
             </motion.div>

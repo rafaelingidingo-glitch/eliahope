@@ -6,36 +6,38 @@ import { MapPin, Phone, Mail, Send, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-
-const contactInfo = [
-  {
-    icon: MapPin,
-    label: 'Address',
-    value: 'Mwanza, Tanzania',
-  },
-  {
-    icon: Phone,
-    label: 'Phone',
-    value: '+255 754 208 639',
-  },
-  {
-    icon: Mail,
-    label: 'Email',
-    value: 'elianixsonl27@gmail.com',
-  },
-  {
-    icon: Clock,
-    label: 'Office Hours',
-    value: 'Mon-Fri: 8:00 AM - 5:00 PM',
-  },
-]
+import { useLanguage } from '@/lib/i18n'
 
 export default function Contact() {
+  const { t } = useLanguage()
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' })
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [statusMsg, setStatusMsg] = useState('')
+
+  const contactInfo = [
+    {
+      icon: MapPin,
+      label: t.contact.address,
+      value: 'Mwanza, Tanzania',
+    },
+    {
+      icon: Phone,
+      label: t.contact.phone,
+      value: '+255 754 208 639',
+    },
+    {
+      icon: Mail,
+      label: t.contact.email,
+      value: 'elianixsonl27@gmail.com',
+    },
+    {
+      icon: Clock,
+      label: t.contact.officeHours,
+      value: t.contact.officeHoursValue,
+    },
+  ]
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,15 +53,15 @@ export default function Contact() {
       const data = await res.json()
       if (res.ok) {
         setStatus('success')
-        setStatusMsg(data.message || 'Message sent successfully!')
+        setStatusMsg(data.message || t.contact.successMessage)
         setFormData({ name: '', email: '', phone: '', message: '' })
       } else {
         setStatus('error')
-        setStatusMsg(data.error || 'Failed to send message. Please try again.')
+        setStatusMsg(data.error || t.contact.errorMessage)
       }
     } catch {
       setStatus('error')
-      setStatusMsg('Failed to send message. Please try again.')
+      setStatusMsg(t.contact.errorMessage)
     }
   }
 
@@ -73,15 +75,14 @@ export default function Contact() {
           className="text-center mb-14"
         >
           <span className="inline-block text-orange font-semibold text-sm uppercase tracking-wider mb-3">
-            Get in Touch
+            {t.contact.subtitle}
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">
-            Contact Us
+            {t.contact.title}
           </h2>
           <div className="w-16 h-1 bg-orange mx-auto rounded-full mb-4" />
           <p className="text-text-secondary max-w-2xl mx-auto">
-            We would love to hear from you. Whether you have questions, want to volunteer, or 
-            need more information, reach out to us.
+            {t.contact.description}
           </p>
         </motion.div>
 
@@ -116,7 +117,7 @@ export default function Contact() {
               <div className="text-center">
                 <MapPin className="h-8 w-8 text-navy/30 mx-auto mb-2" />
                 <p className="text-navy/40 font-medium text-sm">Mwanza, Tanzania</p>
-                <p className="text-navy/30 text-xs">Map view</p>
+                <p className="text-navy/30 text-xs">{t.contact.mapView}</p>
               </div>
             </div>
           </motion.div>
@@ -128,12 +129,12 @@ export default function Contact() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 md:p-8 shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-navy mb-6">Send us a Message</h3>
+              <h3 className="text-xl font-bold text-navy mb-6">{t.contact.sendMessage}</h3>
               <div className="space-y-4">
                 <div>
                   <Input
                     type="text"
-                    placeholder="Your Name"
+                    placeholder={t.contact.yourName}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
@@ -143,7 +144,7 @@ export default function Contact() {
                 <div>
                   <Input
                     type="email"
-                    placeholder="Your Email"
+                    placeholder={t.contact.yourEmail}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
@@ -153,7 +154,7 @@ export default function Contact() {
                 <div>
                   <Input
                     type="tel"
-                    placeholder="Your Phone (optional)"
+                    placeholder={t.contact.yourPhone}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="h-12 rounded-xl border-gray-200 focus:border-orange focus:ring-orange"
@@ -161,7 +162,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <Textarea
-                    placeholder="Your Message"
+                    placeholder={t.contact.yourMessage}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
@@ -174,9 +175,9 @@ export default function Contact() {
                   disabled={status === 'loading'}
                   className="w-full bg-navy hover:bg-navy-light text-white font-semibold rounded-none h-12"
                 >
-                  {status === 'loading' ? 'Sending...' : (
+                  {status === 'loading' ? t.contact.sending : (
                     <>
-                      Send Message
+                      {t.contact.send}
                       <Send className="h-4 w-4 ml-2" />
                     </>
                   )}

@@ -118,3 +118,31 @@ Fixed Issues:
 9. Footer logo increased from h-10 w-10 to h-12 w-12
 10. Replaced all Tailwind color variable classes (bg-light-gray) with explicit hex values for consistency
 11. Build verified: passes with zero errors
+---
+Task ID: i18n-bilingual
+Agent: Main Agent
+Task: Add English and Swahili (EN/SW) bilingual language support to the Elia's Hope Community website
+
+Work Log:
+- Created i18n system with LanguageProvider context, useLanguage hook, and localStorage persistence
+- Created `/src/lib/i18n/en.ts` with all English translations (300+ keys across 16 namespaces)
+- Created `/src/lib/i18n/sw.ts` with all Swahili translations (matching structure)
+- Created `/src/lib/i18n/context.tsx` with LanguageProvider, useLanguage hook, locale state, and localStorage
+- Created `/src/lib/i18n/index.ts` for clean exports
+- Added LanguageProvider wrapper to `/src/app/layout.tsx`
+- Updated Navbar with Globe icon language switcher (desktop + mobile), shows "SW" or "EN" toggle
+- Updated all 15 public-facing components with useLanguage() and t.* translation keys:
+  - Navbar, Hero, About, VisionMission, Programs, ImpactStats, Events
+  - SuccessStories, Gallery, TakeAction, Newsletter, Contact, Partners, Footer
+  - DonationModal, CampaignNotification, AdminLogin
+- Fixed Gallery component: added useEffect to reset activeCategory when language changes
+- Fixed Footer copyright: split into dynamic org name + translated rights text
+- All partner names kept as proper nouns (not translated)
+- Build verified successful with `npx next build`
+
+Stage Summary:
+- Full bilingual EN/SW support implemented across the entire website
+- Language preference persists in localStorage under 'elia_hope_locale'
+- Language switcher with Globe icon in navbar (desktop between nav links and CTAs, mobile as compact button)
+- HTML lang attribute updates dynamically when switching
+- All user-facing text is translated; proper nouns, phone numbers, emails kept as-is

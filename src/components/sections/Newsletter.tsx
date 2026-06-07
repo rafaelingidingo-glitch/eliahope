@@ -5,8 +5,10 @@ import { motion, useInView } from 'framer-motion'
 import { Mail, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useLanguage } from '@/lib/i18n'
 
 export default function Newsletter() {
+  const { t } = useLanguage()
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
   const [name, setName] = useState('')
@@ -28,16 +30,16 @@ export default function Newsletter() {
       const data = await res.json()
       if (res.ok) {
         setStatus('success')
-        setMessage(data.message || 'Thank you for subscribing!')
+        setMessage(data.message || t.newsletter.successMessage)
         setName('')
         setEmail('')
       } else {
         setStatus('error')
-        setMessage(data.error || 'Something went wrong. Please try again.')
+        setMessage(data.error || t.newsletter.errorMessage)
       }
     } catch {
       setStatus('error')
-      setMessage('Something went wrong. Please try again.')
+      setMessage(t.newsletter.errorMessage)
     }
   }
 
@@ -65,17 +67,16 @@ export default function Newsletter() {
             <Mail className="h-8 w-8 text-orange" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">
-            Stay Updated
+            {t.newsletter.title}
           </h2>
           <p className="text-text-secondary max-w-xl mx-auto mb-8">
-            Subscribe to our newsletter and stay connected with the latest news, events, 
-            and stories of impact from Elia&apos;s Hope Community.
+            {t.newsletter.description}
           </p>
 
           <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-3">
             <Input
               type="text"
-              placeholder="Full Name"
+              placeholder={t.newsletter.fullName}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -83,7 +84,7 @@ export default function Newsletter() {
             />
             <Input
               type="email"
-              placeholder="Email Address"
+              placeholder={t.newsletter.emailAddress}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -94,9 +95,9 @@ export default function Newsletter() {
               disabled={status === 'loading'}
               className="w-full bg-orange hover:bg-orange-dark text-white font-semibold rounded-none h-12"
             >
-              {status === 'loading' ? 'Subscribing...' : (
+              {status === 'loading' ? t.newsletter.subscribing : (
                 <>
-                  Subscribe
+                  {t.newsletter.subscribe}
                   <Send className="h-4 w-4 ml-2" />
                 </>
               )}

@@ -3,10 +3,12 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { ShieldCheck } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 export default function About() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const { t } = useLanguage()
 
   return (
     <section id="about" ref={ref} className="py-20 bg-[#fbf9f5]">
@@ -31,7 +33,7 @@ export default function About() {
                 {/* Overlay stat card */}
                 <div className="absolute bottom-6 left-6 right-6 p-6 bg-[#031632]/95 backdrop-blur-sm rounded-xl text-white">
                   <div className="text-4xl font-bold">500+</div>
-                  <div className="text-[#ff8928] font-medium">Children Supported</div>
+                  <div className="text-[#ff8928] font-medium">{t.about.childrenSupported}</div>
                 </div>
               </div>
             </motion.div>
@@ -43,21 +45,16 @@ export default function About() {
               transition={{ duration: 0.7, delay: 0.2 }}
             >
               <span className="text-[#ff8928] font-bold text-xs uppercase tracking-widest mb-4 block">
-                OUR STORY
+                {t.about.ourStory}
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-[#031632] mb-6">
-                Supporting Vulnerable Children in Mwanza
+                {t.about.title}
               </h2>
               <p className="text-[#44474d] leading-relaxed mb-4">
-                Elia&apos;s Hope Community is a registered non-governmental organization based in Mwanza, Tanzania, 
-                dedicated to transforming the lives of vulnerable children and families. Founded with a deep commitment 
-                to child welfare, we provide holistic support encompassing education, nutrition, spiritual development, 
-                and community empowerment.
+                {t.about.paragraph1}
               </p>
               <p className="text-[#44474d] leading-relaxed mb-8">
-                Through the generosity of our sponsors, volunteers, and partners, we continue 
-                to create lasting change and build a brighter future for the next generation. Every child deserves 
-                the chance to thrive, and we work tirelessly to make that a reality.
+                {t.about.paragraph2}
               </p>
 
               {/* NGO Registration Badge */}
@@ -66,8 +63,8 @@ export default function About() {
                   <ShieldCheck className="h-6 w-6 text-[#ff8928]" />
                 </div>
                 <div>
-                  <div className="text-[#031632] font-bold text-sm">Registered NGO</div>
-                  <div className="text-[#44474d] text-xs">Reg No: OONGO/R/6243 | Mwanza, Tanzania</div>
+                  <div className="text-[#031632] font-bold text-sm">{t.about.registeredNgo}</div>
+                  <div className="text-[#44474d] text-xs">{t.about.regNo}</div>
                 </div>
               </div>
             </motion.div>

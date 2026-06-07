@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Shield, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { useLanguage } from '@/lib/i18n'
 
 interface AdminLoginProps {
   isOpen: boolean
@@ -13,6 +14,7 @@ interface AdminLoginProps {
 }
 
 export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps) {
+  const { t } = useLanguage()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -24,7 +26,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
     setError('')
 
     if (!email.trim() || !password.trim()) {
-      setError('Please enter both email and password.')
+      setError(t.admin.invalidCredentials)
       return
     }
 
@@ -42,7 +44,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
       onLogin()
     } else {
       setIsLoading(false)
-      setError('Invalid email or password. Please try again.')
+      setError(t.admin.invalidCredentials)
     }
   }
 
@@ -57,7 +59,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-2xl border-0">
-        <DialogTitle className="sr-only">Admin Login</DialogTitle>
+        <DialogTitle className="sr-only">{t.admin.loginTitle}</DialogTitle>
 
         {/* Header */}
         <div className="bg-[#031632] px-8 py-8 text-center">
@@ -69,7 +71,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
           >
             <Shield className="h-8 w-8 text-[#ff8928]" />
           </motion.div>
-          <h2 className="text-white text-xl font-bold">Admin Login</h2>
+          <h2 className="text-white text-xl font-bold">{t.admin.loginTitle}</h2>
           <p className="text-white/60 text-sm mt-1">Elia&apos;s Hope Community</p>
         </div>
 
@@ -89,7 +91,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
           {/* Email Field */}
           <div className="space-y-2">
             <label htmlFor="admin-email" className="text-sm font-medium text-[#031632]">
-              Email Address
+              {t.admin.email}
             </label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]/50" />
@@ -108,7 +110,7 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
           {/* Password Field */}
           <div className="space-y-2">
             <label htmlFor="admin-password" className="text-sm font-medium text-[#031632]">
-              Password
+              {t.admin.password}
             </label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]/50" />
@@ -143,18 +145,18 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Signing in...
+                {t.admin.signingIn}
               </>
             ) : (
               <>
                 <Shield className="h-4 w-4" />
-                Sign In
+                {t.admin.signIn}
               </>
             )}
           </button>
 
           <p className="text-center text-xs text-[#44474d]/60 pt-1">
-            Authorized personnel only. Contact admin if you need access.
+            {t.admin.loginSubtitle}
           </p>
         </form>
       </DialogContent>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import {
@@ -8,40 +8,48 @@ import {
   DialogContent,
   DialogTitle,
 } from '@/components/ui/dialog'
-
-const categories = [
-  'All',
-  'Education',
-  'Feeding Program',
-  'Community Outreach',
-  'Bible Studies',
-  'Volunteers',
-  'Events',
-]
-
-const galleryItems = [
-  { src: '/program-education.png', category: 'Education', title: 'Children learning in class' },
-  { src: '/program-feeding.png', category: 'Feeding Program', title: 'Serving nutritious meals' },
-  { src: '/program-childcare.png', category: 'Community Outreach', title: 'Child care activities' },
-  { src: '/program-bible.png', category: 'Bible Studies', title: 'Bible study session' },
-  { src: '/program-community.png', category: 'Community Outreach', title: 'Community support programs' },
-  { src: '/event-sample.png', category: 'Events', title: 'Annual charity gala' },
-  { src: '/about-image.png', category: 'Volunteers', title: 'Our dedicated volunteers' },
-  { src: '/success-story.png', category: 'Education', title: 'Success story celebration' },
-  { src: '/hero-bg.png', category: 'Community Outreach', title: 'Community outreach day' },
-  { src: '/program-education.png', category: 'Volunteers', title: 'Volunteers teaching children' },
-  { src: '/program-feeding.png', category: 'Feeding Program', title: 'Meal distribution' },
-  { src: '/program-bible.png', category: 'Bible Studies', title: 'Sunday school program' },
-]
+import { useLanguage } from '@/lib/i18n'
 
 export default function Gallery() {
+  const { t, locale } = useLanguage()
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const [activeCategory, setActiveCategory] = useState('All')
-  const [selectedImage, setSelectedImage] = useState<typeof galleryItems[0] | null>(null)
+  const [activeCategory, setActiveCategory] = useState(t.gallery.all)
+
+  // Reset active category when language changes
+  useEffect(() => {
+    setActiveCategory(t.gallery.all)
+  }, [locale, t.gallery.all])
+
+  const [selectedImage, setSelectedImage] = useState<{ src: string; category: string; title: string } | null>(null)
+
+  const categories = [
+    t.gallery.all,
+    t.gallery.education,
+    t.gallery.feedingProgram,
+    t.gallery.communityOutreach,
+    t.gallery.bibleStudies,
+    t.gallery.volunteers,
+    t.gallery.events,
+  ]
+
+  const galleryItems = [
+    { src: '/program-education.png', category: t.gallery.education, title: t.gallery.childrenLearning },
+    { src: '/program-feeding.png', category: t.gallery.feedingProgram, title: t.gallery.servingMeals },
+    { src: '/program-childcare.png', category: t.gallery.communityOutreach, title: t.gallery.childcareActivities },
+    { src: '/program-bible.png', category: t.gallery.bibleStudies, title: t.gallery.bibleStudySession },
+    { src: '/program-community.png', category: t.gallery.communityOutreach, title: t.gallery.communitySupportPrograms },
+    { src: '/event-sample.png', category: t.gallery.events, title: t.gallery.annualCharityGala },
+    { src: '/about-image.png', category: t.gallery.volunteers, title: t.gallery.dedicatedVolunteers },
+    { src: '/success-story.png', category: t.gallery.education, title: t.gallery.successCelebration },
+    { src: '/hero-bg.png', category: t.gallery.communityOutreach, title: t.gallery.outreachDay },
+    { src: '/program-education.png', category: t.gallery.volunteers, title: t.gallery.volunteersTeaching },
+    { src: '/program-feeding.png', category: t.gallery.feedingProgram, title: t.gallery.mealDistribution },
+    { src: '/program-bible.png', category: t.gallery.bibleStudies, title: t.gallery.sundaySchool },
+  ]
 
   const filtered =
-    activeCategory === 'All'
+    activeCategory === t.gallery.all
       ? galleryItems
       : galleryItems.filter((item) => item.category === activeCategory)
 
@@ -55,14 +63,14 @@ export default function Gallery() {
           className="text-center mb-14"
         >
           <span className="inline-block text-orange font-semibold text-sm uppercase tracking-wider mb-3">
-            Visual Stories
+            {t.gallery.subtitle}
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">
-            Our Gallery
+            {t.gallery.title}
           </h2>
           <div className="w-16 h-1 bg-orange mx-auto rounded-full mb-4" />
           <p className="text-text-secondary max-w-2xl mx-auto">
-            A glimpse into the lives we touch and the communities we serve through our programs.
+            {t.gallery.description}
           </p>
         </motion.div>
 

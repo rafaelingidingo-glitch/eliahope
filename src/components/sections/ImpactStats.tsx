@@ -3,29 +3,31 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { CheckCircle } from 'lucide-react'
-
-const checklistItems = [
-  {
-    title: '100% Transition Rate',
-    description: 'Every child in our program has successfully moved to the next grade level',
-  },
-  {
-    title: 'Reduced Malnutrition',
-    description: 'Significant health improvements observed',
-  },
-  {
-    title: '500+ Children Supported',
-    description: 'Reaching the most vulnerable in Mwanza',
-  },
-  {
-    title: '15,000+ Meals Served',
-    description: 'Nutritious meals provided to children',
-  },
-]
+import { useLanguage } from '@/lib/i18n'
 
 export default function ImpactStats() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const { t } = useLanguage()
+
+  const checklistItems = [
+    {
+      title: t.impact.transitionRate,
+      description: t.impact.transitionRateDesc,
+    },
+    {
+      title: t.impact.reducedMalnutrition,
+      description: t.impact.reducedMalnutritionDesc,
+    },
+    {
+      title: t.impact.childrenSupported,
+      description: t.impact.childrenSupportedDesc,
+    },
+    {
+      title: t.impact.mealsServed,
+      description: t.impact.mealsServedDesc,
+    },
+  ]
 
   return (
     <section id="impact" ref={ref} className="py-20 bg-[#fbf9f5]">
@@ -40,17 +42,17 @@ export default function ImpactStats() {
               className="p-8 lg:p-12"
             >
               <span className="text-[#ff8928] font-bold text-xs uppercase tracking-widest mb-4 block">
-                OUR IMPACT
+                {t.impact.ourImpact}
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-[#031632] mb-8">
-                Creating Real Change
+                {t.impact.title}
               </h2>
 
               {/* Checklist Items */}
               <div className="space-y-5 mb-8">
                 {checklistItems.map((item, i) => (
                   <motion.div
-                    key={item.title}
+                    key={i}
                     initial={{ opacity: 0, x: -20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.4, delay: 0.2 + i * 0.1 }}
@@ -73,10 +75,10 @@ export default function ImpactStats() {
                 className="p-8 bg-[#f5f3ef] rounded-3xl border border-[#c5c6ce]/30"
               >
                 <div className="text-[#44474d] text-xs font-semibold uppercase tracking-wider mb-1">
-                  2026 Education Goal
+                  {t.impact.educationGoal}
                 </div>
                 <div className="text-[#031632] font-bold mb-4">
-                  Helping another 50 children get to school
+                  {t.impact.educationGoalDescription}
                 </div>
                 <div className="text-[#ff8928] text-5xl font-bold mb-4">75%</div>
                 <div className="w-full h-4 bg-white rounded-full overflow-hidden">

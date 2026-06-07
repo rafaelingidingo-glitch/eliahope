@@ -3,49 +3,51 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { Heart, UserCheck, HandHeart, Handshake } from 'lucide-react'
-
-const actions = [
-  {
-    icon: Heart,
-    title: 'Donate',
-    description: 'Your financial contribution provides meals, school fees, and essential supplies for children in need.',
-    iconBg: 'bg-[#ff8928]',
-    cta: 'Donate Now',
-    href: '#donate',
-  },
-  {
-    icon: UserCheck,
-    title: 'Sponsor',
-    description: 'Sponsor a child\'s education and wellbeing, giving them the opportunity for a brighter future.',
-    iconBg: 'bg-[#031632]',
-    cta: 'Sponsor a Child',
-    href: '#donate',
-  },
-  {
-    icon: HandHeart,
-    title: 'Volunteer',
-    description: 'Share your time and skills to directly impact the lives of children and families in our community.',
-    iconBg: 'bg-[#1a2b48]',
-    cta: 'Volunteer Now',
-    href: '#contact',
-  },
-  {
-    icon: Handshake,
-    title: 'Partner',
-    description: 'Partner with us to create sustainable change and expand our reach across Mwanza and beyond.',
-    iconBg: 'bg-[#8b4513]',
-    cta: 'Become a Partner',
-    href: '#contact',
-  },
-]
+import { useLanguage } from '@/lib/i18n'
 
 interface TakeActionProps {
   onDonateClick?: (campaignId?: string, amount?: string) => void
 }
 
 export default function TakeAction({ onDonateClick }: TakeActionProps) {
+  const { t } = useLanguage()
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+
+  const actions = [
+    {
+      icon: Heart,
+      title: t.takeAction.donate,
+      description: t.takeAction.donateDescription,
+      iconBg: 'bg-[#ff8928]',
+      cta: t.takeAction.donateNow,
+      href: '#donate',
+    },
+    {
+      icon: UserCheck,
+      title: t.takeAction.sponsor,
+      description: t.takeAction.sponsorDescription,
+      iconBg: 'bg-[#031632]',
+      cta: t.takeAction.sponsorChild,
+      href: '#donate',
+    },
+    {
+      icon: HandHeart,
+      title: t.takeAction.volunteer,
+      description: t.takeAction.volunteerDescription,
+      iconBg: 'bg-[#1a2b48]',
+      cta: t.takeAction.volunteerNow,
+      href: '#contact',
+    },
+    {
+      icon: Handshake,
+      title: t.takeAction.partner,
+      description: t.takeAction.partnerDescription,
+      iconBg: 'bg-[#8b4513]',
+      cta: t.takeAction.becomePartner,
+      href: '#contact',
+    },
+  ]
 
   const handleScrollTo = (id: string) => {
     const el = document.querySelector(id)
@@ -74,10 +76,10 @@ export default function TakeAction({ onDonateClick }: TakeActionProps) {
           className="text-center mb-14"
         >
           <span className="text-[#ff8928] font-bold text-xs uppercase tracking-widest mb-4 block">
-            TAKE ACTION
+            {t.takeAction.takeAction}
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Become Part of the Hope
+            {t.takeAction.title}
           </h2>
         </motion.div>
 

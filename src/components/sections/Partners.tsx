@@ -2,6 +2,7 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { useLanguage } from '@/lib/i18n'
 
 const partners = [
   'Mwanza City Council',
@@ -15,6 +16,7 @@ const partners = [
 export default function Partners() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const { t } = useLanguage()
 
   return (
     <section id="partners" ref={ref} className="py-20 md:py-28 bg-[#fbf9f5]">
@@ -26,15 +28,14 @@ export default function Partners() {
           className="text-center mb-14"
         >
           <span className="inline-block text-orange font-semibold text-sm uppercase tracking-wider mb-3">
-            Together We Serve
+            {t.partners.subtitle}
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4">
-            Our Partners
+            {t.partners.title}
           </h2>
           <div className="w-16 h-1 bg-orange mx-auto rounded-full mb-4" />
           <p className="text-text-secondary max-w-2xl mx-auto">
-            We are grateful for the support and collaboration of our partners who share our vision 
-            of a better future for every child.
+            {t.partners.description}
           </p>
         </motion.div>
 

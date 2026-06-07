@@ -3,10 +3,12 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { GraduationCap, UtensilsCrossed, Heart, BookOpen, Users } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 export default function Programs() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const { t } = useLanguage()
 
   return (
     <section id="programs" ref={ref} className="py-20 bg-white">
@@ -18,10 +20,10 @@ export default function Programs() {
           className="text-center mb-14"
         >
           <span className="text-[#ff8928] font-bold text-xs uppercase tracking-widest mb-4 block">
-            OUR PROGRAMS
+            {t.programs.ourPrograms}
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-[#031632] mb-4">
-            Nurturing Growth in Five Key Areas
+            {t.programs.title}
           </h2>
         </motion.div>
 
@@ -36,10 +38,9 @@ export default function Programs() {
             <div className="w-14 h-14 bg-[#ffdcc6]/50 rounded-2xl flex items-center justify-center mb-6">
               <GraduationCap className="h-7 w-7 text-[#ff8928]" />
             </div>
-            <h3 className="text-2xl font-bold text-[#031632] mb-3">Education</h3>
+            <h3 className="text-2xl font-bold text-[#031632] mb-3">{t.programs.education}</h3>
             <p className="text-[#44474d] leading-relaxed mb-6">
-              Providing quality education, school supplies, and tuition support to ensure every child 
-              has the opportunity to learn and succeed academically.
+              {t.programs.educationDescription}
             </p>
             <div className="overflow-hidden rounded-2xl aspect-video">
               <img
@@ -60,10 +61,9 @@ export default function Programs() {
             <div className="w-14 h-14 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center mb-6">
               <UtensilsCrossed className="h-7 w-7 text-[#ff8928]" />
             </div>
-            <h3 className="text-2xl font-bold mb-3">Feeding Program</h3>
+            <h3 className="text-2xl font-bold mb-3">{t.programs.feedingProgram}</h3>
             <p className="text-white/80 leading-relaxed mb-6">
-              Ensuring no child goes hungry by providing nutritious daily meals to vulnerable children 
-              and families in our community.
+              {t.programs.feedingDescription}
             </p>
             <div className="overflow-hidden rounded-2xl aspect-video mb-6">
               <img
@@ -76,11 +76,11 @@ export default function Programs() {
             <div className="flex gap-4">
               <div className="bg-white/10 p-5 rounded-2xl flex-1 border border-white/10">
                 <div className="text-3xl font-bold text-[#ff8928]">300+</div>
-                <div className="text-white/80 text-sm mt-1">Weekly Meals</div>
+                <div className="text-white/80 text-sm mt-1">{t.programs.weeklyMeals}</div>
               </div>
               <div className="bg-white/10 p-5 rounded-2xl flex-1 border border-white/10">
-                <div className="text-3xl font-bold text-[#ff8928]">Nutritious</div>
-                <div className="text-white/80 text-sm mt-1">Healthy Diet</div>
+                <div className="text-3xl font-bold text-[#ff8928]">{t.programs.nutritious}</div>
+                <div className="text-white/80 text-sm mt-1">{t.programs.healthyDiet}</div>
               </div>
             </div>
           </motion.div>
@@ -95,10 +95,9 @@ export default function Programs() {
             <div className="w-14 h-14 bg-[#ffdcc6]/50 rounded-2xl flex items-center justify-center mb-6">
               <Heart className="h-7 w-7 text-[#ff8928]" />
             </div>
-            <h3 className="text-xl font-bold text-[#031632] mb-3">Child Care</h3>
+            <h3 className="text-xl font-bold text-[#031632] mb-3">{t.programs.childCare}</h3>
             <p className="text-[#44474d] text-sm leading-relaxed">
-              Creating a safe and nurturing environment for children, protecting them from abuse, 
-              neglect, and exploitation.
+              {t.programs.childCareDescription}
             </p>
           </motion.div>
 
@@ -112,10 +111,9 @@ export default function Programs() {
             <div className="w-14 h-14 bg-[#ffdcc6]/50 rounded-2xl flex items-center justify-center mb-6">
               <BookOpen className="h-7 w-7 text-[#ff8928]" />
             </div>
-            <h3 className="text-xl font-bold text-[#031632] mb-3">Bible Study</h3>
+            <h3 className="text-xl font-bold text-[#031632] mb-3">{t.programs.bibleStudy}</h3>
             <p className="text-[#44474d] text-sm leading-relaxed">
-              Nurturing the spiritual growth of children and families through Bible study, 
-              prayer, and faith-based mentorship programs.
+              {t.programs.bibleStudyDescription}
             </p>
           </motion.div>
 
@@ -129,10 +127,9 @@ export default function Programs() {
             <div className="w-14 h-14 bg-[#ffdcc6]/50 rounded-2xl flex items-center justify-center mb-6">
               <Users className="h-7 w-7 text-[#ff8928]" />
             </div>
-            <h3 className="text-xl font-bold text-[#031632] mb-3">Community Support</h3>
+            <h3 className="text-xl font-bold text-[#031632] mb-3">{t.programs.communitySupport}</h3>
             <p className="text-[#44474d] text-sm leading-relaxed">
-              Empowering families and communities through skills training, health education, 
-              and sustainable livelihood programs.
+              {t.programs.communitySupportDescription}
             </p>
           </motion.div>
         </div>

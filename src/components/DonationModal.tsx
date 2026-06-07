@@ -25,6 +25,7 @@ import {
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
 import { useToast } from '@/hooks/use-toast'
+import { useLanguage } from '@/lib/i18n'
 
 interface Campaign {
   id: string
@@ -49,6 +50,7 @@ interface DonationModalProps {
 
 export default function DonationModal({ isOpen, onClose, preselectedCampaignId, prefilledAmount }: DonationModalProps) {
   const { toast } = useToast()
+  const { t } = useLanguage()
 
   // Form states
   const [activeTab, setActiveTab] = useState<PaymentTab>('mpesa')
@@ -141,10 +143,10 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
           } else if (data.status === 'failed') {
             if (pollingMethod === 'mpesa') {
               setDonationState('error')
-              setErrorMessage('M-Pesa payment was not completed. Please try again.')
+              setErrorMessage(t.donation.mpesaFailed)
             } else {
               setCrdbDonationState('error')
-              setCrdbErrorMessage('CRDB Bank payment was not completed. Please try again.')
+              setCrdbErrorMessage(t.donation.crdbFailed)
             }
             setPolling(false)
           }
@@ -155,7 +157,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     }, 2000)
 
     return () => clearInterval(interval)
-  }, [polling, transactionId, pollingMethod, fetchCampaigns])
+  }, [polling, transactionId, pollingMethod, fetchCampaigns, t.donation.mpesaFailed, t.donation.crdbFailed])
 
   // Stop polling after 60 seconds
   useEffect(() => {
@@ -164,14 +166,14 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
       setPolling(false)
       if (pollingMethod === 'mpesa' && donationState === 'loading') {
         setDonationState('error')
-        setErrorMessage('Payment verification timed out. Your payment may still be processing. Please contact us if you don\'t receive confirmation.')
+        setErrorMessage(t.donation.paymentTimeout)
       } else if (pollingMethod === 'crdb' && crdbDonationState === 'loading') {
         setCrdbDonationState('error')
-        setCrdbErrorMessage('Payment verification timed out. Your payment may still be processing. Please contact us if you don\'t receive confirmation.')
+        setCrdbErrorMessage(t.donation.paymentTimeout)
       }
     }, 60000)
     return () => clearTimeout(timeout)
-  }, [polling, pollingMethod, donationState, crdbDonationState])
+  }, [polling, pollingMethod, donationState, crdbDonationState, t.donation.paymentTimeout])
 
   const resetForm = () => {
     // M-Pesa
@@ -239,7 +241,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
       setPolling(true)
     } catch {
       setDonationState('error')
-      setErrorMessage('Network error. Please check your connection and try again.')
+      setErrorMessage(t.donation.networkError)
     }
   }
 
@@ -280,7 +282,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
       setPolling(true)
     } catch {
       setCrdbDonationState('error')
-      setCrdbErrorMessage('Network error. Please check your connection and try again.')
+      setCrdbErrorMessage(t.donation.networkError)
     }
   }
 
@@ -296,7 +298,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
 
   const handleShare = async () => {
     const amt = activeTab === 'mpesa' ? mpesaAmount : crdbAmount
-    const text = `I just donated TZS ${parseFloat(amt).toLocaleString()} to Elia's Hope Community! Join me in making a difference.`
+    const text = t.donation.shareText.replace('{amount}', parseFloat(amt).toLocaleString())
     if (navigator.share) {
       try {
         await navigator.share({ title: "Elia's Hope Community", text })
@@ -305,7 +307,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
       }
     } else {
       await navigator.clipboard.writeText(text)
-      toast({ title: 'Copied!', description: 'Donation message copied to clipboard' })
+      toast({ title: t.donation.copied, description: t.donation.copiedDescription })
     }
   }
 
@@ -354,8 +356,8 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
               <Heart className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="text-white font-bold text-lg">Donate Now</h2>
-              <p className="text-white/60 text-xs">Support Elia&apos;s Hope Community</p>
+              <h2 className="text-white font-bold text-lg">{t.donation.title}</h2>
+              <p className="text-white/60 text-xs">{t.donation.subtitle}</p>
             </div>
           </div>
         </div>
@@ -380,33 +382,33 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                   <CheckCircle2 className="h-8 w-8 text-green-600" />
                 </motion.div>
                 <h3 className="text-xl font-bold text-[#031632] mb-2">
-                  Thank You For Your Donation!
+                  {t.donation.thankYou}
                 </h3>
                 <p className="text-[#44474d] text-sm mb-4">
-                  Your generosity helps change lives in our community.
+                  {t.donation.thankYouMessage}
                 </p>
 
                 <div className="bg-[#f5f3ef] rounded-2xl p-4 text-left max-w-xs mx-auto mb-6 space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-[#44474d]">Donor:</span>
-                    <span className="text-[#031632] font-semibold">{successData.name || 'Anonymous'}</span>
+                    <span className="text-[#44474d]">{t.donation.donor}</span>
+                    <span className="text-[#031632] font-semibold">{successData.name || t.donation.anonymous}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#44474d]">Amount:</span>
+                    <span className="text-[#44474d]">{t.donation.amount}</span>
                     <span className="text-[#031632] font-semibold">TZS {parseFloat(successData.amount).toLocaleString()}</span>
                   </div>
                   {crdbDonationState === 'success' && crdbBankReference && (
                     <div className="flex justify-between">
-                      <span className="text-[#44474d]">Bank Ref:</span>
+                      <span className="text-[#44474d]">{t.donation.bankRef}</span>
                       <span className="text-[#031632] font-semibold font-mono text-xs">{crdbBankReference}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-[#44474d]">Transaction ID:</span>
+                    <span className="text-[#44474d]">{t.donation.transactionId}</span>
                     <span className="text-[#031632] font-semibold font-mono text-xs">{successData.tid}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#44474d]">Date & Time:</span>
+                    <span className="text-[#44474d]">{t.donation.dateTime}</span>
                     <span className="text-[#031632] font-semibold text-xs">
                       {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}{' '}
                       {new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
@@ -419,19 +421,19 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     onClick={handleDownloadReceipt}
                     className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#031632] text-white rounded-none font-semibold hover:bg-[#1a2b48] transition-colors text-sm"
                   >
-                    <Download className="h-4 w-4" /> Download Receipt
+                    <Download className="h-4 w-4" /> {t.donation.downloadReceipt}
                   </button>
                   <button
                     onClick={handleShare}
                     className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#ff8928] text-white rounded-none font-semibold hover:bg-[#e07820] transition-colors text-sm"
                   >
-                    <Share2 className="h-4 w-4" /> Share Donation
+                    <Share2 className="h-4 w-4" /> {t.donation.shareDonation}
                   </button>
                   <button
                     onClick={handleClose}
                     className="flex items-center justify-center gap-2 px-5 py-2.5 border-2 border-[#c5c6ce] text-[#031632] rounded-none font-semibold hover:bg-gray-50 transition-colors text-sm"
                   >
-                    Close
+                    {t.donation.close}
                   </button>
                 </div>
               </motion.div>
@@ -446,7 +448,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                 {campaigns.length > 0 && (
                   <div className="mb-5">
                     <label className="text-sm font-semibold text-[#031632] mb-2 block">
-                      Select Campaign (Optional)
+                      {t.donation.selectCampaign}
                     </label>
                     <div className="relative">
                       <select
@@ -454,7 +456,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                         onChange={(e) => setSelectedCampaign(e.target.value)}
                         className="w-full px-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors appearance-none bg-white pr-10"
                       >
-                        <option value="">General Donation</option>
+                        <option value="">{t.donation.generalDonation}</option>
                         {campaigns.map((c) => (
                           <option key={c.id} value={c.id}>
                             {c.title}
@@ -477,7 +479,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     }`}
                   >
                     <Phone className="h-4 w-4" />
-                    M-Pesa
+                    {t.donation.mpesa}
                   </button>
                   <button
                     onClick={() => setActiveTab('crdb')}
@@ -488,7 +490,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     }`}
                   >
                     <Landmark className="h-4 w-4" />
-                    CRDB Bank
+                    {t.donation.crdbBank}
                   </button>
                 </div>
 
@@ -498,7 +500,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     {/* Full Name - Optional */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        Full Name <span className="text-[#44474d] font-normal">(Optional)</span>
+                        {t.donation.fullName} <span className="text-[#44474d] font-normal">{t.donation.optional}</span>
                       </label>
                       <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
@@ -507,7 +509,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           value={mpesaName}
                           onChange={(e) => setMpesaName(e.target.value)}
                           className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
-                          placeholder="Enter your name (optional)"
+                          placeholder={`${t.donation.fullName} ${t.donation.optional}`}
                           disabled={donationState === 'loading'}
                         />
                       </div>
@@ -516,7 +518,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     {/* Phone Number */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        Phone Number <span className="text-red-500">*</span>
+                        {t.donation.phoneNumber} <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-sm">
@@ -537,7 +539,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     {/* Email (Optional) */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        Email <span className="text-[#44474d] font-normal">(Optional)</span>
+                        {t.donation.email} <span className="text-[#44474d] font-normal">{t.donation.optional}</span>
                       </label>
                       <div className="relative">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
@@ -555,7 +557,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     {/* Amount */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        Donation Amount <span className="text-red-500">*</span>
+                        {t.donation.donationAmount} <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-sm">
@@ -566,7 +568,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           value={mpesaAmount}
                           onChange={(e) => setMpesaAmount(e.target.value)}
                           className="w-full pl-14 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
-                          placeholder="Enter amount"
+                          placeholder={t.donation.enterAmount}
                           min="1"
                           required
                           disabled={donationState === 'loading'}
@@ -601,7 +603,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                             onClick={handleRetry}
                             className="text-red-600 text-xs font-semibold underline mt-1"
                           >
-                            Try Again
+                            {t.donation.tryAgain}
                           </button>
                         </div>
                       </motion.div>
@@ -616,12 +618,12 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                       {donationState === 'loading' ? (
                         <>
                           <Loader2 className="h-5 w-5 animate-spin" />
-                          Sending payment request...
+                          {t.donation.sendingPaymentRequest}
                         </>
                       ) : (
                         <>
                           <CreditCard className="h-5 w-5" />
-                          Donate via M-Pesa
+                          {t.donation.donateViaMpesa}
                         </>
                       )}
                     </button>
@@ -636,10 +638,10 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                         <Phone className="h-5 w-5 text-green-600 animate-pulse" />
                         <div>
                           <p className="text-green-700 text-sm font-medium">
-                            Please check your phone and enter your M-Pesa PIN.
+                            {t.donation.checkPhoneMpesa}
                           </p>
                           <p className="text-green-600 text-xs mt-0.5">
-                            We&apos;re waiting for payment confirmation...
+                            {t.donation.waitingConfirmation}
                           </p>
                         </div>
                       </motion.div>
@@ -654,14 +656,14 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     <div className="flex items-center gap-2 p-3 bg-[#031632]/5 rounded-xl mb-1">
                       <Shield className="h-4 w-4 text-[#031632]" />
                       <p className="text-[#031632] text-xs font-medium">
-                        Secure payment processed directly through CRDB Bank
+                        {t.donation.securePayment}
                       </p>
                     </div>
 
                     {/* Full Name - Optional */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        Full Name <span className="text-[#44474d] font-normal">(Optional)</span>
+                        {t.donation.fullName} <span className="text-[#44474d] font-normal">{t.donation.optional}</span>
                       </label>
                       <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
@@ -670,7 +672,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           value={crdbName}
                           onChange={(e) => setCrdbName(e.target.value)}
                           className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
-                          placeholder="Enter your name (optional)"
+                          placeholder={`${t.donation.fullName} ${t.donation.optional}`}
                           disabled={crdbDonationState === 'loading'}
                         />
                       </div>
@@ -679,7 +681,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     {/* Email - Optional */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        Email Address <span className="text-[#44474d] font-normal">(Optional)</span>
+                        {t.donation.emailAddress} <span className="text-[#44474d] font-normal">{t.donation.optional}</span>
                       </label>
                       <div className="relative">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
@@ -697,7 +699,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     {/* Phone - Optional */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        Phone Number <span className="text-[#44474d] font-normal">(Optional)</span>
+                        {t.donation.phoneNumber} <span className="text-[#44474d] font-normal">{t.donation.optional}</span>
                       </label>
                       <div className="relative">
                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
@@ -715,14 +717,14 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     {/* Divider */}
                     <div className="flex items-center gap-3 py-1">
                       <div className="flex-1 h-px bg-[#c5c6ce]" />
-                      <span className="text-[#44474d] text-xs font-semibold uppercase tracking-wider">Bank Details</span>
+                      <span className="text-[#44474d] text-xs font-semibold uppercase tracking-wider">{t.donation.bankDetails}</span>
                       <div className="flex-1 h-px bg-[#c5c6ce]" />
                     </div>
 
                     {/* Account Holder Name */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        Account Holder Name <span className="text-red-500">*</span>
+                        {t.donation.accountHolderName} <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
@@ -731,7 +733,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           value={crdbAccountHolder}
                           onChange={(e) => setCrdbAccountHolder(e.target.value)}
                           className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm focus:outline-none focus:border-[#ff8928] transition-colors"
-                          placeholder="Name on the CRDB account"
+                          placeholder={t.donation.nameOnAccount}
                           required
                           disabled={crdbDonationState === 'loading'}
                         />
@@ -741,7 +743,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     {/* CRDB Account Number */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        CRDB Account Number <span className="text-red-500">*</span>
+                        {t.donation.crdbAccountNumber} <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <Landmark className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#44474d]" />
@@ -750,19 +752,19 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           value={crdbAccountNumber}
                           onChange={(e) => setCrdbAccountNumber(e.target.value.replace(/[^\d]/g, ''))}
                           className="w-full pl-11 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] text-sm font-mono tracking-wider focus:outline-none focus:border-[#ff8928] transition-colors"
-                          placeholder="Enter your CRDB account number"
+                          placeholder={t.donation.crdbAccountNumber}
                           required
                           disabled={crdbDonationState === 'loading'}
                           maxLength={16}
                         />
                       </div>
-                      <p className="text-[#44474d] text-xs mt-1">Your CRDB account number (10-16 digits)</p>
+                      <p className="text-[#44474d] text-xs mt-1">{t.donation.crdbAccountHint}</p>
                     </div>
 
                     {/* Donation Amount */}
                     <div>
                       <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        Donation Amount <span className="text-red-500">*</span>
+                        {t.donation.donationAmount} <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#44474d] font-semibold text-sm">
@@ -773,7 +775,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           value={crdbAmount}
                           onChange={(e) => setCrdbAmount(e.target.value)}
                           className="w-full pl-14 pr-4 py-3 border-2 border-[#c5c6ce] rounded-xl text-[#031632] font-semibold text-lg focus:outline-none focus:border-[#ff8928] transition-colors"
-                          placeholder="Enter amount"
+                          placeholder={t.donation.enterAmount}
                           min="1"
                           required
                           disabled={crdbDonationState === 'loading'}
@@ -808,7 +810,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                             onClick={handleRetry}
                             className="text-red-600 text-xs font-semibold underline mt-1"
                           >
-                            Try Again
+                            {t.donation.tryAgain}
                           </button>
                         </div>
                       </motion.div>
@@ -823,12 +825,12 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                       {crdbDonationState === 'loading' ? (
                         <>
                           <Loader2 className="h-5 w-5 animate-spin" />
-                          Connecting to CRDB Bank...
+                          {t.donation.connectingCrdb}
                         </>
                       ) : (
                         <>
                           <Landmark className="h-5 w-5" />
-                          Donate via CRDB Bank
+                          {t.donation.donateViaCrdb}
                         </>
                       )}
                     </button>
@@ -843,10 +845,10 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                         <Building2 className="h-5 w-5 text-[#031632] animate-pulse" />
                         <div>
                           <p className="text-[#031632] text-sm font-medium">
-                            Connecting to CRDB Bank...
+                            {t.donation.connectingCrdb}
                           </p>
                           <p className="text-[#44474d] text-xs mt-0.5">
-                            Please authorize the transaction on the secure CRDB payment page.
+                            {t.donation.authorizeCrdb}
                           </p>
                         </div>
                       </motion.div>
@@ -856,7 +858,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                     <div className="flex items-center gap-2 p-2.5 bg-green-50 border border-green-200 rounded-xl">
                       <Shield className="h-3.5 w-3.5 text-green-600 flex-shrink-0" />
                       <p className="text-green-700 text-xs">
-                        Your bank details are encrypted and processed securely through CRDB Bank&apos;s payment gateway.
+                        {t.donation.bankDetailsEncrypted}
                       </p>
                     </div>
                   </form>
@@ -865,7 +867,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                 {/* Campaign progress at bottom */}
                 {campaigns.length > 0 && (
                   <div className="mt-6 space-y-3">
-                    <h4 className="text-[#031632] font-bold text-sm">Active Campaigns</h4>
+                    <h4 className="text-[#031632] font-bold text-sm">{t.donation.activeCampaigns}</h4>
                     {campaigns.map((campaign, i) => {
                       const Icon = campaignIcons[i % campaignIcons.length]
                       return (
@@ -884,14 +886,14 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                           </div>
                           <Progress value={campaign.percentage} className="h-1.5 mb-2 [&>div]:bg-[#ff8928]" />
                           <div className="flex items-center justify-between text-[10px] text-[#44474d]">
-                            <span>TZS {campaign.raised.toLocaleString()} raised</span>
-                            <span>Goal: TZS {campaign.goal.toLocaleString()}</span>
+                            <span>TZS {campaign.raised.toLocaleString()} {t.donation.raised}</span>
+                            <span>{t.donation.goal} TZS {campaign.goal.toLocaleString()}</span>
                           </div>
                           <button
                             onClick={() => setSelectedCampaign(campaign.id)}
                             className="w-full mt-2 py-2 text-xs font-semibold border-2 border-[#ff8928] text-[#ff8928] rounded-none hover:bg-[#ff8928] hover:text-white transition-colors"
                           >
-                            Support This Campaign
+                            {t.donation.supportCampaign}
                           </button>
                         </div>
                       )

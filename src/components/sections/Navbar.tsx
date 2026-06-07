@@ -2,17 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Menu } from 'lucide-react'
+import { Menu, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
-
-const navLinks = [
-  { label: 'Home', href: '#home' },
-  { label: 'About Us', href: '#about' },
-  { label: 'What We Do', href: '#programs' },
-  { label: 'Our Impact', href: '#impact' },
-  { label: 'Donate', href: '#donate-modal' },
-]
+import { useLanguage } from '@/lib/i18n'
 
 interface NavbarProps {
   onAdminClick?: () => void
@@ -22,6 +15,15 @@ interface NavbarProps {
 export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('#home')
+  const { t, locale, setLocale } = useLanguage()
+
+  const navLinks = [
+    { label: t.nav.home, href: '#home' },
+    { label: t.nav.aboutUs, href: '#about' },
+    { label: t.nav.whatWeDo, href: '#programs' },
+    { label: t.nav.ourImpact, href: '#impact' },
+    { label: t.nav.donate, href: '#donate-modal' },
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,6 +49,10 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' })
     }
+  }
+
+  const toggleLanguage = () => {
+    setLocale(locale === 'en' ? 'sw' : 'en')
   }
 
   return (
@@ -98,41 +104,59 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center gap-3">
+            {/* Language Switcher */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#44474d] hover:text-[#031632] hover:bg-[#f5f3ef] rounded-lg transition-all"
+              title={t.language.switchLanguage}
+            >
+              <Globe className="h-4 w-4" />
+              <span className="font-semibold">{locale === 'en' ? 'SW' : 'EN'}</span>
+            </button>
             <Button
               variant="outline"
               onClick={onAdminClick}
               className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-5 transition-all"
             >
-              Login
+              {t.nav.login}
             </Button>
             <Button
               asChild
               className="bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-none px-6"
             >
               <a href="#donate-modal" onClick={(e) => { e.preventDefault(); onDonateClick?.() }}>
-                Donate Now
+                {t.nav.donateNow}
               </a>
             </Button>
           </div>
 
           {/* Mobile Menu */}
           <div className="flex items-center gap-2 lg:hidden">
+            {/* Mobile Language Switcher */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-1 px-2.5 py-2 text-xs font-semibold text-[#44474d] hover:text-[#031632] hover:bg-[#f5f3ef] rounded-lg transition-all"
+              title={t.language.switchLanguage}
+            >
+              <Globe className="h-4 w-4" />
+              {locale === 'en' ? 'SW' : 'EN'}
+            </button>
             <Button
               variant="outline"
               onClick={onAdminClick}
               className="border-[#031632]/20 text-[#031632] hover:bg-[#031632] hover:text-white font-medium rounded-none px-4 text-xs transition-all"
             >
-              Login
+              {t.nav.login}
             </Button>
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-[#031632] hover:bg-[#ffdcc6]/20">
                   <Menu className="h-6 w-6" />
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">{t.nav.openMenu}</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="bg-white w-72 p-0">
-                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetTitle className="sr-only">{t.nav.navigationMenu}</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b border-[#c5c6ce]/30">
                     <div className="flex items-center gap-3">
@@ -170,7 +194,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                       className="w-full bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-none"
                     >
                       <a href="#donate-modal" onClick={(e) => { e.preventDefault(); onDonateClick?.(); setMobileOpen(false) }}>
-                        Donate Now
+                        {t.nav.donateNow}
                       </a>
                     </Button>
                   </div>
