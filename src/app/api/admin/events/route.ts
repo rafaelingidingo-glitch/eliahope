@@ -29,12 +29,29 @@ export async function POST(request: NextRequest) {
       status?: string
     }
 
+    // Validate required fields
+    if (!body.title || body.title.trim().length < 2) {
+      return NextResponse.json({ error: 'Event title is required (min 2 characters)' }, { status: 400 })
+    }
+    if (!body.date || isNaN(new Date(body.date).getTime())) {
+      return NextResponse.json({ error: 'Valid event date is required' }, { status: 400 })
+    }
+    if (!body.location || body.location.trim().length < 2) {
+      return NextResponse.json({ error: 'Event location is required (min 2 characters)' }, { status: 400 })
+    }
+
+    // Validate status if provided
+    const validEventStatuses = ['upcoming', 'ongoing', 'completed', 'cancelled']
+    if (body.status && !validEventStatuses.includes(body.status)) {
+      return NextResponse.json({ error: `Invalid status. Must be one of: ${validEventStatuses.join(', ')}` }, { status: 400 })
+    }
+
     const event = await db.event.create({
       data: {
-        title: body.title,
-        description: body.description,
+        title: body.title.trim(),
+        description: body.description?.trim() || '',
         date: new Date(body.date),
-        location: body.location,
+        location: body.location.trim(),
         image: body.image || null,
         status: body.status || 'upcoming',
       },
@@ -64,13 +81,24 @@ export async function PUT(request: NextRequest) {
       status?: string
     }
 
+    // Validate status if provided
+    const validEventStatuses = ['upcoming', 'ongoing', 'completed', 'cancelled']
+    if (body.status && !validEventStatuses.includes(body.status)) {
+      return NextResponse.json({ error: `Invalid status. Must be one of: ${validEventStatuses.join(', ')}` }, { status: 400 })
+    }
+
+    // Validate date if provided
+    if (body.date !== undefined && isNaN(new Date(body.date).getTime())) {
+      return NextResponse.json({ error: 'Invalid date format' }, { status: 400 })
+    }
+
     const event = await db.event.update({
       where: { id },
       data: {
-        ...(body.title !== undefined && { title: body.title }),
-        ...(body.description !== undefined && { description: body.description }),
+        ...(body.title !== undefined && { title: body.title.trim() }),
+        ...(body.description !== undefined && { description: body.description.trim() }),
         ...(body.date !== undefined && { date: new Date(body.date) }),
-        ...(body.location !== undefined && { location: body.location }),
+        ...(body.location !== undefined && { location: body.location.trim() }),
         ...(body.image !== undefined && { image: body.image }),
         ...(body.status !== undefined && { status: body.status }),
       },

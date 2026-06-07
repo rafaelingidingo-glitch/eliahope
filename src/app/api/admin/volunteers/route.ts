@@ -24,6 +24,13 @@ export async function PUT(request: NextRequest) {
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
 
     const body = await request.json() as { status?: string; programId?: string }
+
+    // Validate status if provided
+    const validStatuses = ['pending', 'approved', 'rejected', 'inactive']
+    if (body.status && !validStatuses.includes(body.status)) {
+      return NextResponse.json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` }, { status: 400 })
+    }
+
     const volunteer = await db.volunteer.update({
       where: { id },
       data: {

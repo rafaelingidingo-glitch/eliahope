@@ -27,21 +27,78 @@ export async function POST(request: NextRequest) {
       body: string
     }
 
-    // Send email via Resend
-    const result = await sendNewsletterBroadcastEmail(
-      body.to,
-      body.subject,
-      body.body
-    )
-
-    if (!result.success) {
+    if (!body.subject || !body.body) {
       return NextResponse.json(
-        { error: 'Failed to send newsletter email: ' + (result.error || 'Unknown error') },
-        { status: 500 }
+        { error: 'Subject and body are required' },
+        { status: 400 }
       )
     }
 
-    return NextResponse.json({ success: true, message: 'Newsletter sent successfully' })
+    // Build the HTML content from plain text body
+    const htmlContent = body.body
+      .split('\n')
+      .map((line: string) => `<p style="margin:0 0 12px 0;">${line || '<br/>'}</p>`)
+      .join('')
+
+    if (body.to === 'all') {
+      // Broadcast to all active subscribers
+      const subscribers = await db.newsletter.findMany({
+        where: { status: 'active' },
+        select: { email: true },
+      })
+
+      if (subscribers.length === 0) {
+        return NextResponse.json(
+          { error: 'No active subscribers to send to' },
+          { status: 400 }
+        )
+      }
+
+      // Send to each subscriber via BCC to protect privacy
+      const recipientEmails = subscribers.map((s) => s.email)
+      const result = await sendNewsletterBroadcastEmail(
+        recipientEmails.join(','),
+        body.subject,
+        htmlContent
+      )
+
+      if (!result.success) {
+        return NextResponse.json(
+          { error: 'Failed to send newsletter: ' + (result.error || 'Unknown error') },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: `Newsletter sent to ${subscribers.length} subscriber(s)`,
+        sentCount: subscribers.length,
+      })
+    } else {
+      // Send to a single recipient
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(body.to)) {
+        return NextResponse.json(
+          { error: 'Invalid email address' },
+          { status: 400 }
+        )
+      }
+
+      const result = await sendNewsletterBroadcastEmail(
+        body.to,
+        body.subject,
+        htmlContent
+      )
+
+      if (!result.success) {
+        return NextResponse.json(
+          { error: 'Failed to send newsletter email: ' + (result.error || 'Unknown error') },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({ success: true, message: 'Newsletter sent successfully' })
+    }
   } catch (error) {
     console.error('Newsletter POST error:', error)
     return NextResponse.json({ error: 'Failed to send newsletter' }, { status: 500 })

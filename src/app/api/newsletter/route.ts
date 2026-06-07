@@ -14,9 +14,28 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate email format
+    const trimmedEmail = String(email).trim().toLowerCase()
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(trimmedEmail)) {
+      return NextResponse.json(
+        { error: 'Please provide a valid email address.' },
+        { status: 400 }
+      )
+    }
+
+    // Validate name length
+    const trimmedName = String(name).trim()
+    if (trimmedName.length < 2) {
+      return NextResponse.json(
+        { error: 'Name must be at least 2 characters.' },
+        { status: 400 }
+      )
+    }
+
     // Check if already subscribed
     const existing = await db.newsletter.findUnique({
-      where: { email },
+      where: { email: trimmedEmail },
     })
 
     if (existing) {
@@ -28,13 +47,13 @@ export async function POST(request: NextRequest) {
 
     await db.newsletter.create({
       data: {
-        name,
-        email,
+        name: trimmedName,
+        email: trimmedEmail,
       },
     })
 
     // Send welcome email via Resend
-    const emailResult = await sendNewsletterWelcomeEmail(email, name)
+    const emailResult = await sendNewsletterWelcomeEmail(trimmedEmail, trimmedName)
 
     if (!emailResult.success) {
       // Subscription was saved, but email failed — still return success

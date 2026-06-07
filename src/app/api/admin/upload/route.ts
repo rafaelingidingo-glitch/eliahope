@@ -20,11 +20,21 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
-    const subfolder = (formData.get('subfolder') as string) || 'images'
+    const rawSubfolder = (formData.get('subfolder') as string) || 'images'
+    // Sanitize subfolder to prevent path traversal attacks
+    const subfolder = rawSubfolder.replace(/[^a-zA-Z0-9_-]/g, '') || 'images'
 
     if (!file || file.size === 0) {
       return NextResponse.json(
         { error: 'No file provided' },
+        { status: 400 }
+      )
+    }
+
+    // Validate filename doesn't contain path separators
+    if (file.name.includes('/') || file.name.includes('\\') || file.name.includes('..')) {
+      return NextResponse.json(
+        { error: 'Invalid filename' },
         { status: 400 }
       )
     }

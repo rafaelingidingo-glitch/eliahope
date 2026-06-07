@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       events,
       newsletters,
     ] = await Promise.all([
-      db.donation.aggregate({ _sum: { amount: true } }),
+      db.donation.aggregate({ _sum: { amount: true }, where: { status: 'successful' } }),
       db.child.count(),
       db.volunteer.count({ where: { status: 'approved' } }),
       db.event.count({ where: { status: 'upcoming' } }),
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       totalVolunteers: volunteers,
       activeEvents: events,
       newsletterSubscribers: newsletters,
-      websiteVisitors: 3450,
+      websiteVisitors: 0, // Placeholder — requires analytics integration
     }
 
     const recentDonations = await db.donation.findMany({
@@ -53,7 +53,18 @@ export async function GET(request: NextRequest) {
         message: `New volunteer application from ${v.name}`,
         time: getTimeAgo(v.createdAt),
       })),
-    ].sort(() => Math.random() - 0.5)
+    ].sort((a, b) => {
+      // Sort by most recent first (parse time strings roughly)
+      const getOrder = (t: string) => {
+        if (t === 'Just now') return 0
+        const hoursMatch = t.match(/(\d+) hours? ago/)
+        if (hoursMatch) return parseInt(hoursMatch[1])
+        const daysMatch = t.match(/(\d+) days? ago/)
+        if (daysMatch) return parseInt(daysMatch[1]) * 24
+        return 999
+      }
+      return getOrder(a.time) - getOrder(b.time)
+    })
 
     return NextResponse.json({ stats, recentActivity })
   } catch (error) {

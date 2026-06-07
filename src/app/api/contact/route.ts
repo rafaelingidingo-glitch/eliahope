@@ -13,12 +13,36 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(String(email).trim())) {
+      return NextResponse.json(
+        { error: 'Please provide a valid email address.' },
+        { status: 400 }
+      )
+    }
+
+    // Validate message length
+    const trimmedMessage = String(message).trim()
+    if (trimmedMessage.length < 5) {
+      return NextResponse.json(
+        { error: 'Message must be at least 5 characters long.' },
+        { status: 400 }
+      )
+    }
+    if (trimmedMessage.length > 5000) {
+      return NextResponse.json(
+        { error: 'Message must be less than 5000 characters.' },
+        { status: 400 }
+      )
+    }
+
     await db.contactMessage.create({
       data: {
-        name,
-        email,
-        phone: phone || null,
-        message,
+        name: String(name).trim().slice(0, 200),
+        email: String(email).trim().slice(0, 200),
+        phone: phone ? String(phone).trim().slice(0, 50) : null,
+        message: trimmedMessage,
       },
     })
 

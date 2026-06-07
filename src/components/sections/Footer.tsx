@@ -30,10 +30,10 @@ export default function Footer() {
   ]
 
   const socialLinks = [
-    { icon: Facebook, href: 'https://facebook.com/elias hope community', label: 'Facebook' },
-    { icon: Twitter, href: 'https://twitter.com/elias hope community', label: 'Twitter' },
-    { icon: Instagram, href: 'https://instagram.com/elias hope community', label: 'Instagram' },
-    { icon: Youtube, href: 'https://youtube.com/@elias hope community', label: 'YouTube' },
+    { icon: Facebook, href: 'https://facebook.com/eliashopecommunity', label: 'Facebook' },
+    { icon: Twitter, href: 'https://twitter.com/eliashopecommunity', label: 'Twitter' },
+    { icon: Instagram, href: 'https://instagram.com/eliashopecommunity', label: 'Instagram' },
+    { icon: Youtube, href: 'https://youtube.com/@eliashopecommunity', label: 'YouTube' },
   ]
 
   const handleNavClick = (href: string) => {

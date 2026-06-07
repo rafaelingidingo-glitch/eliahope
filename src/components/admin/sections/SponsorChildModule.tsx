@@ -397,7 +397,7 @@ export default function SponsorChildModule() {
                                 name: s.name,
                                 email: s.email,
                                 phone: s.phone || '',
-                                childId: s.childId || '',
+                                childId: s.childId || 'none',
                                 amount: s.amount.toString(),
                                 frequency: s.frequency,
                                 status: s.status,

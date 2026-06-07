@@ -50,7 +50,8 @@ export default function NewsletterManagement() {
 
   const handleExport = () => {
     const headers = ['Name', 'Email', 'Status', 'Date Joined']
-    const rows = subscribers.map((s) => [s.name, s.email, s.status, new Date(s.createdAt).toLocaleDateString()])
+    const escapeCsv = (val: string) => `"${val.replace(/"/g, '""')}"`
+    const rows = subscribers.map((s) => [escapeCsv(s.name), escapeCsv(s.email), escapeCsv(s.status), new Date(s.createdAt).toLocaleDateString()])
     const csv = [headers, ...rows].map((r) => r.join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
@@ -74,7 +75,8 @@ export default function NewsletterManagement() {
         body: JSON.stringify(emailForm),
       })
       if (res.ok) {
-        toast({ title: 'Success', description: 'Newsletter sent successfully' })
+        const data = await res.json()
+        toast({ title: 'Success', description: data.message || 'Newsletter sent successfully' })
         setEmailForm({ to: 'all', subject: '', body: '' })
       } else {
         throw new Error('Failed')

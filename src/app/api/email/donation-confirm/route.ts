@@ -5,6 +5,20 @@ import {
   resendDonationConfirmationEmail,
 } from '@/lib/resend'
 
+// Simple in-memory rate limiting for email endpoints
+const emailRateLimit = new Map<string, number>()
+const RATE_LIMIT_MS = 60_000 // 1 minute between emails for the same donation
+
+function checkRateLimit(donationId: string): boolean {
+  const now = Date.now()
+  const lastSent = emailRateLimit.get(donationId)
+  if (lastSent && now - lastSent < RATE_LIMIT_MS) {
+    return false // Rate limited
+  }
+  emailRateLimit.set(donationId, now)
+  return true
+}
+
 /**
  * POST /api/email/donation-confirm
  *
@@ -48,6 +62,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Cannot send confirmation email for a donation that is not yet completed.' },
         { status: 400 }
+      )
+    }
+
+    // Rate limit check
+    if (!checkRateLimit(donationId)) {
+      return NextResponse.json(
+        { error: 'Please wait a moment before requesting another email.' },
+        { status: 429 }
       )
     }
 

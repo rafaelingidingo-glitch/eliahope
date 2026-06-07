@@ -18,6 +18,9 @@ export default function Newsletter() {
   const [emailLogId, setEmailLogId] = useState<string | null>(null)
   const [emailSent, setEmailSent] = useState(false)
   const [resending, setResending] = useState(false)
+  // Store last subscription data for resend functionality
+  const [lastSubscribedName, setLastSubscribedName] = useState('')
+  const [lastSubscribedEmail, setLastSubscribedEmail] = useState('')
 
   const benefits = [
     { icon: CheckCircle, text: t.newsletter.benefitUpdates },
@@ -42,6 +45,8 @@ export default function Newsletter() {
         setMessage(data.message || t.newsletter.successMessage)
         setEmailSent(data.emailSent !== false)
         setEmailLogId(data.emailLogId || null)
+        setLastSubscribedName(name)
+        setLastSubscribedEmail(email)
         setName('')
         setEmail('')
       } else {
@@ -55,7 +60,9 @@ export default function Newsletter() {
   }
 
   const handleResendEmail = async () => {
-    if (!emailLogId && !email) return
+    const resendTo = email || lastSubscribedEmail
+    const resendName = name || lastSubscribedName
+    if (!emailLogId && !resendTo) return
     setResending(true)
     try {
       const res = await fetch('/api/email/resend', {
@@ -63,8 +70,8 @@ export default function Newsletter() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'newsletter_welcome',
-          to: email || undefined,
-          name: name || undefined,
+          to: resendTo || undefined,
+          name: resendName || undefined,
           emailLogId: emailLogId || undefined,
         }),
       })

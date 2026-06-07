@@ -93,6 +93,12 @@ export async function PUT(request: NextRequest) {
     const isCampaignUpdate = type === 'campaign' || (!type && (body.title !== undefined || body.goal !== undefined))
 
     if (isCampaignUpdate) {
+      // Validate campaign status if provided
+      const validCampaignStatuses = ['active', 'completed', 'paused', 'cancelled']
+      if (body.status && !validCampaignStatuses.includes(body.status)) {
+        return NextResponse.json({ error: `Invalid campaign status. Must be one of: ${validCampaignStatuses.join(', ')}` }, { status: 400 })
+      }
+
       // Campaign update
       const campaign = await db.campaign.update({
         where: { id },
