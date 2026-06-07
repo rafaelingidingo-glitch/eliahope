@@ -459,9 +459,15 @@ export default function AdminLogin({ isOpen, onClose, onLogin }: AdminLoginProps
         {/* ─── Verify OTP ─── */}
         {view === 'verify_otp' && (
           <form onSubmit={handleVerifyOtp} className="px-8 py-6 space-y-5">
-            <p className="text-sm text-[#44474d]">
-              {t.admin.otpSentTo} <span className="font-semibold text-[#031632]">{forgotEmail}</span>
-            </p>
+            <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 p-3 rounded-[5px]">
+              <Mail className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm text-[#44474d]">
+                  {t.admin.otpSentTo}
+                </p>
+                <p className="text-[#031632] font-semibold text-sm mt-0.5">{forgotEmail}</p>
+              </div>
+            </div>
 
             {otpError && (
               <motion.div
