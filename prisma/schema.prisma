@@ -226,3 +226,24 @@ model Stat {
   icon  String?
   order Int    @default(0)
 }
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  purpose   String   @default("forgot_password") // forgot_password, donation_confirm, newsletter_confirm
+  verified  Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EmailLog {
+  id         String   @id @default(cuid())
+  to         String
+  subject    String
+  type       String   // newsletter_welcome, donation_confirmation, admin_otp, newsletter_broadcast
+  status     String   @default("sent") // sent, failed, resent
+  resentFrom String?  // ID of the original email if this is a resend
+  createdAt  DateTime @default(now())
+}

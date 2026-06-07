@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { verifyWebhookSignature } from '@/lib/auth'
 import { verifyPayment } from '@/lib/azampay'
 import type { AzamPayWebhookData } from '@/lib/azampay'
+import { sendDonationConfirmationEmail } from '@/lib/resend'
 
 /**
  * AzamPay Webhook/Callback Endpoint
@@ -157,6 +158,24 @@ export async function POST(request: NextRequest) {
       }
 
       console.log(`[AzamPay Webhook] Donation ${donation.id} marked SUCCESSFUL. Amount: TZS ${donation.amount}, Operator: ${operator}, Ref: ${utilityref}`)
+
+      // Send donation confirmation email if email was provided
+      if (donation.donorEmail) {
+        try {
+          await sendDonationConfirmationEmail({
+            to: donation.donorEmail,
+            name: donation.donorName,
+            amount: donation.amount,
+            transactionId: donation.transactionId || donation.id,
+            method: donation.method,
+            date: donation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
+            campaign: donation.campaign || undefined,
+          })
+          console.log(`[AzamPay Webhook] Confirmation email sent to ${donation.donorEmail}`)
+        } catch (emailErr) {
+          console.error('[AzamPay Webhook] Failed to send confirmation email:', emailErr)
+        }
+      }
     } else {
       // Update donation to failed
       await db.donation.update({

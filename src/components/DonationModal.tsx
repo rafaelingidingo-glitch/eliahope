@@ -21,6 +21,7 @@ import {
   Users,
   Landmark,
   Shield,
+  RefreshCw,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
@@ -92,6 +93,10 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
   // Polling for payment status
   const [polling, setPolling] = useState(false)
   const [pollingMethod, setPollingMethod] = useState<'mpesa' | 'crdb'>('mpesa')
+
+  // Email confirmation resend
+  const [resendingEmail, setResendingEmail] = useState(false)
+  const [resendEmailMessage, setResendEmailMessage] = useState('')
 
   const fetchCampaigns = useCallback(async () => {
     try {
@@ -383,6 +388,36 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     setPolling(false)
   }
 
+  // Resend donation confirmation email
+  const handleResendConfirmationEmail = async () => {
+    const currentDonationId = activeTab === 'mpesa' ? donationId : crdbDonationId
+    const currentEmail = activeTab === 'mpesa' ? mpesaEmail : crdbEmail
+    if (!currentDonationId) return
+
+    setResendingEmail(true)
+    setResendEmailMessage('')
+    try {
+      const res = await fetch('/api/email/donation-confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: currentEmail ? 'resend' : 'send',
+          donationId: currentDonationId,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setResendEmailMessage(t.donation.emailResentSuccess)
+      } else {
+        setResendEmailMessage(data.error || t.donation.emailResendError)
+      }
+    } catch {
+      setResendEmailMessage(t.donation.emailResendError)
+    } finally {
+      setResendingEmail(false)
+    }
+  }
+
   // Determine which success state to show
   const isSuccess = donationState === 'success' || crdbDonationState === 'success'
   const successData = donationState === 'success'
@@ -506,6 +541,22 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                   >
                     <Share2 className="h-4 w-4" /> {t.donation.shareDonation}
                   </button>
+                  {/* Resend Confirmation Email */}
+                  {(activeTab === 'mpesa' ? mpesaEmail : crdbEmail) && (
+                    <button
+                      onClick={handleResendConfirmationEmail}
+                      disabled={resendingEmail}
+                      className="flex items-center justify-center gap-2 px-5 py-2.5 bg-white border-2 border-[#ff8928] text-[#ff8928] rounded-none font-semibold hover:bg-[#ffdcc6]/20 transition-colors text-sm disabled:opacity-50"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${resendingEmail ? 'animate-spin' : ''}`} />
+                      {resendingEmail ? t.donation.resendingEmail : t.donation.resendConfirmation}
+                    </button>
+                  )}
+                  {resendEmailMessage && (
+                    <p className={`text-xs ${resendEmailMessage === t.donation.emailResentSuccess ? 'text-green-600' : 'text-red-500'}`}>
+                      {resendEmailMessage}
+                    </p>
+                  )}
                   <button
                     onClick={handleClose}
                     className="flex items-center justify-center gap-2 px-5 py-2.5 border-2 border-[#c5c6ce] text-[#031632] rounded-none font-semibold hover:bg-gray-50 transition-colors text-sm"

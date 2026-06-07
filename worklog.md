@@ -327,3 +327,73 @@ Stage Summary:
 - AzamPay integration already complete (just needs credentials filled in .env)
 - All i18n keys added for both EN and SW
 - All sections now have richer interactions, better mobile UX, and more visual appeal
+
+---
+Task ID: resend-notification
+Agent: Main Agent
+Task: Implement Resend notification feature with newsletter, donation confirmation, and admin OTP emails
+
+Work Log:
+- Installed resend@6.12.4 via bun
+- Added RESEND_API_KEY and RESEND_FROM_EMAIL to .env and .env.example
+- Updated Prisma schema with OtpCode and EmailLog models
+- Ran prisma db push to sync database
+- Created /src/lib/resend.ts — comprehensive email service with:
+  - Resend client initialization with demo mode (logs to console when API key is 'demo')
+  - HTML email templates: newsletter welcome, donation confirmation, admin OTP
+  - sendNewsletterWelcomeEmail, resendNewsletterWelcomeEmail
+  - sendDonationConfirmationEmail, resendDonationConfirmationEmail
+  - sendAdminOtpEmail, resendAdminOtpEmail
+  - sendNewsletterBroadcastEmail
+  - generateOtp, createOtpRecord, verifyOtp utilities
+  - Email logging to database (EmailLog model)
+- Created /src/app/api/admin/forgot-password/route.ts — full OTP flow:
+  - send_otp: generate and email OTP to admin
+  - resend_otp: resend new OTP with old ones invalidated
+  - verify_otp: validate OTP code
+  - reset_password: verify OTP and update password
+- Created /src/app/api/email/donation-confirm/route.ts — donation confirmation:
+  - send: send confirmation email for a donation
+  - resend: resend confirmation email
+- Created /src/app/api/email/resend/route.ts — generic resend endpoint:
+  - newsletter_welcome: resend welcome email
+  - donation_confirmation: delegate to donation-confirm endpoint
+- Updated /src/app/api/newsletter/route.ts — sends welcome email on subscription
+- Updated /src/app/api/admin/newsletter/route.ts — replaced console.log placeholder with actual Resend email sending
+- Updated /src/app/api/donate/mpesa/route.ts — sends confirmation email after simulated success
+- Updated /src/app/api/donate/crdb/route.ts — sends confirmation email after both OTP and simulated success
+- Updated /src/app/api/donate/azampay/callback/route.ts — sends confirmation email after webhook success
+- Updated /src/components/sections/Newsletter.tsx:
+  - Shows resend welcome email button after successful subscription
+  - Displays email send status
+- Updated /src/components/DonationModal.tsx:
+  - Added RefreshCw icon import
+  - Added resendingEmail and resendEmailMessage state
+  - Added handleResendConfirmationEmail function
+  - Added "Resend Confirmation Email" button in success state (only shown when donor provided email)
+  - Shows resend status message (success/error)
+- Rewrote /src/components/admin/AdminLogin.tsx with full forgot password flow:
+  - Login form with "Forgot Password?" link
+  - Forgot Password view: enter admin email → send OTP
+  - Verify OTP view: enter 6-digit code with cooldown timer and resend option
+  - Reset Password view: new password + confirm password
+  - Back to Login navigation on all views
+  - All views fully translatable
+- Updated /src/lib/i18n/en.ts with new keys:
+  - newsletter: resendEmail, resending, resendSuccess, resendError
+  - donation: resendConfirmation, resendingEmail, emailResentSuccess, emailResendError
+  - admin: forgotPassword, forgotPasswordTitle, forgotPasswordDescription, emailRequired, sendOtp, sendingOtp, otpSendError, verifyOtpTitle, otpSentTo, otpCode, verifyOtp, verifyingOtp, otpInvalid, resendOtp, resendingOtp, otpResentSuccess, otpResendError, resetPasswordTitle, resetPasswordDescription, newPassword, newPasswordPlaceholder, confirmPassword, confirmPasswordPlaceholder, passwordTooShort, passwordMismatch, resetPasswordButton, resettingPassword, resetError, backToLogin
+- Updated /src/lib/i18n/sw.ts with matching Swahili translations
+- Build verified: passes with zero errors
+
+Stage Summary:
+- Full Resend email notification system implemented with 3 core flows:
+  1. Newsletter: Welcome email sent on subscription + resend button
+  2. Donation: Confirmation email sent after successful payment + resend button in success state
+  3. Admin Forgot Password: OTP sent via email → verify → reset password + resend OTP option
+- Demo mode: When RESEND_API_KEY='demo', emails are logged to console (no real API key needed for development)
+- All emails tracked in EmailLog database table
+- OTP codes stored in OtpCode table with 10-minute expiry and auto-invalidation
+- Admin newsletter broadcast now uses Resend (was console.log placeholder)
+- All text is bilingual (EN/SW)
+- 3 new API routes: /api/admin/forgot-password, /api/email/donation-confirm, /api/email/resend

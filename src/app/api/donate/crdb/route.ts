@@ -7,6 +7,7 @@ import {
   getPaymentLimits,
   type BankProvider,
 } from '@/lib/azampay'
+import { sendDonationConfirmationEmail } from '@/lib/resend'
 
 function generateTransactionId(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
@@ -171,6 +172,24 @@ export async function POST(request: NextRequest) {
               })
             }
             console.log(`[CRDB] SIMULATED OTP: Donation ${donationId} marked successful`)
+
+            // Send donation confirmation email
+            if (existingDonation.donorEmail) {
+              try {
+                await sendDonationConfirmationEmail({
+                  to: existingDonation.donorEmail,
+                  name: existingDonation.donorName,
+                  amount: existingDonation.amount,
+                  transactionId: existingDonation.transactionId || existingDonation.id,
+                  method: existingDonation.method,
+                  date: existingDonation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
+                  campaign: existingDonation.campaign || undefined,
+                })
+                console.log(`[CRDB] Confirmation email sent to ${existingDonation.donorEmail}`)
+              } catch (emailErr) {
+                console.error('[CRDB] Failed to send confirmation email:', emailErr)
+              }
+            }
           } else {
             await db.donation.update({
               where: { id: donationId },
@@ -386,6 +405,24 @@ export async function POST(request: NextRequest) {
           }
 
           console.log(`[CRDB] SIMULATED: Donation ${donation.id} marked successful`)
+
+          // Send donation confirmation email if email was provided
+          if (donation.donorEmail) {
+            try {
+              await sendDonationConfirmationEmail({
+                to: donation.donorEmail,
+                name: donation.donorName,
+                amount: donation.amount,
+                transactionId: donation.transactionId || donation.id,
+                method: donation.method,
+                date: donation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
+                campaign: donation.campaign || undefined,
+              })
+              console.log(`[CRDB] Confirmation email sent to ${donation.donorEmail}`)
+            } catch (emailErr) {
+              console.error('[CRDB] Failed to send confirmation email:', emailErr)
+            }
+          }
         } else {
           await db.donation.update({
             where: { id: donation.id },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
+import { sendNewsletterBroadcastEmail } from '@/lib/resend'
 
 export async function GET(request: NextRequest) {
   const authError = requireAdmin(request)
@@ -26,9 +27,19 @@ export async function POST(request: NextRequest) {
       body: string
     }
 
-    // In a real app, this would send emails
-    // For now, just log and return success
-    console.log('Newsletter sent:', { to: body.to, subject: body.subject })
+    // Send email via Resend
+    const result = await sendNewsletterBroadcastEmail(
+      body.to,
+      body.subject,
+      body.body
+    )
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: 'Failed to send newsletter email: ' + (result.error || 'Unknown error') },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({ success: true, message: 'Newsletter sent successfully' })
   } catch (error) {

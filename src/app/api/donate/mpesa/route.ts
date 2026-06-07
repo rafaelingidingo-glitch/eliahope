@@ -8,6 +8,7 @@ import {
   getPaymentLimits,
   type MnoProvider,
 } from '@/lib/azampay'
+import { sendDonationConfirmationEmail } from '@/lib/resend'
 
 function generateTransactionId(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
@@ -215,6 +216,24 @@ export async function POST(request: NextRequest) {
         }
 
         console.log(`[M-Pesa] SIMULATED: Donation ${donation.id} marked as successful`)
+
+        // Send donation confirmation email if email was provided
+        if (donation.donorEmail) {
+          try {
+            await sendDonationConfirmationEmail({
+              to: donation.donorEmail,
+              name: donation.donorName,
+              amount: donation.amount,
+              transactionId: donation.transactionId || donation.id,
+              method: donation.method,
+              date: donation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
+              campaign: donation.campaign || undefined,
+            })
+            console.log(`[M-Pesa] Confirmation email sent to ${donation.donorEmail}`)
+          } catch (emailErr) {
+            console.error('[M-Pesa] Failed to send confirmation email:', emailErr)
+          }
+        }
       } catch (err) {
         console.error('[M-Pesa] Simulation callback error:', err)
       }

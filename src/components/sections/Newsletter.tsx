@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { Mail, Send, CheckCircle, PartyPopper } from 'lucide-react'
+import { Mail, Send, CheckCircle, PartyPopper, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useLanguage } from '@/lib/i18n'
@@ -15,6 +15,9 @@ export default function Newsletter() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
+  const [emailLogId, setEmailLogId] = useState<string | null>(null)
+  const [emailSent, setEmailSent] = useState(false)
+  const [resending, setResending] = useState(false)
 
   const benefits = [
     { icon: CheckCircle, text: t.newsletter.benefitUpdates },
@@ -37,6 +40,8 @@ export default function Newsletter() {
       if (res.ok) {
         setStatus('success')
         setMessage(data.message || t.newsletter.successMessage)
+        setEmailSent(data.emailSent !== false)
+        setEmailLogId(data.emailLogId || null)
         setName('')
         setEmail('')
       } else {
@@ -46,6 +51,34 @@ export default function Newsletter() {
     } catch {
       setStatus('error')
       setMessage(t.newsletter.errorMessage)
+    }
+  }
+
+  const handleResendEmail = async () => {
+    if (!emailLogId && !email) return
+    setResending(true)
+    try {
+      const res = await fetch('/api/email/resend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'newsletter_welcome',
+          to: email || undefined,
+          name: name || undefined,
+          emailLogId: emailLogId || undefined,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setMessage(t.newsletter.resendSuccess)
+        setEmailLogId(data.emailLogId || null)
+      } else {
+        setMessage(data.error || t.newsletter.resendError)
+      }
+    } catch {
+      setMessage(t.newsletter.resendError)
+    } finally {
+      setResending(false)
     }
   }
 
@@ -141,22 +174,42 @@ export default function Newsletter() {
                 className="mt-4"
               >
                 {status === 'success' ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                    >
-                      <PartyPopper className="h-5 w-5 text-green-500" />
-                    </motion.div>
-                    <motion.p
-                      initial={{ opacity: 0, x: -5 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="text-sm font-medium text-green-600"
-                    >
-                      {message}
-                    </motion.p>
+                  <div>
+                    <div className="flex items-center justify-center gap-2">
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                      >
+                        <PartyPopper className="h-5 w-5 text-green-500" />
+                      </motion.div>
+                      <motion.p
+                        initial={{ opacity: 0, x: -5 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-sm font-medium text-green-600"
+                      >
+                        {message}
+                      </motion.p>
+                    </div>
+                    {/* Resend welcome email button */}
+                    {emailSent && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="mt-3"
+                      >
+                        <button
+                          onClick={handleResendEmail}
+                          disabled={resending}
+                          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#ff8928] hover:text-[#e07820] transition-colors disabled:opacity-50"
+                        >
+                          <RefreshCw className={`h-3.5 w-3.5 ${resending ? 'animate-spin' : ''}`} />
+                          {resending ? t.newsletter.resending : t.newsletter.resendEmail}
+                        </button>
+                      </motion.div>
+                    )}
                   </div>
                 ) : (
                   <p className="text-sm font-medium text-red-500">{message}</p>

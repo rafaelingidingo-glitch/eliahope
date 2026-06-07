@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { sendNewsletterWelcomeEmail } from '@/lib/resend'
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,8 +33,29 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Send welcome email via Resend
+    const emailResult = await sendNewsletterWelcomeEmail(email, name)
+
+    if (!emailResult.success) {
+      // Subscription was saved, but email failed — still return success
+      // but include a note about the email
+      console.warn('[Newsletter] Subscription saved but welcome email failed:', emailResult.error)
+      return NextResponse.json(
+        {
+          message: 'Thank you for subscribing! Your welcome email could not be sent, but you are successfully subscribed.',
+          emailSent: false,
+          emailLogId: null,
+        },
+        { status: 201 }
+      )
+    }
+
     return NextResponse.json(
-      { message: 'Thank you for subscribing! You will receive our latest updates.' },
+      {
+        message: 'Thank you for subscribing! A welcome email has been sent to your inbox.',
+        emailSent: true,
+        emailLogId: emailResult.id,
+      },
       { status: 201 }
     )
   } catch {
