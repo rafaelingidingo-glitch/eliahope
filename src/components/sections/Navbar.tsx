@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, Heart } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { useLanguage } from '@/lib/i18n'
@@ -130,14 +130,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
             >
               {t.nav.login}
             </Button>
-            <Button
-              asChild
-              className="bg-[#ff8928] hover:bg-[#964900] text-white font-semibold rounded-none px-6"
-            >
-              <a href="#donate-modal" onClick={(e) => { e.preventDefault(); onDonateClick?.() }}>
-                {t.nav.donateNow}
-              </a>
-            </Button>
+
           </div>
 
           {/* Mobile Menu */}
@@ -167,16 +160,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
               <SheetContent side="right" className="bg-white w-72 p-0">
                 <SheetTitle className="sr-only">{t.nav.navigationMenu}</SheetTitle>
                 <div className="flex flex-col h-full">
-                  {/* Mobile Donate Banner */}
-                  <div className="bg-[#ff8928] p-4">
-                    <Button
-                      onClick={() => { onDonateClick?.(); setMobileOpen(false) }}
-                      className="w-full bg-white text-[#ff8928] hover:bg-white/90 font-bold rounded-none flex items-center justify-center gap-2 h-12"
-                    >
-                      <Heart className="h-4 w-4 fill-current" />
-                      {t.nav.donateNow}
-                    </Button>
-                  </div>
+
                   <div className="flex items-center justify-between p-4 border-b border-[#c5c6ce]/30">
                     <div className="flex items-center gap-3">
                       <img src="/logo.jpeg" alt="Elia's Hope" className="h-9 w-9 rounded-full object-cover" />
