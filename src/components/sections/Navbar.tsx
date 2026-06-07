@@ -89,7 +89,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
           </a>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-0.5">
+          <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -102,10 +102,10 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                     handleNavClick(link.href)
                   }
                 }}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                className={`px-4 py-2 text-sm font-medium transition-colors duration-300 ${
                   activeSection === link.href
-                    ? 'text-[#ff8928] font-semibold bg-[#ff8928]/10'
-                    : 'text-[#44474d] hover:text-[#031632] hover:bg-[#031632]/5'
+                    ? 'text-[#ff8928] font-semibold'
+                    : 'text-[#44474d] hover:text-[#ff8928]'
                 }`}
               >
                 {link.label}
@@ -167,7 +167,7 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                       <span className="text-[#031632] font-bold">Elia&apos;s Hope</span>
                     </div>
                   </div>
-                  <div className="flex-1 py-4 overflow-y-auto">
+                  <div className="flex-1 py-2 overflow-y-auto">
                     {navLinks.map((link) => (
                       <a
                         key={link.href}
@@ -181,10 +181,10 @@ export default function Navbar({ onAdminClick, onDonateClick }: NavbarProps) {
                             handleNavClick(link.href)
                           }
                         }}
-                        className={`block px-6 py-3 font-medium rounded-lg mx-2 transition-colors ${
+                        className={`block px-6 py-3 font-medium transition-colors duration-300 ${
                           activeSection === link.href
-                            ? 'text-[#ff8928] font-semibold bg-[#ff8928]/10'
-                            : 'text-[#44474d] hover:text-[#031632] hover:bg-[#f5f3ef]'
+                            ? 'text-[#ff8928] font-semibold'
+                            : 'text-[#44474d] hover:text-[#ff8928]'
                         }`}
                       >
                         {link.label}
