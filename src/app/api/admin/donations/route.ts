@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db, toNumber } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
+import { DonationStatus } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   const authError = requireAdmin(request)
@@ -121,7 +122,7 @@ export async function PUT(request: NextRequest) {
 
     const donation = await db.donation.update({
       where: { id },
-      data: { ...(body.status && { status: body.status }) },
+      data: { ...(body.status && { status: body.status as DonationStatus }) },
     })
 
     return NextResponse.json({ ...donation, amount: toNumber(donation.amount) })

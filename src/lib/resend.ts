@@ -1,6 +1,7 @@
 import { Resend } from 'resend'
 import { db, toNumber } from '@/lib/db'
 import type { Prisma } from '@prisma/client'
+import { OtpPurpose } from '@prisma/client'
 
 // ─── Configuration ──────────────────────────────────────────────
 const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
@@ -397,13 +398,15 @@ export async function sendNewsletterBroadcastEmail(
  * Generate a 6-digit OTP code
  */
 export function generateOtp(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
+  // Use crypto.randomInt for cryptographically secure OTP generation
+  const { randomInt } = require('crypto')
+  return randomInt(100000, 1000000).toString()
 }
 
 /**
  * Create an OTP record in the database and return the code
  */
-export async function createOtpRecord(email: string, purpose: string = 'forgot_password'): Promise<string> {
+export async function createOtpRecord(email: string, purpose: OtpPurpose = 'forgot_password' as OtpPurpose): Promise<string> {
   const code = generateOtp()
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes from now
 
@@ -424,7 +427,7 @@ export async function createOtpRecord(email: string, purpose: string = 'forgot_p
 /**
  * Verify an OTP code
  */
-export async function verifyOtp(email: string, code: string, purpose: string = 'forgot_password'): Promise<{
+export async function verifyOtp(email: string, code: string, purpose: OtpPurpose = 'forgot_password' as OtpPurpose): Promise<{
   valid: boolean
   error?: string
 }> {

@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
     // Find the donation
     const donation = await db.donation.findUnique({
       where: { id: donationId },
+      include: { campaign: { select: { title: true } } },
     })
 
     if (!donation) {
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
         hour: '2-digit',
         minute: '2-digit',
       }),
-      campaign: donation.campaign || undefined,
+      campaign: donation.campaign?.title || undefined,
     }
 
     if (action === 'send') {

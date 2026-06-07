@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db, toNumber } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
+import { SponsorStatus, SponsorFrequency } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   const authError = requireAdmin(request)
@@ -42,8 +43,8 @@ export async function POST(request: NextRequest) {
         phone: body.phone ?? null,
         childId: body.childId && body.childId !== 'none' ? body.childId : null,
         amount: body.amount,
-        frequency: body.frequency || 'monthly',
-        status: body.status || 'active',
+        frequency: (body.frequency || 'monthly') as SponsorFrequency,
+        status: (body.status || 'active') as SponsorStatus,
       },
     })
 
@@ -80,8 +81,8 @@ export async function PUT(request: NextRequest) {
         ...(body.phone !== undefined && { phone: body.phone }),
         ...(body.childId !== undefined && { childId: body.childId === 'none' ? null : body.childId }),
         ...(body.amount !== undefined && { amount: body.amount }),
-        ...(body.frequency !== undefined && { frequency: body.frequency }),
-        ...(body.status !== undefined && { status: body.status }),
+        ...(body.frequency !== undefined && { frequency: body.frequency as SponsorFrequency }),
+        ...(body.status !== undefined && { status: body.status as SponsorStatus }),
       },
     })
 

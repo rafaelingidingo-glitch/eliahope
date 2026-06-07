@@ -12,6 +12,87 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── Enums ────────────────────────────────────────────────────────────────────
+// Using Prisma enums for type-safe status fields.
+// NOTE: SQLite does not support native enums — Prisma emulates them as strings.
+// When switching to PostgreSQL, these become real DB enums automatically.
+
+enum DonationStatus {
+  pending
+  processing
+  successful
+  failed
+  cancelled
+}
+
+enum DonationMethod {
+  mpesa
+  crdb
+  airtel
+  tigo
+  halopesa
+  azampesa
+  bank_transfer
+}
+
+enum DonationType {
+  one_time
+  monthly
+}
+
+enum VolunteerStatus {
+  pending
+  approved
+  rejected
+  inactive
+}
+
+enum ChildStatus {
+  available
+  sponsored
+  graduated
+  inactive
+}
+
+enum SponsorFrequency {
+  monthly
+  quarterly
+  annually
+  one_time
+}
+
+enum SponsorStatus {
+  active
+  paused
+  cancelled
+}
+
+enum NewsletterStatus {
+  active
+  unsubscribed
+}
+
+enum EmailType {
+  newsletter_welcome
+  donation_confirmation
+  admin_otp
+  newsletter_broadcast
+}
+
+enum EmailStatus {
+  sent
+  failed
+  resent
+}
+
+enum OtpPurpose {
+  forgot_password
+  donation_confirm
+  newsletter_confirm
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -21,6 +102,8 @@ model User {
   image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([email])
 }
 
 model SiteSetting {
@@ -40,6 +123,9 @@ model Event {
   status      String   @default("upcoming")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([date])
 }
 
 model GalleryImage {
@@ -50,104 +136,134 @@ model GalleryImage {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([category])
 }
 
 model Donation {
-  id                String   @id @default(cuid())
+  id                String         @id @default(cuid())
   donorName         String
   donorEmail        String?
   donorPhone        String?
+  // For PostgreSQL: add @db.Decimal(12, 2) for precise monetary values
   amount            Decimal
-  currency          String   @default("TZS")
-  method            String
-  type              String   @default("one-time")
+  currency          String         @default("TZS")
+  method            DonationMethod
+  type              DonationType   @default(one_time)
   campaignId        String?
-  campaign          String?
-  status            String   @default("pending")
+  campaign          Campaign?      @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  status            DonationStatus @default(pending)
   transactionId     String?
   mpesaReceipt      String?
   crdbAccountHolder String?
   crdbAccountNumber String?
   crdbReference     String?
   message           String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([transactionId])
+  @@index([status])
+  @@index([campaignId])
+  @@index([createdAt])
+  @@index([method])
 }
 
 model PaymentProof {
-  id           String   @id @default(cuid())
-  donorName    String
-  donorPhone   String
-  amount       Decimal
-  receiptUrl   String
-  campaignId   String?
-  status       String   @default("pending")
-  adminNotes   String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id         String         @id @default(cuid())
+  donorName  String
+  donorPhone String
+  // For PostgreSQL: add @db.Decimal(12, 2)
+  amount     Decimal
+  receiptUrl String
+  campaignId String?
+  campaign   Campaign?      @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  status     String         @default("pending")
+  adminNotes String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@index([status])
 }
 
 model Campaign {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String
+  // For PostgreSQL: add @db.Decimal(12, 2) for precise monetary values
   goal        Decimal
-  raised      Decimal    @default(0)
+  raised      Decimal   @default(0)
   image       String?
-  status      String   @default("active")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status      String    @default("active")
+  donations   Donation[]
+  proofs      PaymentProof[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
 }
 
 model Volunteer {
-  id          String   @id @default(cuid())
-  name        String
-  email       String
-  phone       String?
-  skills      String?
-  motivation  String?
-  status      String   @default("pending")
-  programId   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String         @id @default(cuid())
+  name       String
+  email      String
+  phone      String?
+  skills     String?
+  motivation String?
+  status     VolunteerStatus @default(pending)
+  programId  String?
+  program    Program?       @relation(fields: [programId], references: [id], onDelete: SetNull)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@index([status])
+  @@index([email])
 }
 
 model Child {
-  id          String    @id @default(cuid())
+  id          String         @id @default(cuid())
   name        String
   age         Int?
   gender      String?
   story       String?
   photo       String?
-  status      String    @default("available")
+  status      ChildStatus    @default(available)
   program     String?
   sponsors    Sponsor[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([status])
 }
 
 model Sponsor {
-  id          String   @id @default(cuid())
-  name        String
-  email       String
-  phone       String?
-  childId     String?
-  amount      Decimal
-  frequency   String   @default("monthly")
-  status      String   @default("active")
-  startDate   DateTime @default(now())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  child       Child?   @relation(fields: [childId], references: [id], onDelete: SetNull)
+  id        String          @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  childId   String?
+  // For PostgreSQL: add @db.Decimal(12, 2)
+  amount    Decimal
+  frequency SponsorFrequency @default(monthly)
+  status    SponsorStatus   @default(active)
+  startDate DateTime        @default(now())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  child     Child?          @relation(fields: [childId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([email])
 }
 
 model Newsletter {
-  id        String   @id @default(cuid())
+  id        String           @id @default(cuid())
   name      String
-  email     String   @unique
-  status    String   @default("active")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  email     String           @unique
+  status    NewsletterStatus @default(active)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([status])
 }
 
 model BlogPost {
@@ -161,18 +277,23 @@ model BlogPost {
   published   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([published])
 }
 
 model Testimonial {
-  id          String   @id @default(cuid())
-  name        String
-  role        String
-  content     String
-  image       String?
-  rating      Int      @default(5)
-  featured    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  content   String
+  image     String?
+  rating    Int      @default(5)
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([featured])
 }
 
 model Partner {
@@ -198,6 +319,8 @@ model SuccessStory {
   featured    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([featured])
 }
 
 model ContactMessage {
@@ -209,6 +332,9 @@ model ContactMessage {
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([read])
+  @@index([createdAt])
 }
 
 model Program {
@@ -220,8 +346,12 @@ model Program {
   image       String?
   order       Int      @default(0)
   active      Boolean  @default(true)
+  volunteers  Volunteer[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([active])
 }
 
 model Stat {
@@ -233,22 +363,29 @@ model Stat {
 }
 
 model OtpCode {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   email     String
   code      String
-  purpose   String   @default("forgot_password") // forgot_password, donation_confirm, newsletter_confirm
-  verified  Boolean  @default(false)
+  purpose   OtpPurpose @default(forgot_password)
+  verified  Boolean    @default(false)
   expiresAt DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([email, purpose, verified])
+  @@index([expiresAt])
 }
 
 model EmailLog {
-  id         String   @id @default(cuid())
+  id         String      @id @default(cuid())
   to         String
   subject    String
-  type       String   // newsletter_welcome, donation_confirmation, admin_otp, newsletter_broadcast
-  status     String   @default("sent") // sent, failed, resent
-  resentFrom String?  // ID of the original email if this is a resend
-  createdAt  DateTime @default(now())
+  type       EmailType
+  status     EmailStatus @default(sent)
+  resentFrom String?
+  createdAt  DateTime    @default(now())
+
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
 }

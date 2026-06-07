@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db, toNumber } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
+import { DonationMethod, DonationStatus, DonationType } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   const authError = requireAdmin(request)
@@ -64,8 +65,8 @@ export async function PUT(request: NextRequest) {
           donorName: proof.donorName,
           donorPhone: proof.donorPhone,
           amount: proof.amount,
-          method: 'bank_transfer',
-          status: 'pending',
+          method: 'bank_transfer' as DonationMethod,
+          status: 'pending' as DonationStatus,
         },
       })
 
@@ -88,11 +89,10 @@ export async function PUT(request: NextRequest) {
             donorPhone: proof.donorPhone,
             amount: proof.amount,
             currency: 'TZS',
-            method: 'bank_transfer',
-            type: 'one-time',
+            method: 'bank_transfer' as DonationMethod,
+            type: 'one_time' as DonationType,
             campaignId: proof.campaignId,
-            campaign: campaignName,
-            status: 'successful',
+            status: 'successful' as DonationStatus,
             transactionId: `BNK${Date.now().toString(36).toUpperCase()}`,
           },
         })

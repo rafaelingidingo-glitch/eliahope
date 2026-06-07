@@ -1,22 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createHmac } from 'crypto'
+import { timingSafeEqual } from 'crypto'
 
 /**
  * Admin API Authentication Middleware
  * 
  * Validates a Bearer token from the Authorization header against
- * the ADMIN_API_TOKEN environment variable.
+ * the ADMIN_API_TOKEN environment variable using timing-safe comparison.
  * 
- * If ADMIN_API_TOKEN is not set, allows all requests (development mode).
- * In production, always set a strong ADMIN_API_TOKEN.
+ * If ADMIN_API_TOKEN is not set in production, all requests are rejected.
+ * In development, a warning is logged and requests are allowed.
  */
 
 const ADMIN_TOKEN = process.env.ADMIN_API_TOKEN || ''
+const isProduction = process.env.NODE_ENV === 'production'
 
 export function requireAdmin(request: NextRequest): NextResponse | null {
-  // If no token configured, allow all requests (development mode)
+  // If no token configured
   if (!ADMIN_TOKEN) {
-    console.warn('ADMIN_API_TOKEN not set — admin API routes are unprotected')
+    if (isProduction) {
+      // In production: reject all requests if no token is configured
+      console.error('ADMIN_API_TOKEN not set in production — admin API routes are BLOCKED')
+      return NextResponse.json(
+        { error: 'Server configuration error. Admin routes are disabled.' },
+        { status: 503 }
+      )
+    }
+    // In development: allow with warning
+    console.warn('ADMIN_API_TOKEN not set — admin API routes are unprotected (development mode)')
     return null
   }
 
@@ -31,7 +41,18 @@ export function requireAdmin(request: NextRequest): NextResponse | null {
 
   const token = authHeader.substring(7) // Remove "Bearer " prefix
 
-  if (token !== ADMIN_TOKEN) {
+  // Timing-safe comparison to prevent timing attacks
+  const tokenBuf = Buffer.from(token)
+  const adminBuf = Buffer.from(ADMIN_TOKEN)
+  
+  if (tokenBuf.length !== adminBuf.length) {
+    return NextResponse.json(
+      { error: 'Forbidden. Invalid admin token.' },
+      { status: 403 }
+    )
+  }
+
+  if (!timingSafeEqual(tokenBuf, adminBuf)) {
     return NextResponse.json(
       { error: 'Forbidden. Invalid admin token.' },
       { status: 403 }
@@ -68,20 +89,18 @@ export function verifyWebhookSignature(
   }
 
   // Compute HMAC-SHA256 of the raw body with the webhook secret
+  const { createHmac } = require('crypto')
   const computed = createHmac('sha256', secret)
     .update(rawBody)
     .digest('hex')
 
-  // Use timing-safe comparison to prevent timing attacks
-  if (computed.length !== signature.length) {
+  // Timing-safe comparison
+  const computedBuf = Buffer.from(computed)
+  const signatureBuf = Buffer.from(signature)
+  
+  if (computedBuf.length !== signatureBuf.length) {
     return false
   }
 
-  // Simple constant-time comparison
-  let result = 0
-  for (let i = 0; i < computed.length; i++) {
-    result |= computed.charCodeAt(i) ^ signature.charCodeAt(i)
-  }
-
-  return result === 0
+  return timingSafeEqual(computedBuf, signatureBuf)
 }

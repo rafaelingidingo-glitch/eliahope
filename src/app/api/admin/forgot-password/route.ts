@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import bcrypt from 'bcryptjs'
 import { db } from '@/lib/db'
 import {
   sendAdminOtpEmail,
@@ -6,6 +7,7 @@ import {
   createOtpRecord,
   verifyOtp,
 } from '@/lib/resend'
+import { forgotPasswordSchema } from '@/lib/validations'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@eliashope.org'
 
@@ -157,8 +159,10 @@ export async function POST(request: NextRequest) {
           )
         }
 
-        // Update or create the admin user in DB
-        // The login route checks the DB first, so this new password will be used
+        // Hash the new password with bcrypt before storing
+        const hashedPassword = await bcrypt.hash(body.newPassword, 12)
+
+        // Update or create the admin user in DB with hashed password
         const existingUser = await db.user.findUnique({
           where: { email: adminEmail },
         })
@@ -166,14 +170,14 @@ export async function POST(request: NextRequest) {
         if (existingUser) {
           await db.user.update({
             where: { email: adminEmail },
-            data: { password: body.newPassword },
+            data: { password: hashedPassword },
           })
         } else {
           await db.user.create({
             data: {
               email: adminEmail,
               name: 'Administrator',
-              password: body.newPassword,
+              password: hashedPassword,
               role: 'admin',
             },
           })

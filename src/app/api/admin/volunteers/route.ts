@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
+import { VolunteerStatus } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   const authError = requireAdmin(request)
@@ -34,7 +35,7 @@ export async function PUT(request: NextRequest) {
     const volunteer = await db.volunteer.update({
       where: { id },
       data: {
-        ...(body.status && { status: body.status }),
+        ...(body.status && { status: body.status as VolunteerStatus }),
         ...(body.programId && { programId: body.programId }),
       },
     })

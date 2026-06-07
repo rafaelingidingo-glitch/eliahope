@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
 
     const donation = await db.donation.findUnique({
       where: { id: donationId },
+      include: { campaign: { select: { title: true } } },
     })
 
     if (!donation) {
@@ -55,7 +56,7 @@ Amount:        TZS ${Number(donation.amount).toLocaleString()}
 Currency:      ${donation.currency}
 Method:        ${donation.method === 'mpesa' ? 'M-Pesa' : donation.method === 'crdb' ? 'CRDB Bank' : 'Bank Transfer'}
 Type:          ${donation.type}
-Campaign:      ${donation.campaign || 'General Donation'}
+Campaign:      ${donation.campaign?.title || 'General Donation'}
 Status:        ${donation.status.toUpperCase()}
 ${donation.mpesaReceipt ? `M-Pesa Ref:     ${donation.mpesaReceipt}` : ''}
 ${donation.crdbReference ? `Bank Ref:      ${donation.crdbReference}` : ''}

@@ -4,6 +4,7 @@ import { verifyWebhookSignature } from '@/lib/auth'
 import { verifyPayment } from '@/lib/azampay'
 import type { AzamPayWebhookData } from '@/lib/azampay'
 import { sendDonationConfirmationEmail } from '@/lib/resend'
+import { DonationStatus } from '@prisma/client'
 
 /**
  * AzamPay Webhook/Callback Endpoint
@@ -83,6 +84,7 @@ export async function POST(request: NextRequest) {
     const lookupId = reference || externalId
     const donation = await db.donation.findFirst({
       where: { transactionId: lookupId },
+      include: { campaign: { select: { title: true } } },
     })
 
     if (!donation) {
@@ -113,7 +115,7 @@ export async function POST(request: NextRequest) {
         // Mark as pending review instead of successful
         await db.donation.update({
           where: { id: donation.id },
-          data: { status: 'pending', message: 'Payment requires manual verification - webhook/API mismatch' },
+          data: { status: 'pending' as DonationStatus, message: 'Payment requires manual verification - webhook/API mismatch' },
         })
         return NextResponse.json({ success: true, message: 'Payment flagged for review' })
       }
@@ -126,7 +128,7 @@ export async function POST(request: NextRequest) {
         await db.donation.update({
           where: { id: donation.id },
           data: {
-            status: 'pending',
+            status: 'pending' as DonationStatus,
             message: `Amount mismatch: expected ${toNumber(donation.amount)}, received ${amount}. Requires manual verification.`,
           },
         })
@@ -137,7 +139,7 @@ export async function POST(request: NextRequest) {
       await db.donation.update({
         where: { id: donation.id },
         data: {
-          status: 'successful',
+          status: 'successful' as DonationStatus,
           mpesaReceipt: (operator === 'Mpesa' || operator === 'Airtel' || operator === 'Tigo' || operator === 'Halopesa' || operator === 'Azampesa')
             ? (utilityref || donation.mpesaReceipt)
             : donation.mpesaReceipt,
@@ -169,7 +171,7 @@ export async function POST(request: NextRequest) {
             transactionId: donation.transactionId || donation.id,
             method: donation.method,
             date: donation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
-            campaign: donation.campaign || undefined,
+            campaign: donation.campaign?.title || undefined,
           })
           console.log(`[AzamPay Webhook] Confirmation email sent to ${donation.donorEmail}`)
         } catch (emailErr) {
@@ -181,7 +183,7 @@ export async function POST(request: NextRequest) {
       await db.donation.update({
         where: { id: donation.id },
         data: {
-          status: 'failed',
+          status: 'failed' as DonationStatus,
           message: body.message || `Payment ${transactionstatus}`,
         },
       })

@@ -509,3 +509,47 @@ Stage Summary:
 - Right: clean, minimalist form with all 4 auth flows
 - Fully responsive: full-width form on mobile, split on desktop
 - All interactions preserved (forgot password, OTP, reset password)
+---
+Task ID: framework-modernization
+Agent: Main Agent
+Task: Review all codes and update to latest frameworks and Prisma/Node.js rules
+
+Work Log:
+- Comprehensive code review identified 26 issues across security, Prisma patterns, and API design
+- **Prisma Schema Modernization**:
+  - Added 10 Prisma enums: DonationStatus, DonationMethod, DonationType, VolunteerStatus, ChildStatus, SponsorFrequency, SponsorStatus, NewsletterStatus, EmailType, EmailStatus, OtpPurpose
+  - Added 25+ @@index declarations for query performance (transactionId, status, createdAt, composite indexes)
+  - Added missing foreign key relations: Donation→Campaign, PaymentProof→Campaign, Volunteer→Program
+  - Added comments for @db.Decimal(12,2) and @db.Text when migrating to PostgreSQL
+  - Ran prisma db push and re-seeded database
+- **Security Fixes**:
+  - Installed bcryptjs and hashed all passwords in DB (seed + login + forgot-password routes)
+  - Replaced Math.random() with crypto.randomInt() for OTP generation (crypto-safe)
+  - Replaced direct string comparison with crypto.timingSafeEqual() for admin token in auth.ts
+  - Added httpOnly cookie on login response (alongside localStorage token)
+  - In production, requireAdmin() blocks all requests if ADMIN_API_TOKEN is not set
+  - Sanitized newsletter broadcast HTML with escapeHtml() to prevent XSS
+  - Created /src/middleware.ts for server-side admin route protection (redirects unauthenticated users)
+- **API Route Modernization**:
+  - Created /src/lib/validations.ts with 15+ Zod v4 schemas for all API routes
+  - Updated contact and newsletter routes to use Zod validation
+  - Created /src/lib/api-utils.ts with standard response helpers (successResponse, errorResponse, paginatedResponse, etc.)
+  - Added pagination to newsletter admin GET endpoint
+  - Fixed all API routes to use proper Prisma enum type casting
+  - Fixed 'one-time' → 'one_time' in donation type enum value
+  - Fixed donation routes to use campaign relation instead of plain campaign string field
+- **TypeScript & Config Updates**:
+  - Updated tsconfig.json target from ES2017 to ES2022
+  - Fixed seed.ts type annotations for array variables
+- Verified build passes cleanly with all changes
+
+Stage Summary:
+- All 7 critical security issues fixed
+- Prisma schema now uses enums, indexes, and proper relations (latest Prisma 6 patterns)
+- Password hashing with bcryptjs (12 salt rounds)
+- Server-side route protection via middleware.ts
+- httpOnly cookies + localStorage dual token storage
+- Zod v4 validation schemas for all public-facing API routes
+- Standard API response helpers with pagination support
+- XSS prevention in newsletter broadcast
+- Build verified passing after all changes

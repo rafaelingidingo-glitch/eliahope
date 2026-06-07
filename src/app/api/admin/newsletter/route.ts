@@ -2,17 +2,27 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
 import { sendNewsletterBroadcastEmail } from '@/lib/resend'
+import { newsletterBroadcastSchema } from '@/lib/validations'
+import { parsePagination, paginatedResponse, errorResponse, serverErrorResponse } from '@/lib/api-utils'
 
 export async function GET(request: NextRequest) {
   const authError = requireAdmin(request)
   if (authError) return authError
 
   try {
-    const subscribers = await db.newsletter.findMany({ orderBy: { createdAt: 'desc' } })
-    return NextResponse.json(subscribers)
+    const pagination = parsePagination(request.nextUrl.searchParams)
+    const [subscribers, total] = await Promise.all([
+      db.newsletter.findMany({
+        orderBy: { createdAt: 'desc' },
+        skip: pagination.skip,
+        take: pagination.limit,
+      }),
+      db.newsletter.count(),
+    ])
+    return paginatedResponse(subscribers, total, pagination)
   } catch (error) {
     console.error('Newsletter GET error:', error)
-    return NextResponse.json({ error: 'Failed to load subscribers' }, { status: 500 })
+    return serverErrorResponse('Failed to load subscribers')
   }
 }
 
@@ -27,17 +37,27 @@ export async function POST(request: NextRequest) {
       body: string
     }
 
-    if (!body.subject || !body.body) {
-      return NextResponse.json(
-        { error: 'Subject and body are required' },
-        { status: 400 }
-      )
+    // Validate with Zod
+    const validation = newsletterBroadcastSchema.safeParse(body)
+    if (!validation.success) {
+      const firstError = validation.error.issues[0]?.message || 'Invalid input'
+      return errorResponse(firstError, 400)
     }
+    const { subject, to } = validation.data
 
-    // Build the HTML content from plain text body
+    // Sanitize HTML: escape special characters to prevent XSS
+    const escapeHtml = (str: string) =>
+      str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+
+    // Build the HTML content from plain text body with escaped content
     const htmlContent = body.body
       .split('\n')
-      .map((line: string) => `<p style="margin:0 0 12px 0;">${line || '<br/>'}</p>`)
+      .map((line: string) => `<p style="margin:0 0 12px 0;">${escapeHtml(line) || '<br/>'}</p>`)
       .join('')
 
     if (body.to === 'all') {

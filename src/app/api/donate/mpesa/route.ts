@@ -9,6 +9,7 @@ import {
   type MnoProvider,
 } from '@/lib/azampay'
 import { sendDonationConfirmationEmail } from '@/lib/resend'
+import { DonationMethod, DonationStatus, DonationType } from '@prisma/client'
 
 function generateTransactionId(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
@@ -115,11 +116,10 @@ export async function POST(request: NextRequest) {
         donorPhone: normalizedPhone,
         amount,
         currency: 'TZS',
-        method: mnoProvider.toLowerCase(),
-        type: 'one-time',
+        method: mnoProvider.toLowerCase() as DonationMethod,
+        type: 'one_time' as DonationType,
         campaignId: campaignId || null,
-        campaign: campaignName,
-        status: 'pending',
+        status: 'pending' as DonationStatus,
         transactionId,
       },
     })
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
           // AzamPay rejected the checkout request
           await db.donation.update({
             where: { id: donation.id },
-            data: { status: 'failed' },
+            data: { status: 'failed' as DonationStatus },
           })
 
           console.error(`[M-Pesa] AzamPay checkout rejected: ${result.message}`)
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
         // Mark donation as failed
         await db.donation.update({
           where: { id: donation.id },
-          data: { status: 'failed' },
+          data: { status: 'failed' as DonationStatus },
         })
 
         return NextResponse.json(
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
         await db.donation.update({
           where: { id: donation.id },
           data: {
-            status: 'successful',
+            status: 'successful' as DonationStatus,
             mpesaReceipt: mockReceipt,
           },
         })
@@ -227,7 +227,7 @@ export async function POST(request: NextRequest) {
               transactionId: donation.transactionId || donation.id,
               method: donation.method,
               date: donation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
-              campaign: donation.campaign || undefined,
+              campaign: campaignName || undefined,
             })
             console.log(`[M-Pesa] Confirmation email sent to ${donation.donorEmail}`)
           } catch (emailErr) {

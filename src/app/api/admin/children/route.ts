@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
+import { ChildStatus } from '@prisma/client'
 
 export async function GET(request: NextRequest) {
   const authError = requireAdmin(request)
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
         gender: body.gender ?? null,
         story: body.story ?? null,
         photo: body.photo ?? null,
-        status: body.status || 'available',
+        status: (body.status || 'available') as ChildStatus,
         program: body.program ?? null,
       },
     })
@@ -75,7 +76,7 @@ export async function PUT(request: NextRequest) {
         ...(body.gender !== undefined && { gender: body.gender }),
         ...(body.story !== undefined && { story: body.story }),
         ...(body.photo !== undefined && { photo: body.photo }),
-        ...(body.status !== undefined && { status: body.status }),
+        ...(body.status !== undefined && { status: body.status as ChildStatus }),
         ...(body.program !== undefined && { program: body.program }),
       },
     })

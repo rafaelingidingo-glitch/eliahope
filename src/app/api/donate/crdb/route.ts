@@ -8,6 +8,7 @@ import {
   type BankProvider,
 } from '@/lib/azampay'
 import { sendDonationConfirmationEmail } from '@/lib/resend'
+import { DonationMethod, DonationStatus, DonationType } from '@prisma/client'
 
 function generateTransactionId(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
@@ -75,6 +76,7 @@ export async function POST(request: NextRequest) {
     if (donationId && otp) {
       const existingDonation = await db.donation.findUnique({
         where: { id: donationId },
+        include: { campaign: { select: { title: true } } },
       })
 
       if (!existingDonation) {
@@ -121,7 +123,7 @@ export async function POST(request: NextRequest) {
             // Update status to processing (waiting for final webhook)
             await db.donation.update({
               where: { id: donationId },
-              data: { status: 'processing' },
+              data: { status: 'processing' as DonationStatus },
             })
 
             return NextResponse.json({
@@ -135,7 +137,7 @@ export async function POST(request: NextRequest) {
           } else {
             await db.donation.update({
               where: { id: donationId },
-              data: { status: 'failed' },
+              data: { status: 'failed' as DonationStatus },
             })
 
             console.error(`[CRDB] OTP confirmation failed: ${result.message}`)
@@ -163,7 +165,7 @@ export async function POST(request: NextRequest) {
           if (isSuccess) {
             await db.donation.update({
               where: { id: donationId },
-              data: { status: 'successful' },
+              data: { status: 'successful' as DonationStatus },
             })
             if (existingDonation.campaignId) {
               await db.campaign.update({
@@ -183,7 +185,7 @@ export async function POST(request: NextRequest) {
                   transactionId: existingDonation.transactionId || existingDonation.id,
                   method: existingDonation.method,
                   date: existingDonation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
-                  campaign: existingDonation.campaign || undefined,
+                  campaign: existingDonation.campaign?.title || undefined,
                 })
                 console.log(`[CRDB] Confirmation email sent to ${existingDonation.donorEmail}`)
               } catch (emailErr) {
@@ -193,7 +195,7 @@ export async function POST(request: NextRequest) {
           } else {
             await db.donation.update({
               where: { id: donationId },
-              data: { status: 'failed' },
+              data: { status: 'failed' as DonationStatus },
             })
             console.log(`[CRDB] SIMULATED OTP: Donation ${donationId} marked failed`)
           }
@@ -275,11 +277,10 @@ export async function POST(request: NextRequest) {
         donorPhone: phone?.trim() || null,
         amount,
         currency: 'TZS',
-        method: bankProvider.toLowerCase(),
-        type: 'one-time',
+        method: bankProvider.toLowerCase() as DonationMethod,
+        type: 'one_time' as DonationType,
         campaignId: campaignId || null,
-        campaign: campaignName,
-        status: 'pending',
+        status: 'pending' as DonationStatus,
         transactionId,
         crdbAccountHolder: accountHolderName.trim(),
         crdbAccountNumber: cleanedAccount,
@@ -334,7 +335,7 @@ export async function POST(request: NextRequest) {
             // No OTP required — payment is processing
             await db.donation.update({
               where: { id: donation.id },
-              data: { status: 'processing' },
+              data: { status: 'processing' as DonationStatus },
             })
 
             return NextResponse.json({
@@ -351,7 +352,7 @@ export async function POST(request: NextRequest) {
           // AzamPay rejected the checkout request
           await db.donation.update({
             where: { id: donation.id },
-            data: { status: 'failed' },
+            data: { status: 'failed' as DonationStatus },
           })
 
           console.error(`[CRDB] AzamPay checkout rejected: ${result.message}`)
@@ -368,7 +369,7 @@ export async function POST(request: NextRequest) {
         // Mark donation as failed
         await db.donation.update({
           where: { id: donation.id },
-          data: { status: 'failed' },
+          data: { status: 'failed' as DonationStatus },
         })
 
         return NextResponse.json(
@@ -390,7 +391,7 @@ export async function POST(request: NextRequest) {
           await db.donation.update({
             where: { id: donation.id },
             data: {
-              status: 'successful',
+              status: 'successful' as DonationStatus,
             },
           })
 
@@ -416,7 +417,7 @@ export async function POST(request: NextRequest) {
                 transactionId: donation.transactionId || donation.id,
                 method: donation.method,
                 date: donation.createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
-                campaign: donation.campaign || undefined,
+                campaign: campaignName || undefined,
               })
               console.log(`[CRDB] Confirmation email sent to ${donation.donorEmail}`)
             } catch (emailErr) {
@@ -427,7 +428,7 @@ export async function POST(request: NextRequest) {
           await db.donation.update({
             where: { id: donation.id },
             data: {
-              status: 'failed',
+              status: 'failed' as DonationStatus,
             },
           })
           console.log(`[CRDB] SIMULATED: Donation ${donation.id} marked failed`)
