@@ -34,84 +34,50 @@
 import { PrismaClient, Prisma } from '@/generated/prisma/client'
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 
-// ─── Database Engine Detection ───────────────────────────────────────────
-// Detect which database engine to use based on the DATABASE_URL scheme.
-
 type DatabaseEngine = 'sqlite' | 'postgresql' | 'mysql'
 
 function detectEngine(url: string): DatabaseEngine {
   if (url.startsWith('file:')) return 'sqlite'
   if (url.startsWith('postgresql://') || url.startsWith('postgres://')) return 'postgresql'
   if (url.startsWith('mysql://')) return 'mysql'
-  return 'sqlite' // Default fallback
+  return 'sqlite'
 }
 
 const DATABASE_URL = process.env.DATABASE_URL || 'file:./db/custom.db'
 const engine = detectEngine(DATABASE_URL)
 
-// ─── Adapter Creation ────────────────────────────────────────────────────
-// Creates the Prisma driver adapter for the detected database engine.
-//
-// SQLite is always available (installed by default).
-// For PostgreSQL/MySQL, uncomment the corresponding block after installing
-// the required adapter packages.
+// Tunaweka vigezo vya mteja hapa nje ili tuvisasishe baada ya asynchronous import
+let dbInstance: PrismaClient
 
-function createPrismaClient(): PrismaClient {
-  const log: Array<{ emit: 'stdout'; level: 'query' | 'error' }> =
-    process.env.NODE_ENV === 'development'
-      ? [{ emit: 'stdout', level: 'query' }, { emit: 'stdout', level: 'error' }]
-      : [{ emit: 'stdout', level: 'error' }]
-
-  if (engine === 'sqlite') {
-    const adapter = new PrismaBetterSqlite3({ url: DATABASE_URL })
-    return new PrismaClient({ adapter, log })
-  }
-
-  // ─── PostgreSQL Adapter ────────────────────────────────────────────
-  // Uncomment after installing: bun add @prisma/adapter-pg pg
-  //
-  if (engine === 'postgresql') {
-  // The magic comments stop Turbopack from tracing and breaking on these imports at build time
-  const { PrismaPg } = require(/* turbopackIgnore: true */ '@prisma/adapter-pg')
-  const { Pool } = require(/* turbopackIgnore: true */ 'pg')
-  
-  const pool = new Pool({ connectionString: DATABASE_URL })
-  const adapter = new PrismaPg(pool)
-  return new PrismaClient({ adapter, log })
-}
-  // ─── MySQL Adapter ─────────────────────────────────────────────────
-  // Uncomment after installing: bun add @prisma/adapter-mariadb mariadb
-  //
-  // if (engine === 'mysql') {
-  //   const { PrismaMariaDB } = require('@prisma/adapter-mariadb')
-  //   const mariadb = require('mariadb')
-  //   const pool = mariadb.createPool({ connectionString: DATABASE_URL })
-  //   const adapter = new PrismaMariaDB(pool)
-  //   return new PrismaClient({ adapter, log })
-  // }
-
-  // Fallback: If non-SQLite engine detected but adapter not configured,
-  // fall back to SQLite adapter (will fail if URL is actually PG/MySQL)
-  console.warn(
-    `[DB] Engine "${engine}" detected but adapter not configured. ` +
-    'Falling back to SQLite adapter. For PostgreSQL/MySQL, see comments in db.ts.'
-  )
+if (engine === 'sqlite') {
   const adapter = new PrismaBetterSqlite3({ url: DATABASE_URL })
-  return new PrismaClient({ adapter, log })
+  dbInstance = new PrismaClient({ adapter })
+} else if (engine === 'postgresql') {
+  // Hii inafanya kazi Hostinger/Route Africa (Bun/Node runtime) na Vercel pia!
+  // Tunatumia dynamic import inayokubalika na standard zote za kisasa
+  const { PrismaPg } = await import('@prisma/adapter-pg')
+  const pg = (await import('pg')).default
+
+  const pool = new pg.Pool({ connectionString: DATABASE_URL })
+  const adapter = new PrismaPg(pool)
+  dbInstance = new PrismaClient({ adapter })
+} else {
+  // Fallback ya usalama
+  const adapter = new PrismaBetterSqlite3({ url: DATABASE_URL })
+  dbInstance = new PrismaClient({ adapter })
 }
 
-// ─── Type-safe global augmentation ───────────────────────────────────────
 const globalForPrisma = globalThis as unknown as {
   db: PrismaClient | undefined
 }
 
-// ─── Singleton instantiation ─────────────────────────────────────────────
-export const db = globalForPrisma.db ?? createPrismaClient()
+export const db = globalForPrisma.db ?? dbInstance
 
-// Persist on globalThis to survive HMR cycles (development only)
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.db = db
 }
+
+// ... weka zile helper functions zako za `toNumber`, `decimalFieldsToNumber` chini kama zilivyokuwa.
 
 // ─── Decimal / Number Helpers ────────────────────────────────────────────
 // Prisma returns `Decimal` objects for `Decimal` schema fields. These
