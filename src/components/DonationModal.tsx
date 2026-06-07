@@ -40,7 +40,7 @@ interface Campaign {
 
 type DonationState = 'idle' | 'loading' | 'success' | 'error'
 type PaymentTab = 'mpesa' | 'crdb'
-type MnoProviderValue = 'mpesa' | 'airtel' | 'tigo' | 'halopesa' | 'azampesa'
+type MnoProviderValue = 'mpesa'
 type CrdbStep = 'form' | 'otp'
 
 interface DonationModalProps {
@@ -63,7 +63,8 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
   const [mpesaPhone, setMpesaPhone] = useState('')
   const [mpesaEmail, setMpesaEmail] = useState('')
   const [mpesaAmount, setMpesaAmount] = useState(prefilledAmount || '')
-  const [mnoProvider, setMnoProvider] = useState<MnoProviderValue>('mpesa')
+  // M-Pesa is the only provider
+  const mnoProvider: MnoProviderValue = 'mpesa'
   const [donationState, setDonationState] = useState<DonationState>('idle')
   const [transactionId, setTransactionId] = useState('')
   const [donationId, setDonationId] = useState('')
@@ -87,9 +88,6 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
 
   // Campaigns
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
-
-  // Donation type
-  const [donationType, setDonationType] = useState<'one-time' | 'monthly'>('one-time')
 
   // Polling for payment status
   const [polling, setPolling] = useState(false)
@@ -191,8 +189,7 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
     setMpesaPhone('')
     setMpesaEmail('')
     setMpesaAmount('')
-    setMnoProvider('mpesa')
-    setDonationType('one-time')
+
     // CRDB
     setCrdbDonationState('idle')
     setCrdbTransactionId('')
@@ -571,46 +568,6 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                   </div>
                 )}
 
-                {/* Donation Type Toggle: One-time / Monthly */}
-                <div className="mb-5">
-                  <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                    {t.donation.donationType}
-                  </label>
-                  <div className="flex border-2 border-[#c5c6ce] rounded-xl overflow-hidden">
-                    <button
-                      type="button"
-                      onClick={() => setDonationType('one-time')}
-                      className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-                        donationType === 'one-time'
-                          ? 'bg-[#ff8928] text-white'
-                          : 'bg-white text-[#44474d] hover:bg-gray-50'
-                      }`}
-                    >
-                      {t.donation.oneTime}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDonationType('monthly')}
-                      className={`flex-1 py-2.5 text-sm font-semibold transition-colors border-l-2 border-[#c5c6ce] ${
-                        donationType === 'monthly'
-                          ? 'bg-[#ff8928] text-white'
-                          : 'bg-white text-[#44474d] hover:bg-gray-50'
-                      }`}
-                    >
-                      {t.donation.monthly}
-                    </button>
-                  </div>
-                  {donationType === 'monthly' && (
-                    <motion.p
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="text-[#ff8928] text-xs mt-1.5 font-medium"
-                    >
-                      {t.donation.recurringNote}
-                    </motion.p>
-                  )}
-                </div>
-
                 {/* Payment Tabs */}
                 <div className="flex mb-5 border-2 border-[#c5c6ce] rounded-xl overflow-hidden">
                   <button
@@ -640,33 +597,14 @@ export default function DonationModal({ isOpen, onClose, preselectedCampaignId, 
                 {/* ===== M-Pesa / Mobile Money Tab ===== */}
                 {activeTab === 'mpesa' && (
                   <form onSubmit={handleMpesaSubmit} className="space-y-4">
-                    {/* Mobile Money Provider Selector */}
-                    <div>
-                      <label className="text-sm font-semibold text-[#031632] mb-1.5 block">
-                        {t.donation.selectProvider} <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex flex-wrap gap-2">
-                        {([
-                          { value: 'mpesa' as MnoProviderValue, label: 'M-Pesa', color: 'bg-green-600 border-green-600 text-white' },
-                          { value: 'airtel' as MnoProviderValue, label: 'Airtel', color: 'bg-red-600 border-red-600 text-white' },
-                          { value: 'tigo' as MnoProviderValue, label: 'Tigo', color: 'bg-blue-600 border-blue-600 text-white' },
-                          { value: 'halopesa' as MnoProviderValue, label: 'Halo', color: 'bg-orange-500 border-orange-500 text-white' },
-                          { value: 'azampesa' as MnoProviderValue, label: 'Azam', color: 'bg-purple-600 border-purple-600 text-white' },
-                        ]).map((p) => (
-                          <button
-                            key={p.value}
-                            type="button"
-                            onClick={() => setMnoProvider(p.value)}
-                            disabled={donationState === 'loading'}
-                            className={`py-2.5 px-3 text-xs font-bold rounded-lg border-2 transition-all min-w-[60px] sm:min-w-0 sm:flex-1 ${
-                              mnoProvider === p.value
-                                ? p.color
-                                : 'border-[#c5c6ce] text-[#44474d] bg-white hover:border-[#ff8928]'
-                            }`}
-                          >
-                            {p.label}
-                          </button>
-                        ))}
+                    {/* M-Pesa Provider Badge */}
+                    <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-xl">
+                      <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                        <Phone className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-[#031632] font-bold text-sm">M-Pesa</p>
+                        <p className="text-green-600 text-[10px]">Vodacom Tanzania</p>
                       </div>
                     </div>
                     {/* Full Name - Optional */}
