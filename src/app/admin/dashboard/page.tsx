@@ -58,7 +58,7 @@ function useNavItems() {
     { key: 'donations' as SectionKey, label: t.adminDashboard.donations, icon: DollarSign },
     { key: 'volunteers' as SectionKey, label: t.adminDashboard.volunteers, icon: Users },
     { key: 'sponsor-child' as SectionKey, label: t.adminDashboard.sponsorChild, icon: Baby },
-    { key: 'newsletter' as SectionKey, label: t.adminDashboard.newsletter, icon: Mail },
+    // { key: 'newsletter' as SectionKey, label: t.adminDashboard.newsletter, icon: Mail },
     { key: 'blog' as SectionKey, label: t.adminDashboard.blog, icon: Newspaper },
     { key: 'reports' as SectionKey, label: t.adminDashboard.reports, icon: BarChart3 },
   ]

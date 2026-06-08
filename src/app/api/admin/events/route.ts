@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/auth'
+import { revalidatePath } from 'next/cache' // <-- 1. Tumeongeza hii kwa ajili ya kusafisha cache
 
 export async function GET(request: NextRequest) {
   const authError = requireAdmin(request)
@@ -57,6 +58,10 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // <-- 2. Safisha cache baada ya kutengeneza event mpya
+    revalidatePath('/events')
+    revalidatePath('/')
+
     return NextResponse.json(event, { status: 201 })
   } catch (error) {
     console.error('Events POST error:', error)
@@ -104,6 +109,11 @@ export async function PUT(request: NextRequest) {
       },
     })
 
+    // <-- 3. Safisha cache baada ya ku-update event
+    revalidatePath('/events')
+    revalidatePath(`/events/${id}`)
+    revalidatePath('/')
+
     return NextResponse.json(event)
   } catch (error) {
     console.error('Events PUT error:', error)
@@ -120,6 +130,12 @@ export async function DELETE(request: NextRequest) {
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
 
     await db.event.delete({ where: { id } })
+
+    // <-- 4. Safisha cache baada ya kufuta kabisa event
+    revalidatePath('/events')
+    revalidatePath(`/events/${id}`)
+    revalidatePath('/')
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Events DELETE error:', error)
